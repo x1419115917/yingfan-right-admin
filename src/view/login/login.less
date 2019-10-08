@@ -1,0 +1,119 @@
+.login{
+    width: 100%;
+    height: 100%;
+    background-image: url('../../assets/images/backg02.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    position: relative;
+    .login-content{
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        transform: translateY(-60%);
+    }
+    .outside-login{
+        border-top: #dcdee3 1px solid;
+        padding: 7% 0 0;
+        text-align: center;
+        position: relative;
+        margin: 9% 0% 0;
+        border-radius: 0 0 1% 1%;
+    }
+    .outside-login-tit{
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        margin: 0 0 0 -50px;
+        text-align: center;
+        width: 100px;
+        height: 14px;
+        line-height: 1;
+        color: #999;
+    }
+    .outside-login-tit span {
+        position: relative;
+        z-index: 2;
+    }
+    .text-center{
+        text-align: center;
+    }
+    .outside-login-tit:after, .outside-login-tit:before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 7px;
+        position: absolute;
+        z-index: 1;
+    }
+    .outside-login-tit:before {
+        top: 0;
+        left: 0;
+        background-color: #fff;
+    }
+    .left-login-text{
+        color: #fff;
+        // margin-left: 300px;
+        // position: absolute;
+        // left: 500px;
+        // top: 50%;
+        // transform: translateY(-60%);
+        // width: 380px;
+        h3{
+            font-size: 40px;
+            font-weight: 500;
+        }
+        h5{
+            font-size: 24px;
+            
+        }
+        .list{
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            font-size: 20px;
+            li{
+                list-style: none;
+            }
+        }
+        .footer{
+            padding-top: 100px;
+        }
+    }
+    &-con{
+        // position: absolute;
+        // right: 160px;
+        // top: 50%;
+        // transform: translateY(-60%);
+        width: 393px;
+        height: 328px;
+        // margin-left: 160px;
+        background: #fff;
+        padding: 30px;
+        box-sizing: border-box;
+        h3{
+            color: #333333;
+            font-size: 24px;
+            font-family: "microsoft yahei";
+            font-weight: 400;
+        }
+        h5{
+            font-size: 13px;
+            margin: 20px 0 10px 0;
+        }
+        &-header{
+            font-size: 16px;
+            font-weight: 300;
+            text-align: center;
+            padding: 30px 0;
+        }
+        .form-con{
+            padding: 10px 0 0;
+        }
+        .login-tip{
+            font-size: 10px;
+            text-align: center;
+            color: #c3c3c3;
+        }
+    }
+}
