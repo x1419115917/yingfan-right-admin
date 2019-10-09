@@ -35,29 +35,27 @@ module.exports = {
       .set('_c', resolve('src/components'))
   },
   // 设为false打包时不生成.map文件
-  productionSourceMap: false,
+  productionSourceMap: false
   // 这里写你调用接口的基础路径，来解决跨域，如果设置了代理，那你本地开发环境的axios的baseUrl要写为 '' ，即空字符串
   // devServer: {
   //   proxy: 'localhost:3000'
   // }
-  devServer: {
-    port: 8080,
-    proxy: {
-      /**
-         * 注意：修改配置需重启才生效
-      */
-      '/api': {
-        target: 'http://sitxqy.bndxqc.com',
-        // target: 'http://192.168.21.47:8765',
-        // target: 'http://192.168.11.14:8765', 
-        // target: 'http://192.168.11.37:8765',
-        changeOrigin: true,
-        ws: true,
-        pathRewrite: {
-          '^/guest': 'api'
-          //   '^/guest': '' //开发环境
-        }
-      }
-    }
-}
+  // devServer: {
+  //   port: 8080,
+  //   proxy: {
+  //     /**
+  //        * 注意：修改配置需重启才生效
+  //     */
+  //     '/api': {
+  //       target: 'http://120.79.191.75:9203',
+  //       // target: 'http://192.168.1.23:9203',
+  //       changeOrigin: true,
+  //       ws: true,
+  //       pathRewrite: {
+  //         '^/guest': ''
+  //         //   '^/guest': '' //开发环境
+  //       }
+  //     }
+  //   }
+  // }
 }

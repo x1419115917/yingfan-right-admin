@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
+import Cookies from 'js-cookie'
 // import { Spin } from 'iview'
 const addErrorLog = errorInfo => {
   const { statusText, status, request: { responseURL } } = errorInfo
@@ -10,6 +11,15 @@ const addErrorLog = errorInfo => {
     url: responseURL
   }
   if (!responseURL.includes('save_error_logger')) store.dispatch('addErrorLog', info)
+}
+// form数据格式化
+function formdata (obj) {
+  // 表单格式提交
+  let data = new FormData()
+  for (let j in obj) {
+    data.append(j, obj[j])
+  }
+  return data
 }
 
 class HttpRequest {
@@ -22,6 +32,7 @@ class HttpRequest {
       baseURL: this.baseUrl,
       headers: {
         //
+        'Content-Type': 'application/json'
       }
     }
     return config
@@ -39,13 +50,25 @@ class HttpRequest {
       if (!Object.keys(this.queue).length) {
         // Spin.show() // 不建议开启，因为界面不友好
       }
+      // 可在此设置要发送的token
+      let token = Cookies.get('token')
+      // let channel = Cookies.get('channel');
+      token && (config.headers.access_token = token)
       this.queue[url] = true
+      if (config.method === 'post') {
+        if (!config.data.FLAG) {
+          config.data = formdata(config.data)
+        } else {
+          config.data = JSON.stringify(config.data)
+        }
+      }
       return config
     }, error => {
       return Promise.reject(error)
     })
     // 响应拦截
     instance.interceptors.response.use(res => {
+      console.log(res)
       this.destroy(url)
       const { data, status } = res
       return { data, status }

@@ -119,10 +119,10 @@ export default {
         params = route.params
         query = route.query
       }
-      if (name.indexOf('isTurnByHref_') > -1) {
-        window.open(name.split('_')[1])
-        return
-      }
+      // if (name.indexOf('isTurnByHref_') > -1) {
+      //   window.open(name.split('_')[1])
+      //   return
+      // }
       this.$router.push({
         name,
         params,
@@ -164,6 +164,7 @@ export default {
     /**
      * @description 初始化设置面包屑导航和标签导航
      */
+    console.log(this.menuList)
     this.setTagNavList()
     this.setHomeRoute(routers)
     const { name, params, query, meta } = this.$route

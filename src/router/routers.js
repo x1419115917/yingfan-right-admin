@@ -51,6 +51,64 @@ export default [
     ]
   },
   {
+    path: '/dict',
+    name: 'dict',
+    meta: {
+      icon: 'ios-list',
+      title: '基础管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'common',
+        name: 'common',
+        meta: {
+          icon: '',
+          title: '数据字典管理'
+        },
+        component: () => import('@/view/dict/common.vue')
+      },
+      {
+        path: 'export-excel',
+        name: 'export-excel',
+        meta: {
+          icon: 'md-download',
+          title: '导出EXCEL'
+        },
+        component: () => import('@/view/dict/export-excel.vue')
+      }
+    ]
+  },
+  {
+    path: '/system',
+    name: 'system',
+    meta: {
+      icon: 'ios-laptop',
+      title: '系统管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'upload-excel',
+        name: 'upload-excel',
+        meta: {
+          icon: 'md-add',
+          title: '导入EXCEL'
+        },
+        component: () => import('@/view/system/upload-excel.vue')
+      },
+      {
+        path: 'export-excel',
+        name: 'export-excel',
+        meta: {
+          icon: 'md-download',
+          title: '导出EXCEL'
+        },
+        component: () => import('@/view/system/export-excel.vue')
+      }
+    ]
+  },
+  {
     path: '/message',
     name: 'message',
     component: Main,
@@ -70,6 +128,7 @@ export default [
       }
     ]
   },
+
   {
     path: '/components',
     name: 'components',

@@ -43,6 +43,8 @@
 <script>
 import LoginForm from '_c/login-form'
 import { mapActions } from 'vuex'
+import { login } from '@/api/login'
+import Cookies from 'js-cookie'
 export default {
   components: {
     LoginForm
@@ -52,7 +54,7 @@ export default {
       'handleLogin',
       'getUserInfo'
     ]),
-    handleSubmit ({ userName, password }) {
+    handleSubmit1 ({ userName, password }) {
       console.log(this.$config.homeName)
       this.handleLogin({ userName, password }).then(res => {
         this.getUserInfo().then(res => {
@@ -60,6 +62,47 @@ export default {
             name: this.$config.homeName
           })
         })
+      })
+    },
+    async handleSubmit ({ userName, password }) {
+      // alert(12345)
+      let data = {
+        username: userName,
+        password: password
+      }
+      // console.log(this.$config.homeName)
+      let res = await login(data)
+      console.log(res)
+      if (res.data.code === 0) {
+        Cookies.set('token', res.data.content.token)
+        Cookies.set('userId', res.data.content.userId)
+        Cookies.set('username', res.data.content.username)
+        this.$router.push({
+          name: this.$config.homeName
+        })
+      }
+      // this.login({ userName, password }).then(res => {
+
+      // this.getUserInfo().then(res => {
+      //   this.$router.push({
+      //     name: this.$config.homeName
+      //   })
+      // })
+      // })
+    },
+    async handleSubmit2 ({ userName, password }) {
+      alert(345)
+      console.log(this.$config.homeName)
+      const data = {
+        username: userName,
+        password: password
+      }
+      axios.request({
+        url: 'login',
+        data,
+        method: 'post'
+      }).then(function (res) {
+        console.log(res)
       })
     }
   }
