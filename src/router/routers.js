@@ -98,6 +98,15 @@ export default [
         component: () => import('@/view/sys/role.vue')
       },
       {
+        path: 'menus',
+        name: 'menus',
+        meta: {
+          icon: 'ios-arrow-forward',
+          title: '系统菜单s'
+        },
+        component: () => import('@/view/sys/menus.vue')
+      },
+      {
         path: 'menu',
         name: 'menu',
         meta: {
