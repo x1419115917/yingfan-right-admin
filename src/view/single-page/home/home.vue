@@ -6,7 +6,6 @@
         <li>美粤文化成立于2000,专注文化传播</li>
         <li>美粤文化主流电商平台</li>
       </ul>
-
     </div>
     <!-- <Row :gutter="20">
       <i-col :xs="12" :md="8" :lg="4" v-for="(infor, i) in inforCardData" :key="`infor-${i}`" style="height: 120px;padding-bottom: 10px;">

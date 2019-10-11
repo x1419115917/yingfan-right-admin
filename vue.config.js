@@ -40,22 +40,4 @@ module.exports = {
   // devServer: {
   //   proxy: 'localhost:3000'
   // }
-  // devServer: {
-  //   port: 8080,
-  //   proxy: {
-  //     /**
-  //        * 注意：修改配置需重启才生效
-  //     */
-  //     '/api': {
-  //       target: 'http://120.79.191.75:9203',
-  //       // target: 'http://192.168.1.23:9203',
-  //       changeOrigin: true,
-  //       ws: true,
-  //       pathRewrite: {
-  //         '^/guest': ''
-  //         //   '^/guest': '' //开发环境
-  //       }
-  //     }
-  //   }
-  // }
 }

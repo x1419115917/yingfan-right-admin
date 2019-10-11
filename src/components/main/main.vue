@@ -4,8 +4,7 @@
       <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con">
-          <img v-show="!collapsed" :src="minLogo" key="max-logo" />
-          <p v-show="!collapsed">美粤文化后台管理系统</p>
+          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
           <img v-show="collapsed" :src="minLogo" key="min-logo" />
         </div>
       </side-menu>
@@ -16,7 +15,7 @@
           <user :message-unread-count="unreadCount" :user-avatar="userAvatar"/>
           <language v-if="$config.useI18n" @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
           <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store>
-          <!-- <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/> -->
+          <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
         </header-bar>
       </Header>
       <Content class="main-content-con">
@@ -47,7 +46,8 @@ import ErrorStore from './components/error-store'
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import { getNewTagList, routeEqual } from '@/libs/util'
 import routers from '@/router/routers'
-import minLogo from '@/assets/images/photo_s.jpg'
+import minLogo from '@/assets/images/logo-min.jpg'
+import maxLogo from '@/assets/images/logo.jpg'
 import './main.less'
 export default {
   name: 'Main',
@@ -65,6 +65,7 @@ export default {
     return {
       collapsed: false,
       minLogo,
+      maxLogo,
       isFullscreen: false
     }
   },
@@ -119,10 +120,10 @@ export default {
         params = route.params
         query = route.query
       }
-      // if (name.indexOf('isTurnByHref_') > -1) {
-      //   window.open(name.split('_')[1])
-      //   return
-      // }
+      if (name.indexOf('isTurnByHref_') > -1) {
+        window.open(name.split('_')[1])
+        return
+      }
       this.$router.push({
         name,
         params,
@@ -164,7 +165,6 @@ export default {
     /**
      * @description 初始化设置面包屑导航和标签导航
      */
-    console.log(this.menuList)
     this.setTagNavList()
     this.setHomeRoute(routers)
     const { name, params, query, meta } = this.$route

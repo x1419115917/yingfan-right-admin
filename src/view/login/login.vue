@@ -42,9 +42,9 @@
 
 <script>
 import LoginForm from '_c/login-form'
-import { mapActions } from 'vuex'
 import { login } from '@/api/login'
 import Cookies from 'js-cookie'
+import { mapActions } from 'vuex'
 export default {
   components: {
     LoginForm
@@ -54,7 +54,24 @@ export default {
       'handleLogin',
       'getUserInfo'
     ]),
-    handleSubmit1 ({ userName, password }) {
+    async handleSubmit ({ userName, password }) {
+      let data = {
+        userName,
+        passWord: password
+      }
+      let res = await login(data)
+      console.log(res)
+      console.log(this.$config.homeName)
+      if (res.data.code === 0) {
+        Cookies.set('access_token', res.data.content.token)
+        Cookies.set('userId', res.data.content.userId)
+        Cookies.set('username', res.data.content.username)
+        this.$router.push({
+          name: this.$config.homeName
+        })
+      }
+    },
+    handleSubmit123 ({ userName, password }) {
       console.log(this.$config.homeName)
       this.handleLogin({ userName, password }).then(res => {
         this.getUserInfo().then(res => {
@@ -62,47 +79,6 @@ export default {
             name: this.$config.homeName
           })
         })
-      })
-    },
-    async handleSubmit ({ userName, password }) {
-      // alert(12345)
-      let data = {
-        username: userName,
-        password: password
-      }
-      // console.log(this.$config.homeName)
-      let res = await login(data)
-      console.log(res)
-      if (res.data.code === 0) {
-        Cookies.set('token', res.data.content.token)
-        Cookies.set('userId', res.data.content.userId)
-        Cookies.set('username', res.data.content.username)
-        this.$router.push({
-          name: this.$config.homeName
-        })
-      }
-      // this.login({ userName, password }).then(res => {
-
-      // this.getUserInfo().then(res => {
-      //   this.$router.push({
-      //     name: this.$config.homeName
-      //   })
-      // })
-      // })
-    },
-    async handleSubmit2 ({ userName, password }) {
-      alert(345)
-      console.log(this.$config.homeName)
-      const data = {
-        username: userName,
-        password: password
-      }
-      axios.request({
-        url: 'login',
-        data,
-        method: 'post'
-      }).then(function (res) {
-        console.log(res)
       })
     }
   }
