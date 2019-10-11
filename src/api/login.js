@@ -12,3 +12,10 @@ export const login = ({ userName, passWord }) => {
     method: 'post'
   })
 }
+export const logoutFn = data => {
+  return axios.request({
+    url: '/logout',
+    data,
+    method: 'get'
+  })
+}

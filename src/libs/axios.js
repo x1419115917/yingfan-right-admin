@@ -53,10 +53,13 @@ class HttpRequest {
       }
       this.queue[url] = true
       // 可在此设置要发送的token
+      console.log(config.data)
       let token = Cookies.get('access_token')
+      let sessionId = Cookies.get('sessionId')
       token && (config.headers.token = token)
+      sessionId && (config.headers.Authorization = sessionId)
       if (config.method === 'post') {
-        if (!config.data.FLAG) {
+        if (config.data && !config.data.FLAG) {
           config.data = formdata(config.data)
         } else {
           config.data = JSON.stringify(config.data)

@@ -98,6 +98,15 @@ export default [
         component: () => import('@/view/sys/role.vue')
       },
       {
+        path: 'menu',
+        name: 'menu',
+        meta: {
+          icon: 'md-add',
+          title: '系统菜单'
+        },
+        component: () => import('@/view/sys/menu.vue')
+      },
+      {
         path: 'export-excel',
         name: 'export-excel',
         meta: {

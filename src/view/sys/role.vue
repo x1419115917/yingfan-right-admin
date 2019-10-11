@@ -6,12 +6,12 @@
     <Card title="角色管理">
       <Row class="role-top">
         <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="handleUploadFile">添加</Button>
-          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="handleUploadFile">批量删除</Button>
+          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
+          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
         </div>
         <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="搜索" style="width: 200px"></Input>
-          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="handleUploadFile">搜索</Button>
+          <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
+          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
         </div>
       </Row>
       <Row>
@@ -47,9 +47,9 @@
             @on-selection-change="selected"
           >
             <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="show(index)">
+              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
                 <i></i>
-                <span>查看</span>
+                <span>编辑</span>
               </Button>
               <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
                 <i></i>
@@ -75,25 +75,111 @@
           />
         </div>
     </Row>
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑角色': '新增角色'"  width="640" @on-cancel="cancelModal1">
+			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
+				<FormItem label="角色名:" prop="roleName">
+					<Input v-model="formValidate.roleName" placeholder="请输入角色名"></Input>
+				</FormItem>
+        <FormItem label="角色标识:" prop="roleSign">
+					<Input v-model="formValidate.roleSign" placeholder="请输入角色标识"></Input>
+				</FormItem>
+				<FormItem label="备注:" prop="roleDesc">
+					<Input v-model="formValidate.roleDesc" placeholder="请输入备注"></Input>
+				</FormItem>
+				<FormItem label="菜单权限:" prop="power" class="is-checked">
+					<Tree :data="ztreesData" show-checkbox multiple style="height: 290px;overflow: auto;"></Tree>
+				</FormItem>
+			</Form>
+			<div slot="footer">
+				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
+				<Button size="large" @click="operationRole" type="primary">确定</Button>
+			</div>
+		</Modal>
+    <Modal
+				width="20"
+				v-model="delModal"
+				@on-ok="delRole"
+				:closable="false"
+				class-name="vertical-center-modal">
+			<p>确定删除？</p>
+		</Modal>
+    <Modal
+				width="20"
+				v-model="delBatchModal"
+				@on-ok="batchRemove"
+				:closable="false"
+				class-name="vertical-center-modal">
+			<p>确定删除选中的数据？</p>
+		</Modal>
   </div>
 </template>
 <script>
-import excel from '@/libs/excel'
+import { roleList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
 export default {
-  name: 'upload-excel',
+  name: 'role-name',
   data () {
     return {
       value: '',
+      modal1: false,
+      operationShow: false,
+      delBatchModal: false,
+      delModal: false,
+      checkedIds: [],
+      checkedId: '',
+      menuIdsArr: [],
+      ztreesData: [
+        {
+          title: 'parent 1',
+          expand: true,
+          selected: true,
+          children: [
+            {
+              title: 'parent 1-1',
+              expand: true,
+              children: [
+                {
+                  title: 'leaf 1-1-1',
+                  disabled: true
+                },
+                {
+                  title: 'leaf 1-1-2'
+                }
+              ]
+            },
+            {
+              title: 'parent 1-2',
+              expand: true,
+              children: [
+                {
+                  title: 'leaf 1-2-1',
+                  checked: true
+                },
+                {
+                  title: 'leaf 1-2-1'
+                }
+              ]
+            }
+          ]
+        }
+      ],
       formValidate: {
-        companyId: '',
-        appId: '',
-        appName: ''
+        roleName: '',
+        roleDesc: '',
+        roleSign: '',
+        power: ''
       },
       ruleValidate: {
-        companyId: [
-          { required: true, message: '请选择企业名称', trigger: 'blur' }
+        roleName: [
+          { required: true, message: '角色名称不能为空', trigger: 'blur' }
+        ],
+        roleSign: [
+          { required: true, message: '角色标识不能为空', trigger: 'blur' }
+        ],
+        roleDesc: [
+          { required: true, message: '备注不能为空', trigger: 'blur' }
         ]
       },
+      roleName: '',
       columnsList: [
         {
           type: 'selection',
@@ -102,7 +188,7 @@ export default {
         },
         {
           title: '序号',
-          key: 'num'
+          key: 'roleId'
         },
         {
           title: '角色名',
@@ -110,11 +196,11 @@ export default {
         },
         {
           title: '备注',
-          key: 'beizhu'
+          key: 'remark'
         },
         {
           title: '权限',
-          key: 'quanxian'
+          key: 'menuIds'
         },
         {
           title: '操作',
@@ -123,22 +209,18 @@ export default {
           align: 'center'
         }
       ],
-      dataList: [
-        {
-          id: 1,
-          num: 1,
-          roleName: '超级用户角色',
-          beizhu: '最高权限',
-          quanxian: '-'
-        }
-      ],
+      dataList: [],
+      userIdCreate: '',
+      roleSign: '',
       dataDel: [],
       addShow: false,
       sendContractBut: false,
+      selectedList: [],
       contractInfo: '',
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
+      delIndex: '',
       total: 0,
       loading: false, // 分割线
       uploadLoading: false,
@@ -152,23 +234,296 @@ export default {
     }
   },
   methods: {
-    show (i) {
-      this.showModal1 = !this.showModal1
-      this.showData = this.dataList[i]
+    async getPageList () {
+      let data = {
+        FLAG: 1,
+        pageIndex: this.pageNum,
+        pageSize: this.pageSize,
+        roleName: this.value,
+        roleSign: this.roleSign,
+        userIdCreate: this.userIdCreate
+      }
+      let res = await roleList(data)
+      if (res.data.code === 0) {
+        console.log(res.data.content)
+        this.dataList = res.data.content.rows
+        this.dataList.forEach((item) => {
+          item.menuIds = item.menuIds === null ? '-' : item.menuIds
+        })
+      }
+    },
+    async roleDetail (id) {
+      let res = await roleDetail(id)
+      if (res.data.code === 0) {
+        this.formValidate = {
+          roleName: res.data.content.roleName,
+          roleDesc: res.data.content.remark,
+          roleSign: res.data.content.roleSign,
+          power: ''
+        }
+        this.menuIds = res.data.content.menuIds
+        if (this.menuIds && this.menuIds.length > 0) {
+          this.forIds(this.menuIds)
+        }
+      }
+    },
+    forIds (arr) {
+      let zTreeData = [...this.ztreesData]
+      for (let i = 0; i < arr.length; i++) {
+        this.parentFn(zTreeData, arr[i])
+      }
+      this.ztreesData = [...zTreeData]
+    },
+    parentFn (arr, roleId) {
+      arr.forEach((item, index) => {
+        if (item.id == roleId) {
+          this.$set(item, 'checked', true)
+        } else {
+          if (item.children) {
+            this.parentFn(item.children, roleId)
+          }
+        }
+      })
+    },
+    async roleUpdate () {
+      let menuIds = this.checkedIds
+      if (menuIds && menuIds.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择菜单权限'
+        })
+        return
+      }
+      let data = {
+        FLAG: 1,
+        menuIds: menuIds,
+        roleId: this.checkedId,
+        remark: this.formValidate.roleDesc,
+        roleName: this.formValidate.roleName,
+        roleSign: this.formValidate.roleSign
+      }
+      let res = await roleUpdate(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        this.modal1 = false
+        this.$Modal.success({
+          title: '提示',
+          content: '编辑成功'
+        })
+        this.checkedId = ''
+        this.checkedIds = []
+        this.formValidate = {
+          roleName: '',
+          roleDesc: '',
+          roleSign: '',
+          power: ''
+        }
+        this.getPageList()
+      }
+    },
+    forArr1 (arr, num) { // 循环部门树形数据
+      let data = []
+      arr.forEach((value, index, array) => {
+        let datav
+        if (value.children) {
+          datav = {
+            id: value.id,
+            parentId: value.parentId,
+            title: value.text,
+            checked: value.selected === 'true',
+            expand: num < 1,
+            children: this.forArr1(value.children, num + 1),
+            hasParent: value.hasParent,
+            hasChildren: value.hasChildren
+          }
+        } else {
+          datav = {
+            id: value.id,
+            parentId: value.parentId,
+            title: value.text,
+            expand: true,
+            hasParent: value.hasParent,
+            hasChildren: value.hasChildren
+          }
+        }
+        data.push(datav)
+      })
+      return data
+    },
+    // 循环树形结构，得到选中id
+    forTreesIds (arr) {
+      arr.forEach((item, index) => {
+        if (item.checked == true) {
+          this.checkedIds.push(item.id)
+        }
+        if (item.children) {
+          this.forTreesIds(item.children)
+        }
+      })
+    },
+    // 循环树形结构，得到选中id
+    forTrees () {
+      this.ztreesData.forEach((item, index) => {
+        if (item.checked == true) {
+          this.checkedIds.push(item.id)
+        }
+        if (item.children) {
+          item.children.forEach((value, index) => {
+            if (value.checked == true) {
+              this.checkedIds.push(value.id)
+              // this.checkedIds.push(item.id)
+              // value.children.forEach
+            }
+            if (value.children) {}
+          })
+        }
+      })
+      this.checkedIds = [...new Set(this.checkedIds)]
+      this.formValidate.power = this.checkedIds.join(',')
+    },
+    //  菜单树结构
+    async menuTree () {
+      let res = await menuTree({})
+      console.log(res.data)
+      if (res.data.code === 0) {
+        let data = [{ ...res.data.content }]
+        console.log(data)
+        this.ztreesData = this.forArr1(data, 0)
+      }
+    },
+    // saveRole 添加角色
+    saveRole () {
+      this.$refs.formValidate.validate((valid) => {
+        if (valid) {
+          this.addRole()
+        }
+      })
+    },
+    async addRole () {
+      let menuIds = this.checkedIds
+      if (menuIds && menuIds.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择菜单权限'
+        })
+        return
+      }
+      let data = {
+        FLAG: 1,
+        menuIds: menuIds,
+        remark: this.formValidate.roleDesc,
+        roleName: this.formValidate.roleName,
+        roleSign: this.formValidate.roleSign
+      }
+      let res = await saveRole(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        this.modal1 = false
+        this.$Modal.success({
+          title: '提示',
+          content: '添加成功'
+        })
+        this.checkedIds = []
+        this.getPageList()
+      }
+    },
+    addFn () {
+      this.modal1 = true
+      this.operationShow = false
+      this.formValidate = {
+        roleName: '',
+        roleDesc: '',
+        roleSign: '',
+        power: ''
+      }
+    },
+    bactchDel () {
+      this.delBatchModal = true
+    },
+    async batchRemove () {
+      let ids = []
+      this.selectedList.forEach(item => {
+        ids.push(item.roleId)
+      })
+      if (ids && ids.length == 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择数据进行删除'
+        })
+        return
+      }
+      let data = {
+        FLAG: 1,
+        ids: ids
+      }
+      let res = await batchRemove(data)
+      if (res.data.code === 0) {
+        this.delBatchModal = false
+        this.$Modal.success({
+          title: '提示',
+          content: '删除成功'
+        })
+        this.selectedList = []
+        this.getPageList()
+      }
+    },
+    searchFn () {
+      this.getPageList()
+    },
+    operationRole () {
+      if (this.operationShow) {
+        this.forTreesIds(this.ztreesData)
+        this.roleUpdate()
+      } else {
+        this.forTreesIds(this.ztreesData)
+        this.saveRole()
+      }
+    },
+    edit (i) {
+      this.modal1 = true
+      this.operationShow = true
+      this.checkedId = this.dataList[i].roleId
+      this.roleDetail(this.dataList[i].roleId)
     },
     remove (i) {
-      this.modal2 = true
+      this.delModal = true
       this.delIndex = i
       console.log(this.delIndex)
     },
+    async delRole () {
+      let data = {
+        id: parseInt(this.dataList[this.delIndex].roleId)
+      }
+      let res = await roleremove(data)
+      if (res.data.code === 0) {
+        this.$Modal.success({
+          title: '提示',
+          content: '删除成功'
+        })
+        this.checkedIds = []
+        this.delIndex = ''
+        this.getPageList()
+      }
+    },
+    checkedPrentFn (arr) {
+      arr.forEach((item, index) => {
+        this.$set(item, 'checked', false)
+        if (item.children) {
+          this.checkedPrentFn(item.children)
+        }
+      })
+    },
     // 取消
     cancelModal1 () {
-      this.formValidate = { companyId: '', appId: '', appName: '' }
-      this.parentDataId = ''
+      // this.formValidate = { companyId: '', appId: '', appName: '' }
+      // this.parentDataId = ''
       this.modal1 = false
+      this.menuIds = []
+      this.checkedPrentFn(this.ztreesData)
     },
     selected (res) {
       this.selectedList = res
+      console.log(res)
     },
     changePageSize (value) {
       this.pageNum = 1
@@ -199,57 +554,12 @@ export default {
       this.loadingProgress = 0
       this.tableData = []
       this.tableTitle = []
-    },
-    handleUploadFile () {
-      this.initUpload()
-    },
-    handleRemove () {
-      this.initUpload()
-      this.$Message.info('上传的文件已删除！')
-    },
-    handleBeforeUpload (file) {
-      const fileExt = file.name.split('.').pop().toLocaleLowerCase()
-      if (fileExt === 'xlsx' || fileExt === 'xls') {
-        this.readFile(file)
-        this.file = file
-      } else {
-        this.$Notice.warning({
-          title: '文件类型错误',
-          desc: '文件：' + file.name + '不是EXCEL文件，请选择后缀为.xlsx或者.xls的EXCEL文件。'
-        })
-      }
-      return false
-    },
-    // 读取文件
-    readFile (file) {
-      const reader = new FileReader()
-      reader.readAsArrayBuffer(file)
-      reader.onloadstart = e => {
-        this.uploadLoading = true
-        this.tableLoading = true
-        this.showProgress = true
-      }
-      reader.onprogress = e => {
-        this.progressPercent = Math.round(e.loaded / e.total * 100)
-      }
-      reader.onerror = e => {
-        this.$Message.error('文件读取出错')
-      }
-      reader.onload = e => {
-        this.$Message.info('文件读取成功')
-        const data = e.target.result
-        const { header, results } = excel.read(data, 'array')
-        const tableTitle = header.map(item => { return { title: item, key: item } })
-        this.tableData = results
-        this.tableTitle = tableTitle
-        this.uploadLoading = false
-        this.tableLoading = false
-        this.showRemoveFile = true
-      }
     }
+
   },
   created () {
-
+    this.getPageList()
+    this.menuTree()
   },
   mounted () {
 
@@ -300,5 +610,8 @@ export default {
     position: absolute;
     left: 0px;
   }
+}
+.btn-item{
+  margin-left: 6px;
 }
 </style>

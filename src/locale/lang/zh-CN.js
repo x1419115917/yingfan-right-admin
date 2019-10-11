@@ -5,6 +5,7 @@ export default {
   common: '数字字典管理',
   sys: '系统配置',
   role: '角色管理',
+  menu: '系统菜单',
   components: '组件',
   count_to_page: '数字渐变',
   tables_page: '多功能表格',

@@ -18,6 +18,8 @@
 <script>
 import './user.less'
 import { mapActions } from 'vuex'
+import Cookies from 'js-cookie'
+import { logoutFn } from '@/api/login'
 export default {
   name: 'User',
   props: {
@@ -34,12 +36,21 @@ export default {
     ...mapActions([
       'handleLogOut'
     ]),
-    logout () {
-      this.handleLogOut().then(() => {
+    async logout () {
+      let res = await logoutFn({})
+      if (res.data.code === 0) {
+        Cookies.remove('access_token')
+        Cookies.remove('userId')
+        Cookies.remove('username')
         this.$router.push({
           name: 'login'
         })
-      })
+      }
+      // this.handleLogOut().then(() => {
+      //   this.$router.push({
+      //     name: 'login'
+      //   })
+      // })
     },
     message () {
       this.$router.push({

@@ -66,6 +66,7 @@ export default {
         Cookies.set('access_token', res.data.content.token)
         Cookies.set('userId', res.data.content.userId)
         Cookies.set('username', res.data.content.username)
+        Cookies.set('sessionId', res.data.content.sessionId)
         this.$router.push({
           name: this.$config.homeName
         })

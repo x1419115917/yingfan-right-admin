@@ -48,6 +48,39 @@ export const getMenuByRouter = (list, access) => {
   })
   return res
 }
+/**
+ * @param {Array} menuTree 菜单树结构循环
+ * @returns {Array}
+ */
+export const forTreeArr1 = (arr, num) => { // 循环部门树形数据
+  let data = []
+  arr.forEach((value, index, array) => {
+    let datav
+    if (value.children) {
+      datav = {
+        id: value.id,
+        parentId: value.parentId,
+        title: value.text,
+        checked: value.selected === 'true',
+        expand: num < 1,
+        children: forTreeArr1(value.children, num + 1),
+        hasParent: value.hasParent,
+        hasChildren: value.hasChildren
+      }
+    } else {
+      datav = {
+        id: value.id,
+        parentId: value.parentId,
+        title: value.text,
+        expand: true,
+        hasParent: value.hasParent,
+        hasChildren: value.hasChildren
+      }
+    }
+    data.push(datav)
+  })
+  return data
+}
 
 /**
  * @param {Array} routeMetched 当前路由metched
