@@ -79,6 +79,23 @@
           />
         </div>
     </Row>
+    <Modal v-model="modal1" class="smsModel" title="添加" @on-cancel="cancelModal1">
+			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+				<FormItem label="分类名称:" prop="classifyName">
+					<Input v-model="formValidate.classifyName" placeholder="请输入分类名称"></Input>
+				</FormItem>
+				<FormItem label="分类描述:" prop="classifyDefault">
+					<Input v-model="formValidate.classifyDefault" placeholder="请输入分类描述"></Input>
+				</FormItem>
+        <FormItem label="分类编码:" prop="classifyCode">
+					<Input v-model="formValidate.classifyCode" placeholder="请输入分类编码"></Input>
+				</FormItem>
+			</Form>
+			<div slot="footer">
+				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
+				<Button size="large" @click="operationMenu" type="primary">确定</Button>
+			</div>
+		</Modal>
   </div>
 </template>
 <script>
@@ -98,6 +115,25 @@ export default {
       tableData: [],
       tableTitle: [],
       tableLoading: false,
+      modal1: false,
+      formValidate: {
+        classifyDefault: '',
+        classifyName: '',
+        classifyCode: ''
+      },
+      ismenu: '',
+      ruleValidate: {
+        classifyName: [
+          { required: true, message: '请选择分类名称', trigger: 'blur' }
+        ],
+        classifyDefault: [
+          { required: true, message: '请选择分类描述', trigger: 'blur' }
+        ],
+        classifyCode: [
+          { required: true, message: '请选择分类编号', trigger: 'blur' }
+        ]
+      },
+      roleName: '',
       columnsList: [
         {
           type: 'selection',
@@ -151,13 +187,23 @@ export default {
       this.initUpload()
     },
     add () {
-      console.log(123)
+      this.modal1 = true
     },
     batchRemove () {
       console.log(13)
     },
     searchFn () {
 
+    },
+    cancelModal1 () {
+      this.modal1 = false
+    },
+    operationMenu () {
+      this.$refs.formValidate.validate((valid) => {
+        if (valid) {
+
+        }
+      })
     },
     selected (res) {
       this.selectedList = res
@@ -281,4 +327,9 @@ export default {
       font-size: 14px;
     }
   }
+  .smsModel{
+		.bottomBtn{
+			text-align: center;
+		}
+	}
 </style>
