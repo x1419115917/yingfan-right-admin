@@ -89,28 +89,28 @@ export default [
     component: Main,
     children: [
       {
+        path: 'user',
+        name: 'user',
+        meta: {
+          icon: '',
+          title: '用户管理'
+        },
+        component: () => import('@/view/sys/user.vue')
+      },
+      {
         path: 'role',
         name: 'role',
         meta: {
-          icon: 'md-add',
+          icon: '',
           title: '角色管理'
         },
         component: () => import('@/view/sys/role.vue')
       },
       {
-        path: 'menus',
-        name: 'menus',
-        meta: {
-          icon: 'ios-arrow-forward',
-          title: '系统菜单s'
-        },
-        component: () => import('@/view/sys/menus.vue')
-      },
-      {
         path: 'menu',
         name: 'menu',
         meta: {
-          icon: 'md-add',
+          icon: '',
           title: '系统菜单'
         },
         component: () => import('@/view/sys/menu.vue')
@@ -119,7 +119,7 @@ export default [
         path: 'export-excel',
         name: 'export-excel',
         meta: {
-          icon: 'md-download',
+          icon: '',
           title: '导出EXCEL'
         },
         component: () => import('@/view/sys/export-excel.vue')

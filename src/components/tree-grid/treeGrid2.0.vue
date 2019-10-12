@@ -37,7 +37,7 @@
                             <input type="checkbox" :value="item.id" v-model="checkGroup" @click="handleCheckClick(item,$event,index)">
                         </label>
                         <div v-if="column.type === 'action'">
-                            <i-button :type="action.type" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)' :key="action.text">{{action.text}}</i-button>
+                            <i-button class="btn btn-group" :type="action.type" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)' :key="action.text">{{action.text}}</i-button>
                         </div>
                         <label @click="toggle(index,item)" v-if="!column.type">
                             <span v-if='snum==iconRow()'>
@@ -448,7 +448,7 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="less" scoped>
 .autoTbale {
     overflow: auto;
 }
@@ -457,6 +457,12 @@ table {
     width: 100%;
     border-spacing: 0;
     border-collapse: collapse;
+}
+.btn-group{
+  margin-right: 6px;
+}
+.btn-group:last-child{
+  margin: 0;
 }
 
 .table-bordered {
@@ -488,15 +494,15 @@ table {
 
 .table-bordered>thead>tr>td,
 .table-bordered>thead>tr>th {
-    background-color: #F5F5F6;
+    background-color: #f8f8f9;
 }
 
 #hl-tree-table>tbody>tr {
-    background-color: #fbfbfb;
+    background-color: #fff;
 }
 
 #hl-tree-table>tbody>.child-tr {
-    background-color: #fff;
+    background-color: #fffcfc;
 }
 
 label {

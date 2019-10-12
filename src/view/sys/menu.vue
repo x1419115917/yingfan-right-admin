@@ -3,15 +3,16 @@
 </style>
 <template>
   <div>
-    <Card title="角色管理">
+    <Card title="系统管理">
       <Row class="role-top">
         <div class="role-top-left">
           <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
+          <!-- <Icon type="ios-checkmark" /> -->
+          <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
         </div>
         <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
-          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
+          <!-- <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
+          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button> -->
         </div>
       </Row>
       <Row>
@@ -41,87 +42,68 @@
           @on-row-click='rowClick'
           @on-selection-change='selectionClick'
           @on-sort-change='sortClick'
-        ></tree-grid>
-          <!-- <Table
-            :columns="columnsList"
-            :data="dataList"
-            height="450"
-            border
-            ref="mainTable"
-            stripe
-            :loading="tableLoading"
-            no-data-text
-            @on-selection-change="selected"
-          >
-            <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
-                <i></i>
-                <span>编辑</span>
-              </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
-                <i></i>
-                <span>删除</span>
-              </Button>
-            </template>
-          </Table> -->
-          <div class="no-data" v-if="columnsList.length < 1">
+        >>
+        </tree-grid>
+          <div class="no-data" v-if="data.length < 1">
             <!-- <div class="no-data-img"></div> -->
             <div class="no-tit">暂无数据</div>
           </div>
         </div>
-        <div class="pages">
-          <Page
-            :current="pageNum"
-            :page-size="pageSize"
-            :total="total"
-            show-total
-            show-elevator
-            show-sizer
-            @on-page-size-change="changePageSize"
-            @on-change="pageChange"
-          />
-        </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑角色': '新增角色'"  width="640" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑菜单': '新增菜单'"  width="640" @on-cancel="cancelModal1">
 			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-				<FormItem label="角色名:" prop="roleName">
-					<Input v-model="formValidate.roleName" placeholder="请输入角色名"></Input>
+        <FormItem label="上级菜单:" prop="roleName">
+					<Input v-model="formValidate.superiorMenu"  disabled></Input>
 				</FormItem>
-        <FormItem label="角色标识:" prop="roleSign">
-					<Input v-model="formValidate.roleSign" placeholder="请输入角色标识"></Input>
+        <FormItem label="上级菜单:" prop="roleName">
+					<RadioGroup v-model="formValidate.menuType">
+            <Radio label="0">目录</Radio>
+            <Radio label="1">菜单</Radio>
+            <Radio label="2">按钮</Radio>
+          </RadioGroup>
 				</FormItem>
-				<FormItem label="备注:" prop="roleDesc">
-					<Input v-model="formValidate.roleDesc" placeholder="请输入备注"></Input>
+				<FormItem label="菜单名称:" prop="menuName">
+					<Input v-model="formValidate.menuName" placeholder="请输入菜单名称"></Input>
 				</FormItem>
-				<FormItem label="菜单权限:" prop="power" class="is-checked">
-					<Tree :data="ztreesData" show-checkbox multiple style="height: 290px;overflow: auto;"></Tree>
+        <FormItem label="链接地址:" prop="url">
+					<Input v-model="formValidate.url" placeholder="请输入链接地址"></Input>
+				</FormItem>
+				<FormItem label="权限标识:" prop="roleSign">
+					<Input v-model="formValidate.roleSign" placeholder="请输入权限标识"></Input>
+				</FormItem>
+        <FormItem label="排序号:" prop="sort">
+					<Input type="number" v-model="formValidate.sort" placeholder="请输入排序号"></Input>
+				</FormItem>
+        <FormItem label="图标:" prop="icon">
+					<Input v-model="formValidate.icon" placeholder="请输入图标" style="width: 220px;"></Input>
+          <Button type="warning" style="margin-left: 10px;" @click="openIconModal">选择图标</Button>
 				</FormItem>
 			</Form>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
-				<Button size="large" @click="operationRole" type="primary">确定</Button>
+				<Button size="large" @click="operationMenu" type="primary">确定</Button>
 			</div>
+		</Modal>
+    <Modal v-model="modal2" class="smsModel iconsd-modal" :title="'选择图标'"  width="640" @on-cancel="cancelModal2">
+      <div class="icons-list" :label-width="90">
+        <span class="icon" v-for="(item, index) in icons" :key="index" @click="chooseIcon(index)">
+            <Icon class="icon-wp" size="30" :type="item" />
+        </span>
+      </div>
+      <div slot="footer" style="display: none;"></div>
 		</Modal>
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok="delRole"
+				@on-ok="delMenu"
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除？</p>
 		</Modal>
-    <Modal
-				width="20"
-				v-model="delBatchModal"
-				@on-ok="batchRemove"
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除选中的数据？</p>
-		</Modal>
   </div>
 </template>
 <script>
-import { roleList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
+import { treeList, menuTree, saveMenu, detailMenu, updateMenu, removeMenu } from '@/api/sys'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
   name: 'role-name',
@@ -129,6 +111,7 @@ export default {
     return {
       value: '',
       modal1: false,
+      modal2: false,
       operationShow: false,
       delBatchModal: false,
       delModal: false,
@@ -137,150 +120,99 @@ export default {
       menuIdsArr: [],
       ztreesData: [],
       formValidate: {
-        roleName: '',
-        roleDesc: '',
+        superiorMenu: '根目录',
+        parentId: 0,
+        menuType: '',
+        menuName: '',
+        url: '',
         roleSign: '',
-        power: ''
+        sort: '',
+        icon: ''
       },
+      icons: ['ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add-circle', 'ios-add', 'ios-checkmark', 'ios-checkmark', 'ios-add-circle', 'ios-alarm'],
       ruleValidate: {
-        roleName: [
-          { required: true, message: '角色名称不能为空', trigger: 'blur' }
+        menuType: [
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        roleSign: [
-          { required: true, message: '角色标识不能为空', trigger: 'blur' }
-        ],
-        roleDesc: [
-          { required: true, message: '备注不能为空', trigger: 'blur' }
+        // url: [
+        //   { required: true, message: '不能为空', trigger: 'blur' }
+        // ],
+        // roleSign: [
+        //   { required: true, message: '不能为空', trigger: 'blur' }
+        // ],
+        // sort: [
+        //   { required: true, message: '不能为空', trigger: 'blur' }
+        // ],
+        // icon: [
+        //   { required: true, message: '不能为空', trigger: 'blur' }
+        // ],
+        menuName: [
+          { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
       roleName: '',
-      columns: [{
-        type: 'selection',
-        width: '50'
-      }, {
-        title: '编码',
-        key: 'code',
-        sortable: true,
-        width: '150'
-      }, {
-        title: '名称',
-        key: 'name',
-        width: '150'
-      }, {
-        title: '状态',
-        key: 'status',
-        width: '150'
-      }, {
-        title: '备注',
-        key: 'remark',
-        width: '150'
-      }, {
-        title: '操作',
-        type: 'action',
-        actions: [{
-          type: 'primary',
-          text: '编辑'
-        }, {
-          type: 'error',
-          text: '删除'
-        }],
-        width: '150'
-      }],
-      data: [{
-        id: '1',
-        code: '0001',
-        name: '测试数据1',
-        status: '启用',
-        remark: '测试数据测试数据',
-        _checked: true
-      }, {
-        id: '2',
-        code: '0002',
-        name: '测试数据2',
-        status: '启用',
-        remark: '测试数据测试数据',
-        children: [{
-          id: '01',
-          code: '00001',
-          name: '测试数据01',
-          status: '启用',
-          remark: '测试数据测试数据',
-          children: [{
-            id: '01',
-            code: '00001',
-            name: '测试数据01',
-            status: '启用',
-            remark: '测试数据测试数据'
-          }, {
-            id: '02',
-            code: '00002',
-            name: '测试数据02',
-            status: '启用',
-            remark: '测试数据测试数据'
-          }]
-        }, {
-          id: '02',
-          code: '00002',
-          name: '测试数据02',
-          status: '启用',
-          remark: '测试数据测试数据'
-        }]
-      }, {
-        id: '3',
-        code: '0003',
-        name: '测试数据3',
-        status: '启用',
-        remark: '测试数据测试数据'
-      }, {
-        id: '4',
-        code: '0004',
-        name: '测试数据4',
-        status: '启用',
-        remark: '测试数据测试数据'
-      }],
-      columnsList: [
+      columns: [
+      // {
+      //   type: 'selection',
+      //   width: '50'
+      // },
         {
-          type: 'expand',
-          width: 50,
-          render: (h, params) => {
-            return h(expandRow, {
-              props: {
-                row: params.row
-              }
-            })
-          }
-        },
-        {
-          title: '编号',
-          key: 'id'
+          title: '编码',
+          key: 'id',
+          sortable: true,
+          width: '100'
         },
         {
           title: '名称',
-          key: 'name'
+          key: 'text',
+          width: '150'
         },
         {
           title: '图标',
-          key: 'icon'
-        },
-        {
+          key: 'icon',
+          width: '80'
+        }, {
           title: '类型',
-          key: 'menu'
+          key: 'type',
+          width: '150'
         },
         {
           title: '地址',
-          key: 'addr'
+          key: 'url',
+          width: '150'
         },
         {
           title: '权限标识',
-          key: 'access'
+          key: 'perms',
+          width: '150'
         },
+        // {
+        //     title: '操作',
+        //     width: 180,
+        //     slot: 'action',
+        //     align: 'center'
+        //   }
         {
           title: '操作',
-          width: 180,
-          slot: 'action',
-          align: 'center'
+          type: 'action',
+          actions: [
+            {
+              type: 'primary',
+              text: '编辑'
+            },
+            {
+              type: 'error',
+              text: '删除'
+            },
+            {
+              type: 'success',
+              text: '添加'
+            }
+          ],
+          width: '150'
         }
       ],
+      data: [],
       dataList: [],
       userIdCreate: '',
       roleSign: '',
@@ -290,8 +222,11 @@ export default {
       selectedList: [],
       contractInfo: '',
       delIndex: '',
+      delID: '',
+      editID: '',
+      editInfo: '',
       pageNum: 1,
-      pageSize: 10,
+      pageSize: 100,
       delIndex: '',
       total: 0,
       loading: false, // 分割线
@@ -311,33 +246,44 @@ export default {
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
-        pageSize: this.pageSize,
-        roleName: this.value,
-        roleSign: this.roleSign,
-        userIdCreate: this.userIdCreate
+        pageSize: this.pageSize
       }
-      let res = await roleList(data)
+      let res = await treeList(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.dataList = res.data.content.rows
-        this.dataList.forEach((item) => {
-          item.menuIds = item.menuIds === null ? '-' : item.menuIds
-        })
+        this.data = [...res.data.content.children]
+        this.forDataRow(this.data)
       }
     },
-    async roleDetail (id) {
-      let res = await roleDetail(id)
+    forDataRow (arr) {
+      arr.forEach(item => {
+        item.type = ((item.type == 0) ? '目录' : (item.type == 1) ? '菜单' : '按钮')
+        if (item.children) {
+          this.forDataRow(item.children)
+        }
+      })
+    },
+    openIconModal () {
+      this.modal2 = true
+    },
+    chooseIcon (i) {
+      this.formValidate.icon = this.icons[i]
+      this.modal2 = false
+    },
+    async detailMenu (id) {
+      let res = await detailMenu(id)
       if (res.data.code === 0) {
+        let data = res.data.content
         this.formValidate = {
-          roleName: res.data.content.roleName,
-          roleDesc: res.data.content.remark,
-          roleSign: res.data.content.roleSign,
-          power: ''
+          superiorMenu: data.parentName,
+          parentId: data.parentId,
+          menuType: data.type.toString(),
+          menuName: data.name,
+          url: data.url,
+          roleSign: data.perms,
+          sort: data.orderNum,
+          icon: data.icon
         }
-        this.menuIds = res.data.content.menuIds
-        if (this.menuIds && this.menuIds.length > 0) {
-          this.forIds(this.menuIds)
-        }
+        console.log(data.type)
       }
     },
     forIds (arr) {
@@ -358,24 +304,26 @@ export default {
         }
       })
     },
-    async roleUpdate () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
+    async updateMenu () {
+      if (!this.formValidate.menuType) {
         this.$Modal.warning({
           title: '提示',
-          content: '请选择菜单权限'
+          content: '请选择菜单类型'
         })
         return
       }
       let data = {
         FLAG: 1,
-        menuIds: menuIds,
-        roleId: this.checkedId,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
+        menuId: this.editID,
+        name: this.formValidate.menuName,
+        orderNum: this.formValidate.sort,
+        parentId: parseInt(this.formValidate.parentId),
+        type: this.formValidate.menuType,
+        url: this.formValidate.url,
+        icon: this.formValidate.icon,
+        perms: this.formValidate.roleSign
       }
-      let res = await roleUpdate(data)
+      let res = await updateMenu(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -386,74 +334,71 @@ export default {
         this.checkedId = ''
         this.checkedIds = []
         this.formValidate = {
-          roleName: '',
-          roleDesc: '',
+          superiorMenu: '根目录',
+          parentId: 0,
+          menuType: '',
+          menuName: '',
+          url: '',
           roleSign: '',
-          power: ''
+          sort: '',
+          icon: ''
         }
         this.getPageList()
       }
     },
-    forArr1 (arr, num) { // 循环部门树形数据
-      let data = []
-      arr.forEach((value, index, array) => {
-        let datav
-        if (value.children) {
-          datav = {
-            id: value.id,
-            parentId: value.parentId,
-            title: value.text,
-            checked: value.selected === 'true',
-            expand: num < 1,
-            children: this.forArr1(value.children, num + 1),
-            hasParent: value.hasParent,
-            hasChildren: value.hasChildren
+    rowClick (data, index, event, text) {
+      console.log('当前行数据:' + data)
+      console.log('点击行号:' + index)
+      console.log('点击事件:' + event)
+      console.log('text', text)
+      switch (text) {
+        case '添加':
+          // this.formValidate.superiorMenu = data.text
+          // this.formValidate.parentId = data.id
+          this.formValidate = {
+            superiorMenu: data.text,
+            parentId: data.id,
+            menuType: '',
+            menuName: '',
+            url: '',
+            roleSign: '',
+            sort: '',
+            icon: ''
           }
-        } else {
-          datav = {
-            id: value.id,
-            parentId: value.parentId,
-            title: value.text,
-            expand: true,
-            hasParent: value.hasParent,
-            hasChildren: value.hasChildren
-          }
-        }
-        data.push(datav)
-      })
-      return data
+          this.modal1 = true
+          this.operationShow = false
+          console.log(data)
+          break
+        case '删除':
+          this.delModal = true
+          this.delID = data.id
+          break
+        case '编辑':
+          this.editID = data.id
+          this.detailMenu(this.editID)
+          this.editInfo = data
+          this.modal1 = true
+          this.operationShow = true
+          // this.formValidate = {
+          //   superiorMenu: data.parentId ==0 ? '根目录' : ,
+          //   parentId: data.parentId,
+          //   menuType: '',
+          //   menuName: '',
+          //   url: '',
+          //   roleSign: '',
+          //   sort: '',
+          //   icon: ''
+          // }
+          break
+      }
     },
-    // 循环树形结构，得到选中id
-    forTreesIds (arr) {
-      arr.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          this.forTreesIds(item.children)
-        }
-      })
+    selectionClick (arr) {
+      console.log('选中数据id数组:' + arr)
     },
-    // 循环树形结构，得到选中id
-    forTrees () {
-      this.ztreesData.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          item.children.forEach((value, index) => {
-            if (value.checked == true) {
-              this.checkedIds.push(value.id)
-              // this.checkedIds.push(item.id)
-              // value.children.forEach
-            }
-            if (value.children) {}
-          })
-        }
-      })
-      this.checkedIds = [...new Set(this.checkedIds)]
-      this.formValidate.power = this.checkedIds.join(',')
-    },
+    sortClick (key, type) {
+      console.log('排序字段:' + key)
+      console.log('排序规则:' + type)
+    }, // 分割线
     //  菜单树结构
     async menuTree () {
       let res = await menuTree({})
@@ -464,39 +409,42 @@ export default {
         this.ztreesData = this.forArr1(data, 0)
       }
     },
-    // saveRole 添加角色
-    saveRole () {
+    // 添加菜单
+    saveMenu () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          this.addRole()
+          this.addMenu()
         }
       })
     },
-    async addRole () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
+    async addMenu () {
+      if (!this.formValidate.menuType) {
         this.$Modal.warning({
           title: '提示',
-          content: '请选择菜单权限'
+          content: '请选择菜单类型'
         })
         return
       }
       let data = {
         FLAG: 1,
-        menuIds: menuIds,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
+        name: this.formValidate.menuName,
+        orderNum: this.formValidate.sort,
+        parentId: parseInt(this.formValidate.parentId),
+        type: this.formValidate.menuType,
+        url: this.formValidate.url,
+        icon: this.formValidate.icon,
+        perms: this.formValidate.roleSign
       }
-      let res = await saveRole(data)
+      let res = await saveMenu(data)
       if (res.data.code === 0) {
-        console.log(res)
+        // console.log(res)
         this.modal1 = false
         this.$Modal.success({
           title: '提示',
           content: '添加成功'
         })
-        this.checkedIds = []
+        this.formValidate.superiorMenu = '根目录'
+        this.formValidate.parentId = 0
         this.getPageList()
       }
     },
@@ -504,70 +452,47 @@ export default {
       this.modal1 = true
       this.operationShow = false
       this.formValidate = {
-        roleName: '',
-        roleDesc: '',
+        superiorMenu: '根目录',
+        parentId: 0,
+        menuType: '',
+        menuName: '',
+        url: '',
         roleSign: '',
-        power: ''
+        sort: '',
+        icon: ''
       }
     },
     bactchDel () {
       this.delBatchModal = true
     },
-    async batchRemove () {
-      let ids = []
-      this.selectedList.forEach(item => {
-        ids.push(item.roleId)
-      })
-      if (ids && ids.length == 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择数据进行删除'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        ids: ids
-      }
-      let res = await batchRemove(data)
-      if (res.data.code === 0) {
-        this.delBatchModal = false
-        this.$Modal.success({
-          title: '提示',
-          content: '删除成功'
-        })
-        this.selectedList = []
-        this.getPageList()
-      }
-    },
     searchFn () {
       this.getPageList()
     },
-    operationRole () {
+    operationMenu () {
       if (this.operationShow) {
-        this.forTreesIds(this.ztreesData)
-        this.roleUpdate()
+        // this.forTreesIds(this.ztreesData)
+        this.updateMenu()
       } else {
-        this.forTreesIds(this.ztreesData)
-        this.saveRole()
+        // this.forTreesIds(this.ztreesData)
+        this.saveMenu()
       }
     },
     edit (i) {
       this.modal1 = true
       this.operationShow = true
       this.checkedId = this.dataList[i].roleId
-      this.roleDetail(this.dataList[i].roleId)
+      this.detailMenu(this.dataList[i].roleId)
     },
     remove (i) {
       this.delModal = true
       this.delIndex = i
       console.log(this.delIndex)
     },
-    async delRole () {
+    async delMenu () {
       let data = {
-        id: parseInt(this.dataList[this.delIndex].roleId)
+        id: parseInt(this.delID)
       }
-      let res = await roleremove(data)
+      let res = await removeMenu(data)
       if (res.data.code === 0) {
         this.$Modal.success({
           title: '提示',
@@ -593,6 +518,10 @@ export default {
       this.modal1 = false
       this.menuIds = []
       this.checkedPrentFn(this.ztreesData)
+    },
+    // 取消
+    cancelModal2 () {
+      this.modal2 = false
     },
     selected (res) {
       this.selectedList = res
@@ -631,7 +560,7 @@ export default {
 
   },
   created () {
-    // this.getPageList()
+    this.getPageList()
     // this.menuTree()
   },
   mounted () {
@@ -640,6 +569,26 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.icons-list{
+  span{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 10px;
+    cursor: pointer;
+    border: 1px solid #fff;
+    &:hover{
+      border: 1px solid #e6e6e6;
+    }
+    .icon-wp{
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+.iconsd-modal /deep/ .ivu-modal-footer{
+  display: none;
+}
 .role-top{
   overflow: hidden;
   width: 100%;
