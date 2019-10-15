@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-// import { Spin } from 'iview'
+import { Spin, Modal } from 'iview'
 import Cookies from 'js-cookie'
 const addErrorLog = errorInfo => {
   // const { statusText, status, request: { responseURL } } = errorInfo
@@ -74,7 +74,27 @@ class HttpRequest {
       this.destroy(url)
       const { data, status } = res
       // const { code } = data
-      return { data, status }
+      if (data.code === 0) {
+        return { data, status }
+      } else if (data.code === 100001 || data.code === 100003 || data.code === 100005) {
+        Modal.warning({
+          title: '提示',
+          content: 'token 已失效，请重新登录',
+          onOk: () => {
+            Cookies.remove('access_token')
+            Cookies.remove('userId')
+            Cookies.remove('username')
+            window.location.href = '/login'
+          }
+        })
+        return { data, status }
+      } else {
+        Modal.warning({
+          title: '提示',
+          content: data.message
+        })
+        return { data, status }
+      }
     }, error => {
       this.destroy(url)
       let errorInfo = error.response

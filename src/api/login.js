@@ -19,3 +19,11 @@ export const logoutFn = data => {
     method: 'get'
   })
 }
+export const userMemu = () => {
+  let data = {}
+  return axios.request({
+    url: '/userMemu',
+    data,
+    method: 'get'
+  })
+}

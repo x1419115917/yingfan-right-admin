@@ -3,7 +3,7 @@
 </style>
 <template>
   <div>
-    <Card title="系统菜单">
+    <Card title="部门管理">
       <Row class="role-top">
         <div class="role-top-left">
           <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
@@ -11,8 +11,8 @@
           <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
         </div>
         <div class="role-top-right">
-          <!-- <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
-          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button> -->
+          <Input class="ipt" v-model="value" placeholder="请输入名称" style="width: 200px"></Input>
+          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
         </div>
       </Row>
       <Row>
@@ -50,53 +50,32 @@
           </div>
         </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑菜单': '新增菜单'"  width="640" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑部门': '新增部门'"  width="640" @on-cancel="cancelModal1">
 			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-        <FormItem label="上级菜单:" prop="roleName">
-					<Input v-model="formValidate.superiorMenu"  disabled></Input>
+        <FormItem label="上级部门:" prop="pName">
+					<Input v-model="formValidate.pName"  disabled></Input>
 				</FormItem>
-        <FormItem label="上级菜单:" prop="roleName">
+        <!-- <FormItem label="上级菜单:" prop="roleName">
 					<RadioGroup v-model="formValidate.menuType">
             <Radio label="0">目录</Radio>
             <Radio label="1">菜单</Radio>
             <Radio label="2">按钮</Radio>
           </RadioGroup>
+				</FormItem> -->
+				<FormItem label="部门名称:" prop="name">
+					<Input v-model="formValidate.name" placeholder="请输入部门名称"></Input>
 				</FormItem>
-				<FormItem label="菜单名称:" prop="menuName">
-					<Input v-model="formValidate.menuName" placeholder="请输入菜单名称"></Input>
+        <FormItem label="排序:" prop="orderNum">
+					<Input v-model="formValidate.orderNum" placeholder="请输入排序"></Input>
 				</FormItem>
-        <FormItem label="链接地址:" prop="url">
-					<Input v-model="formValidate.url" placeholder="请输入链接地址"></Input>
-				</FormItem>
-				<FormItem label="权限标识:" prop="roleSign">
-					<Input v-model="formValidate.roleSign" placeholder="请输入权限标识"></Input>
-				</FormItem>
-        <FormItem label="排序号:" prop="sort">
-					<Input type="number" v-model="formValidate.sort" placeholder="请输入排序号"></Input>
-				</FormItem>
-        <FormItem label="是否展示:" prop="showMenu">
-					<RadioGroup v-model="formValidate.showMenu">
-            <Radio label="1">是</Radio>
-            <Radio label="0">否</Radio>
-          </RadioGroup>
-				</FormItem>
-        <FormItem label="图标:" prop="icon">
-					<Input v-model="formValidate.icon" placeholder="请输入图标" style="width: 220px;"></Input>
-          <Button type="warning" style="margin-left: 10px;" @click="openIconModal">选择图标</Button>
+				<FormItem label="状态:" prop="delFlag">
+					<Input v-model="formValidate.delFlag" placeholder="请输入状态"></Input>
 				</FormItem>
 			</Form>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
 				<Button size="large" @click="operationMenu" type="primary">确定</Button>
 			</div>
-		</Modal>
-    <Modal v-model="modal2" class="smsModel iconsd-modal" :title="'选择图标'"  width="640" @on-cancel="cancelModal2">
-      <div class="icons-list" :label-width="90">
-        <span class="icon" v-for="(item, index) in icons" :key="index" @click="chooseIcon(index)">
-            <Icon class="icon-wp" size="30" :type="item" />
-        </span>
-      </div>
-      <div slot="footer" style="display: none;"></div>
 		</Modal>
     <Modal
 				width="20"
@@ -109,7 +88,7 @@
   </div>
 </template>
 <script>
-import { treeList, menuTree, saveMenu, detailMenu, updateMenu, removeMenu } from '@/api/sys'
+import { deptTreeList, menuTree, deptsave, deptDetail, deptupdate, deptRemove } from '@/api/sys'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
   name: 'role-name',
@@ -121,39 +100,27 @@ export default {
       operationShow: false,
       delBatchModal: false,
       delModal: false,
+      pCheckedName: '',
+      currentName: '',
       checkedIds: [],
       checkedId: '',
       menuIdsArr: [],
       ztreesData: [],
       formValidate: {
-        superiorMenu: '根目录',
         parentId: 0,
-        menuType: '',
-        menuName: '',
-        url: '',
-        roleSign: '',
-        sort: '',
-        showMenu: '',
-        icon: ''
+        pName: '总部门',
+        name: '',
+        orderNum: '',
+        delFlag: ''
       },
-      icons: ['ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add-circle', 'ios-add', 'ios-checkmark', 'ios-checkmark', 'ios-add-circle', 'ios-alarm'],
       ruleValidate: {
-        menuType: [
+        name: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        // url: [
-        //   { required: true, message: '不能为空', trigger: 'blur' }
-        // ],
-        // roleSign: [
-        //   { required: true, message: '不能为空', trigger: 'blur' }
-        // ],
-        // sort: [
-        //   { required: true, message: '不能为空', trigger: 'blur' }
-        // ],
-        // icon: [
-        //   { required: true, message: '不能为空', trigger: 'blur' }
-        // ],
-        menuName: [
+        orderNum: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        delFlag: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
@@ -170,27 +137,17 @@ export default {
           width: '100'
         },
         {
-          title: '名称',
+          title: '部门名称',
           key: 'text',
           width: '150'
         },
         {
-          title: '图标',
-          key: 'icon',
+          title: '排序',
+          key: 'orderNum',
           width: '80'
         }, {
-          title: '类型',
-          key: 'type',
-          width: '150'
-        },
-        {
-          title: '地址',
-          key: 'url',
-          width: '150'
-        },
-        {
-          title: '权限标识',
-          key: 'perms',
+          title: '状态',
+          key: 'delFlag',
           width: '150'
         },
         // {
@@ -253,11 +210,16 @@ export default {
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        name: this.value
       }
-      let res = await treeList(data)
+      let res = await deptTreeList(data)
       if (res.data.code === 0) {
-        this.data = [...res.data.content.children]
+        if (res.data.content && res.data.content.children.length > 0) {
+          this.data = [...res.data.content.children]
+        } else {
+          this.data = [{ ...res.data.content }]
+        }
         this.forDataRow(this.data)
       }
     },
@@ -276,20 +238,16 @@ export default {
       this.formValidate.icon = this.icons[i]
       this.modal2 = false
     },
-    async detailMenu (id) {
-      let res = await detailMenu(id)
+    async deptDetail (id) {
+      let res = await deptDetail(id)
       if (res.data.code === 0) {
         let data = res.data.content
         this.formValidate = {
-          superiorMenu: data.parentName,
           parentId: data.parentId,
-          menuType: data.type.toString(),
-          menuName: data.name,
-          url: data.url,
-          roleSign: data.perms,
-          sort: data.orderNum,
-          showMenu: data.showMenu,
-          icon: data.icon
+          pName: data.parentName === '顶级节点' ? '总部门' : data.parentName,
+          name: data.name,
+          orderNum: data.orderNum,
+          delFlag: data.delFlag
         }
         console.log(data.type)
       }
@@ -312,27 +270,17 @@ export default {
         }
       })
     },
-    async updateMenu () {
-      if (!this.formValidate.menuType) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择菜单类型'
-        })
-        return
-      }
+    async deptupdate () {
       let data = {
         FLAG: 1,
-        menuId: this.editID,
-        name: this.formValidate.menuName,
-        orderNum: this.formValidate.sort,
+        deptId: this.editID,
         parentId: parseInt(this.formValidate.parentId),
-        type: this.formValidate.menuType,
-        url: this.formValidate.url,
-        icon: this.formValidate.icon,
-        showMenu: parseInt(this.formValidate.showMenu),
-        perms: this.formValidate.roleSign
+        pName: this.formValidate.pName,
+        name: this.formValidate.name,
+        orderNum: this.formValidate.orderNum,
+        delFlag: parseInt(this.formValidate.delFlag)
       }
-      let res = await updateMenu(data)
+      let res = await deptupdate(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -343,14 +291,11 @@ export default {
         this.checkedId = ''
         this.checkedIds = []
         this.formValidate = {
-          superiorMenu: '根目录',
           parentId: 0,
-          menuType: '',
-          menuName: '',
-          url: '',
-          roleSign: '',
-          sort: '',
-          icon: ''
+          pName: '总部门',
+          name: '',
+          orderNum: '',
+          delFlag: ''
         }
         this.getPageList()
       }
@@ -365,15 +310,13 @@ export default {
           // this.formValidate.superiorMenu = data.text
           // this.formValidate.parentId = data.id
           this.formValidate = {
-            superiorMenu: data.text,
             parentId: data.id,
-            menuType: '',
-            menuName: '',
-            url: '',
-            roleSign: '',
-            sort: '',
-            icon: ''
+            pName: data.text,
+            name: '',
+            orderNum: '',
+            delFlag: ''
           }
+          this.currentName = data.text
           this.modal1 = true
           this.operationShow = false
           console.log(data)
@@ -384,7 +327,8 @@ export default {
           break
         case '编辑':
           this.editID = data.id
-          this.detailMenu(this.editID)
+          // this.pCheckedName = data.text
+          this.deptDetail(this.editID)
           this.editInfo = data
           this.modal1 = true
           this.operationShow = true
@@ -422,30 +366,20 @@ export default {
     saveMenu () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          this.addMenu()
+          this.deptsave()
         }
       })
     },
-    async addMenu () {
-      if (!this.formValidate.menuType) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择菜单类型'
-        })
-        return
-      }
+    async deptsave () {
       let data = {
         FLAG: 1,
-        name: this.formValidate.menuName,
-        orderNum: this.formValidate.sort,
         parentId: parseInt(this.formValidate.parentId),
-        type: this.formValidate.menuType,
-        url: this.formValidate.url,
-        icon: this.formValidate.icon,
-        showMenu: parseInt(this.formValidate.showMenu),
-        perms: this.formValidate.roleSign
+        pName: this.formValidate.pName,
+        name: this.formValidate.name,
+        orderNum: this.formValidate.orderNum,
+        delFlag: parseInt(this.formValidate.delFlag)
       }
-      let res = await saveMenu(data)
+      let res = await deptsave(data)
       if (res.data.code === 0) {
         // console.log(res)
         this.modal1 = false
@@ -453,8 +387,13 @@ export default {
           title: '提示',
           content: '添加成功'
         })
-        this.formValidate.superiorMenu = '根目录'
-        this.formValidate.parentId = 0
+        this.formValidate = {
+          parentId: 0,
+          pName: '总部门',
+          name: '',
+          orderNum: '',
+          delFlag: ''
+        }
         this.getPageList()
       }
     },
@@ -462,14 +401,11 @@ export default {
       this.modal1 = true
       this.operationShow = false
       this.formValidate = {
-        superiorMenu: '根目录',
         parentId: 0,
-        menuType: '',
-        menuName: '',
-        url: '',
-        roleSign: '',
-        sort: '',
-        icon: ''
+        pName: '总部门',
+        name: '',
+        orderNum: '',
+        delFlag: ''
       }
     },
     bactchDel () {
@@ -481,7 +417,7 @@ export default {
     operationMenu () {
       if (this.operationShow) {
         // this.forTreesIds(this.ztreesData)
-        this.updateMenu()
+        this.deptupdate()
       } else {
         // this.forTreesIds(this.ztreesData)
         this.saveMenu()
@@ -491,7 +427,7 @@ export default {
       this.modal1 = true
       this.operationShow = true
       this.checkedId = this.dataList[i].roleId
-      this.detailMenu(this.dataList[i].roleId)
+      this.deptDetail(this.dataList[i].roleId)
     },
     remove (i) {
       this.delModal = true
@@ -499,10 +435,7 @@ export default {
       console.log(this.delIndex)
     },
     async delMenu () {
-      let data = {
-        id: parseInt(this.delID)
-      }
-      let res = await removeMenu(data)
+      let res = await deptRemove(parseInt(this.delID))
       if (res.data.code === 0) {
         this.$Modal.success({
           title: '提示',

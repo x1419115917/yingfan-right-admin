@@ -116,7 +116,7 @@
   </div>
 </template>
 <script>
-import { categoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/supplier'
+import { categoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/dict'
 export default {
   name: 'role-name',
   data () {

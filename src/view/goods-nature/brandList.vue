@@ -10,9 +10,7 @@
           <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
         </div>
         <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="种类Id" style="width: 200px"></Input>
-          <Input class="ipt" v-model="value" placeholder="分类编码" style="width: 200px"></Input>
-          <Input class="ipt" v-model="value" placeholder="分类名称" style="width: 200px"></Input>
+          <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
           <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
         </div>
       </Row>
@@ -116,7 +114,7 @@
   </div>
 </template>
 <script>
-import { categoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/supplier'
+import { roleList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
 export default {
   name: 'role-name',
   data () {
@@ -189,28 +187,20 @@ export default {
           align: 'center'
         },
         {
-          title: 'ID',
-          key: 'id'
+          title: '序号',
+          key: 'roleId'
         },
         {
-          title: '字典类目id',
-          key: 'id'
+          title: '角色名',
+          key: 'roleName'
         },
         {
-          title: '名称',
-          key: 'name'
-        },
-        {
-          title: '内容',
+          title: '备注',
           key: 'remark'
         },
         {
-          title: '分类描述',
-          key: 'description'
-        },
-        {
-          title: '分类编码',
-          key: 'code'
+          title: '权限',
+          key: 'menuIds'
         },
         {
           title: '操作',
@@ -253,7 +243,7 @@ export default {
         roleSign: this.roleSign,
         userIdCreate: this.userIdCreate
       }
-      let res = await categoryList(data)
+      let res = await roleList(data)
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows

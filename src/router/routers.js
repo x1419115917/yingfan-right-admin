@@ -116,13 +116,130 @@ export default [
         component: () => import('@/view/sys/menu.vue')
       },
       {
-        path: 'export-excel',
-        name: 'export-excel',
+        path: 'dept',
+        name: 'dept',
         meta: {
           icon: '',
-          title: '导出EXCEL'
+          title: '角色管理'
         },
-        component: () => import('@/view/sys/export-excel.vue')
+        component: () => import('@/view/sys/dept.vue')
+      }
+      // {
+      //   path: 'export-excel',
+      //   name: 'export-excel',
+      //   meta: {
+      //     icon: '',
+      //     title: '导出EXCEL'
+      //   },
+      //   component: () => import('@/view/sys/export-excel.vue')
+      // }
+    ]
+  },
+  {
+    path: '/goodsManage',
+    name: 'goodsManage',
+    meta: {
+      icon: 'ios-stats',
+      title: '商品管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'goodsPub',
+        name: 'goodsPub',
+        meta: {
+          icon: '',
+          title: '商品发布'
+        },
+        component: () => import('@/view/goods-manage/goodsPub.vue')
+      },
+      {
+        path: 'goodsList',
+        name: 'goodsList',
+        meta: {
+          icon: '',
+          title: '商品列表'
+        },
+        component: () => import('@/view/goods-manage/goodsList.vue')
+      }
+    ]
+  },
+  {
+    path: '/goodsNature',
+    name: 'goodsNature',
+    meta: {
+      icon: 'ios-stats',
+      title: '商品属性管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'categoryManger',
+        name: 'categoryManger',
+        meta: {
+          icon: '',
+          title: '类目管理'
+        },
+        component: () => import('@/view/goods-nature/categoryManger.vue')
+      },
+      {
+        path: 'attrTemp',
+        name: 'attrTemp',
+        meta: {
+          icon: '',
+          title: '属性模板管理'
+        },
+        component: () => import('@/view/goods-nature/attrTemp.vue')
+      },
+      {
+        path: 'brandList',
+        name: 'brandList',
+        meta: {
+          hideInMenu: false,
+          icon: '',
+          title: '品牌管理'
+        },
+        component: () => import('@/view/goods-nature/brandList.vue')
+      }
+    ]
+  },
+  {
+    path: '/sup',
+    name: 'sup',
+    meta: {
+      icon: 'ios-stats',
+      title: '供应商'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'supplier',
+        name: 'supplier',
+        meta: {
+          icon: '',
+          title: '供应商管理'
+        },
+        component: () => import('@/view/supplier/supplier.vue')
+      },
+      {
+        path: 'addsupr',
+        name: 'addsupr',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '编辑供应商'
+        },
+        component: () => import('@/view/supplier/add-supplier.vue')
+      },
+      {
+        path: 'testexcel',
+        name: 'testexcel',
+        meta: {
+          hideInMenu: false,
+          icon: '',
+          title: '测试页'
+        },
+        component: () => import('@/view/supplier/export-excel.vue')
       }
     ]
   },

@@ -6,13 +6,11 @@
     <Card title="角色管理">
       <Row class="role-top">
         <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
+          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addsupplierFn">添加供应商</Button>
+          <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
         </div>
         <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="种类Id" style="width: 200px"></Input>
-          <Input class="ipt" v-model="value" placeholder="分类编码" style="width: 200px"></Input>
-          <Input class="ipt" v-model="value" placeholder="分类名称" style="width: 200px"></Input>
+          <Input class="ipt" v-model="value" placeholder="请输入供应商名称" style="width: 200px"></Input>
           <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
         </div>
       </Row>
@@ -116,9 +114,9 @@
   </div>
 </template>
 <script>
-import { categoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/supplier'
+import { supplierList } from '@/api/supplier'
 export default {
-  name: 'role-name',
+  name: 'supplier',
   data () {
     return {
       value: '',
@@ -129,41 +127,7 @@ export default {
       checkedIds: [],
       checkedId: '',
       menuIdsArr: [],
-      ztreesData: [
-        {
-          title: 'parent 1',
-          expand: true,
-          selected: true,
-          children: [
-            {
-              title: 'parent 1-1',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-1-1',
-                  disabled: true
-                },
-                {
-                  title: 'leaf 1-1-2'
-                }
-              ]
-            },
-            {
-              title: 'parent 1-2',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-2-1',
-                  checked: true
-                },
-                {
-                  title: 'leaf 1-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      ztreesData: [],
       formValidate: {
         roleName: '',
         roleDesc: '',
@@ -183,34 +147,26 @@ export default {
       },
       roleName: '',
       columnsList: [
+        // {
+        //   type: 'selection',
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
-        {
-          title: 'ID',
+          title: '序号',
           key: 'id'
         },
         {
-          title: '字典类目id',
-          key: 'id'
-        },
-        {
-          title: '名称',
+          title: '供应商名称',
           key: 'name'
         },
         {
-          title: '内容',
-          key: 'remark'
+          title: '联系人',
+          key: 'operator'
         },
         {
-          title: '分类描述',
-          key: 'description'
-        },
-        {
-          title: '分类编码',
-          key: 'code'
+          title: '手机',
+          key: 'phone'
         },
         {
           title: '操作',
@@ -249,17 +205,12 @@ export default {
         FLAG: 1,
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        roleName: this.value,
-        roleSign: this.roleSign,
-        userIdCreate: this.userIdCreate
+        name: this.value
       }
-      let res = await categoryList(data)
+      let res = await supplierList(data)
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
-        this.dataList.forEach((item) => {
-          item.menuIds = item.menuIds === null ? '-' : item.menuIds
-        })
       }
     },
     async roleDetail (id) {
@@ -437,15 +388,13 @@ export default {
         this.getPageList()
       }
     },
-    addFn () {
-      this.modal1 = true
-      this.operationShow = false
-      this.formValidate = {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
-      }
+    addsupplierFn () {
+      this.$router.push({
+        name: 'addsupr',
+        query: {
+          type: 'add'
+        }
+      })
     },
     bactchDel () {
       this.delBatchModal = true
@@ -569,7 +518,7 @@ export default {
   },
   created () {
     this.getPageList()
-    this.menuTree()
+    // this.menuTree()
   },
   mounted () {
 

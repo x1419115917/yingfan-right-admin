@@ -3,8 +3,9 @@
     <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
       <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-        <div class="logo-con">
-          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
+        <div class="logo-con" :class="{'logon-con-height': !collapsed}">
+          <img v-show="!collapsed" :src="minLogo" key="max-logo" />
+          <h1 v-show="!collapsed" class="title-text">应悦汇管理系统</h1>
           <img v-show="collapsed" :src="minLogo" key="min-logo" />
         </div>
       </side-menu>
@@ -12,7 +13,7 @@
     <Layout>
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-          <user :message-unread-count="unreadCount" :user-avatar="userAvatar"/>
+          <user :message-unread-count="unreadCount" :user-avatar="minLogo"/>
           <language v-if="$config.useI18n" @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
           <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store>
           <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
@@ -46,8 +47,7 @@ import ErrorStore from './components/error-store'
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import { getNewTagList, routeEqual } from '@/libs/util'
 import routers from '@/router/routers'
-import minLogo from '@/assets/images/logo-min.jpg'
-import maxLogo from '@/assets/images/logo.jpg'
+import minLogo from '@/assets/images/photo_s.jpg'
 import './main.less'
 export default {
   name: 'Main',
@@ -65,7 +65,6 @@ export default {
     return {
       collapsed: false,
       minLogo,
-      maxLogo,
       isFullscreen: false
     }
   },

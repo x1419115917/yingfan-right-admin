@@ -3,18 +3,16 @@
 </style>
 <template>
   <div>
-    <Card title="角色管理">
+    <Card :title="type == 'edit' ? '编辑供应商' : '新增供应商'">
       <Row class="role-top">
-        <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
+        <!-- <div class="role-top-left">
+          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加供应商</Button>
           <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
-        </div>
-        <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="种类Id" style="width: 200px"></Input>
-          <Input class="ipt" v-model="value" placeholder="分类编码" style="width: 200px"></Input>
-          <Input class="ipt" v-model="value" placeholder="分类名称" style="width: 200px"></Input>
+        </div> -->
+        <!-- <div class="role-top-right">
+          <Input class="ipt" v-model="value" placeholder="请输入供应商名称" style="width: 200px"></Input>
           <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
-        </div>
+        </div> -->
       </Row>
       <Row>
         <div class="ivu-upload-list-file" v-if="file !== null">
@@ -34,64 +32,147 @@
         </transition>
       </Row>
     </Card>
-    <Row class="margin-top-10">
+    <Row class="margin-top-10" style="background:#fff;padding:30px;">
       <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
       <div class="bank_table" style="position:relative;">
-          <Table
-            :columns="columnsList"
-            :data="dataList"
-            height="450"
-            border
-            ref="mainTable"
-            stripe
-            :loading="tableLoading"
-            no-data-text
-            @on-selection-change="selected"
-          >
-            <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
-                <i></i>
-                <span>编辑</span>
-              </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
-                <i></i>
-                <span>删除</span>
-              </Button>
-            </template>
-          </Table>
-          <div class="no-data" v-if="dataList.length < 1">
-            <!-- <div class="no-data-img"></div> -->
-            <div class="no-tit">暂无数据</div>
+          <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
+            <FormItem label="供应商名称:" prop="name">
+              <Input v-model="formValidate.name" placeholder="请输入供应商名称"></Input>
+            </FormItem>
+            <FormItem label="联系人:" prop="operator">
+              <Input v-model="formValidate.operator" placeholder="请输入联系人"></Input>
+            </FormItem>
+            <FormItem label="手机号码:" prop="phone">
+              <Input v-model="formValidate.phone" placeholder="请输入手机号码"></Input>
+            </FormItem>
+            <div class="deloy-pro">
+              <div class="deloy-left">
+                <span>代理类目/品牌：</span>
+                <Button style="margin-left: 5px; padding: 5px 10px;" size="large" @click="addFn" type="primary">新增代理类目/品牌</Button>
+              </div>
+              <div class="deloy-right">
+                <Table
+                  :columns="columnsList"
+                  :data="dataList"
+                  height="350"
+                  border
+                  ref="mainTable"
+                  stripe
+                  :loading="tableLoading"
+                  no-data-text
+                  @on-selection-change="selected"
+                >
+                  <template slot-scope="{ row, index }" slot="action">
+                    <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+                      <i></i>
+                      <span>编辑</span>
+                    </Button>
+                    <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
+                      <i></i>
+                      <span>删除</span>
+                    </Button>
+                  </template>
+                </Table>
+              </div>
+            </div>
+          </Form>
+          <div class="bank_table_footer">
+            <Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 15px; padding: 5px 38px;">取消</Button>
+            <Button size="large" @click="operationRole" type="primary" style="padding: 5px 38px;">确定</Button>
+          </div>
+      </div>
+    </Row>
+    <Modal v-model="modal1" class="smsModel" :title="'新增代理类目/品牌'"  width="840" @on-cancel="cancelModal1">
+      <div class="create-catg">
+        <div class="title">
+          <div class="row">
+              <span>基本信息</span>
+              <span>没有相关类目？去创建类目</span>
           </div>
         </div>
-        <div class="pages">
-          <Page
-            :current="pageNum"
-            :page-size="pageSize"
-            :total="total"
-            show-total
-            show-elevator
-            show-sizer
-            @on-page-size-change="changePageSize"
-            @on-change="pageChange"
-          />
-        </div>
-    </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑角色': '新增角色'"  width="640" @on-cancel="cancelModal1">
-			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-				<FormItem label="角色名:" prop="roleName">
-					<Input v-model="formValidate.roleName" placeholder="请输入角色名"></Input>
-				</FormItem>
-        <FormItem label="角色标识:" prop="roleSign">
-					<Input v-model="formValidate.roleSign" placeholder="请输入角色标识"></Input>
-				</FormItem>
-				<FormItem label="备注:" prop="roleDesc">
-					<Input v-model="formValidate.roleDesc" placeholder="请输入备注"></Input>
-				</FormItem>
-				<FormItem label="菜单权限:" prop="power" class="is-checked">
-					<Tree :data="ztreesData" show-checkbox multiple style="height: 290px;overflow: auto;"></Tree>
-				</FormItem>
-			</Form>
+        <Row>
+          <Col span="2" class="sub-left-item">类目：</Col>
+          <Col span="22">
+            <Row>
+              <Col span="7">
+                <p class="ul-title">选择一级分类</p>
+                <ul class="list-group ul-content">
+                    <li class="list-group-item">服装</li>
+                    <li class="list-group-item">餐厨</li>
+                    <li class="list-group-item">配件</li>
+                    <li class="list-group-item">电子产品</li>
+                    <li class="list-group-item">生活用品</li>
+                </ul>
+              </Col>
+              <Col span="1">
+                <Icon type="ios-arrow-dropright-circle" size="30" style="margin-top: 99px;" />
+              </Col>
+              <Col span="7">
+                <p class="ul-title">选择二级分类</p>
+                <ul class="list-group ul-content">
+                    <li class="list-group-item">服装</li>
+                    <li class="list-group-item">餐厨</li>
+                    <li class="list-group-item">配件</li>
+                    <li class="list-group-item">电子产品</li>
+                    <li class="list-group-item">生活用品</li>
+                </ul>
+              </Col>
+              <Col span="1">
+                <Icon type="ios-arrow-dropright-circle" size="30" style="margin-top: 99px;" />
+              </Col>
+              <Col span="7">
+                <p class="ul-title">选择三级分类</p>
+                <ul class="list-group ul-content">
+                    <li class="list-group-item">服装</li>
+                    <li class="list-group-item">餐厨</li>
+                    <li class="list-group-item">配件</li>
+                    <li class="list-group-item">电子产品</li>
+                    <li class="list-group-item">生活用品</li>
+                </ul>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="3" class="sub-left-item">代理品牌：</Col>
+          <Col span="21">
+            <Row>
+              <Col span="7">
+                <Input v-model="value3" placeholder="输入品牌关键字" style="width: 200px" />
+              </Col>
+              <Col span="3">
+                <Button size="large" @click="operationRole" type="primary">确定</Button>
+              </Col>
+              <Col span="6">
+                <span class="goto-brand">没有相关品牌？去创建品牌</span>
+              </Col>
+            </Row>
+            <Row style="margin-top: 15px;">
+              <CheckboxGroup v-model="brandListcheck">
+                <Checkbox class="check-item" :label="item.id" v-for="(item, index) in brandListArr" :key="index">
+                    <span class="brand-name">{{item.brandName}}</span>
+                </Checkbox>
+                <Checkbox class="check-item" label="facebook">
+                    <span class="brand-name">品牌名称</span>
+                </Checkbox>
+                <Checkbox class="check-item" label="github">
+                    <span class="brand-name">品牌名称</span>
+                </Checkbox>
+                <Checkbox class="check-item" label="snapchat">
+                    <span class="brand-name">品牌名称</span>
+                </Checkbox>
+            </CheckboxGroup>
+              <!-- <Col span="7">
+                <Input v-model="value3" placeholder="输入品牌关键字" style="width: 200px" />
+              </Col>
+              <Col span="3">
+              </Col>
+              <Col span="6">
+              </Col> -->
+            </Row>
+          </Col>
+        </Row>
+      </div>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
@@ -116,12 +197,17 @@
   </div>
 </template>
 <script>
-import { categoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/supplier'
+import { brandList, procategoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/supplier'
 export default {
-  name: 'role-name',
+  name: 'supplier',
   data () {
     return {
+      brandListcheck: ['facebook', 'github'],
+      brandListArr: [],
+      title: '新增供应商',
+      type: this.$route.query.tyoe,
       value: '',
+      value3: '',
       modal1: false,
       operationShow: false,
       delBatchModal: false,
@@ -129,88 +215,37 @@ export default {
       checkedIds: [],
       checkedId: '',
       menuIdsArr: [],
-      ztreesData: [
-        {
-          title: 'parent 1',
-          expand: true,
-          selected: true,
-          children: [
-            {
-              title: 'parent 1-1',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-1-1',
-                  disabled: true
-                },
-                {
-                  title: 'leaf 1-1-2'
-                }
-              ]
-            },
-            {
-              title: 'parent 1-2',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-2-1',
-                  checked: true
-                },
-                {
-                  title: 'leaf 1-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      ztreesData: [],
       formValidate: {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
+        name: '',
+        operator: '',
+        phone: ''
       },
       ruleValidate: {
-        roleName: [
-          { required: true, message: '角色名称不能为空', trigger: 'blur' }
+        name: [
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        roleSign: [
-          { required: true, message: '角色标识不能为空', trigger: 'blur' }
+        operator: [
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        roleDesc: [
-          { required: true, message: '备注不能为空', trigger: 'blur' }
+        phone: [
+          { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
       roleName: '',
       columnsList: [
+        // {
+        //   type: 'selection',
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
-        {
-          title: 'ID',
+          title: '序号',
           key: 'id'
         },
         {
-          title: '字典类目id',
-          key: 'id'
-        },
-        {
-          title: '名称',
-          key: 'name'
-        },
-        {
-          title: '内容',
-          key: 'remark'
-        },
-        {
-          title: '分类描述',
-          key: 'description'
-        },
-        {
-          title: '分类编码',
-          key: 'code'
+          title: '类目名称',
+          key: 'categoryName'
         },
         {
           title: '操作',
@@ -244,22 +279,28 @@ export default {
     }
   },
   methods: {
-    async getPageList () {
+    async getBrandList () {
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
-        pageSize: this.pageSize,
-        roleName: this.value,
-        roleSign: this.roleSign,
-        userIdCreate: this.userIdCreate
+        pageSize: this.pageSize
       }
-      let res = await categoryList(data)
+      let res = await brandList(data)
+      if (res.data.code === 0) {
+        console.log(res.data.content)
+        this.brandListArr = res.data.content.rows
+      }
+    },
+    async procategoryList () {
+      let data = {
+        FLAG: 1,
+        pageIndex: this.pageNum,
+        pageSize: this.pageSize
+      }
+      let res = await procategoryList(data)
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
-        this.dataList.forEach((item) => {
-          item.menuIds = item.menuIds === null ? '-' : item.menuIds
-        })
       }
     },
     async roleDetail (id) {
@@ -568,8 +609,10 @@ export default {
 
   },
   created () {
-    this.getPageList()
-    this.menuTree()
+    // this.getPageList()
+    this.getBrandList()
+    this.procategoryList()
+    // this.menuTree()
   },
   mounted () {
 
@@ -577,6 +620,53 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.goto-brand{
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 35px;
+  color: #6699CC;
+  cursor: pointer;
+}
+.check-item{
+  margin-left: 20px;
+  &:first-child{
+    margin-left: 0;
+  }
+}
+.brand-name{
+  font-size: 14px;
+}
+.sub-left-item{
+  font-style: normal;
+  font-size: 16px;
+  color: rgba(51, 51, 51, 0.8);
+}
+.list-group{
+  height: 200px;
+  overflow: auto;
+  li{
+    list-style: none;
+    background-color: inherit;
+    border: 1px solid #e7eaec;
+    display: block;
+    margin-bottom: -1px;
+    padding: 10px 15px;
+    position: relative;
+    border-bottom: 0;
+    &:last-child{
+      border-bottom: 1px solid #e7eaec;
+    }
+  }
+}
+.bank_table_footer{
+  margin: 0 auto;
+  margin-top: 15px;
+  text-align: center
+}
+.deloy-right{
+  margin-top: 15px;
+}
 .role-top{
   overflow: hidden;
   width: 100%;
@@ -623,5 +713,57 @@ export default {
 }
 .btn-item{
   margin-left: 6px;
+}
+.title{
+    margin:15px 0 15px;
+}
+.title span:first-child{
+    font-size: 18px;
+    font-weight: bold;
+}
+.title span:last-child{
+    font-size: 14px;
+    color: #6699CC;
+    margin-left: 10px;
+}
+.ul-title{
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+.catgimg{
+    width: 50px;
+    height: 45px;
+    margin-top: 110px;
+}
+.ul-content li:hover{
+    background: #f9f9f9;
+    cursor: pointer;
+}
+.form-search{
+    overflow: hidden;
+    margin-left: 15px;
+}
+.form-search div{
+    float: left;
+    margin-right: 10px;
+    line-height: 34px;
+}
+.blue-con{
+    font-size: 14px;
+    color: #6699CC;
+    cursor: pointer;
+}
+.bot-row{
+    margin: 15px;
+}
+.bot-row div{
+    float: left;
+    margin: 15px;
 }
 </style>

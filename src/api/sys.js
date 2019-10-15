@@ -132,3 +132,87 @@ export const userSave = data => {
     method: 'post'
   })
 }
+// 用户根据id查看详情
+export const detailUser = id => {
+  let data = {}
+  return axios.request({
+    url: `/sys/user/detail/${id}`,
+    data,
+    method: 'post'
+  })
+}
+// 用户编辑 /sys/user/update
+export const updateUser = data => {
+  return axios.request({
+    url: `/sys/user/update`,
+    data,
+    method: 'post'
+  })
+}
+// 重置密码 /sys/user/adminResetPwd
+export const adminResetPwd = data => {
+  return axios.request({
+    url: `/sys/user/adminResetPwd`,
+    data,
+    method: 'post'
+  })
+}
+// 批量删除 /sys/user/batchRemove
+export const batchRemoveUser = data => {
+  return axios.request({
+    url: `/sys/user/batchRemove`,
+    data,
+    method: 'post'
+  })
+}
+// 删除
+export const removeUser = id => {
+  let data = {}
+  return axios.request({
+    url: `/sys/user/remove/${id}`,
+    data,
+    method: 'post'
+  })
+}
+// /system/sysDept/treeList 部门树菜单
+export const deptTreeList = data => {
+  return axios.request({
+    url: `/system/sysDept/treeList`,
+    data,
+    method: 'post'
+  })
+}
+// /system/sysDept/save 保存新增部门
+export const deptsave = data => {
+  return axios.request({
+    url: `/system/sysDept/save`,
+    data,
+    method: 'post'
+  })
+}
+// 获取部门详情  /system/sysDept/detail/{deptId}
+export const deptDetail = deptId => {
+  let data = {}
+  return axios.request({
+    url: `/system/sysDept/detail/${deptId}`,
+    data,
+    method: 'get'
+  })
+}
+// 部门删除 /system/sysDept/remove
+export const deptRemove = deptId => {
+  let data = {}
+  return axios.request({
+    url: `/system/sysDept/remove/${deptId}`,
+    data,
+    method: 'post'
+  })
+}
+// 更新部门 /system/sysDept/update
+export const deptupdate = data => {
+  return axios.request({
+    url: `/system/sysDept/update`,
+    data,
+    method: 'post'
+  })
+}

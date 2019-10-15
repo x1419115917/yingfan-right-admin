@@ -1,13 +1,31 @@
 import Cookies from 'js-cookie'
 // cookie保存的天数
 import config from '@/config'
-import { forEach, hasOneOf, objEqual } from '@/libs/tools'
-const { title, cookieExpires, useI18n } = config
+import {
+  forEach,
+  hasOneOf,
+  objEqual
+} from '@/libs/tools'
+// import {
+//   router
+// } from '@/router/index'
+// import {
+//   routers,
+//   otherRouter,
+//   appRouter
+// } from '@/router/router.js'
+const {
+  title,
+  cookieExpires,
+  useI18n
+} = config
 
 export const TOKEN_KEY = 'token'
 
 export const setToken = (token) => {
-  Cookies.set(TOKEN_KEY, token, { expires: cookieExpires || 1 })
+  Cookies.set(TOKEN_KEY, token, {
+    expires: cookieExpires || 1
+  })
 }
 
 export const getToken = () => {
@@ -48,6 +66,56 @@ export const getMenuByRouter = (list, access) => {
   })
   return res
 }
+// 更新路由
+// util.UpdateRouter = function (data) {
+//   return new Promise((resolve, reject) => {
+//     store.commit('setLoginData', data)
+//     let routes = []
+//     let forData = data.length > 0 ? data : [] // 一级菜单(注：0级菜单为薪签约)
+//     for (let i = 0; i < forData.length; i++) {
+//       let forDataChild = forData[i].children
+//       let childData = []
+//       let icon
+//       if (forData[i].resourceName == 'fileManage') {
+//         icon = 'ios-folder-outline'
+//       } else if (forData[i].resourceName == 'service') {
+//         icon = 'clipboard'
+//       }
+//       let routeData = {
+//         path: forData[i].path,
+//         name: forData[i].resourceName,
+//         title: forData[i].titile,
+//         component: Main,
+//         icon: icon,
+//         children: childData
+//       }
+//       if (forDataChild) {
+//         for (let j = 0; j < forDataChild.length; j++) { // 二级菜单
+//           let forDataChilds = forDataChild[j].children
+//           let routeDatas = {
+//             path: forDataChild[j].path,
+//             name: forDataChild[j].resourceName,
+//             title: forDataChild[j].titile,
+//             component: () =>
+//               import(forDataChild[j].path)
+//           }
+//           childData.push(routeDatas)
+//         }
+//       }
+//       router.options.routes.push(routeData)
+//       routes.push(routeData)
+//       appRouter.push(routeData)
+//     }
+//     localStorage.setItem('routers_admin', JSON.stringify(router.options.routes))
+//     localStorage.setItem('appRouter_admin', JSON.stringify(routes))
+//     router.addRoutes(router.options.routes)
+//     store.commit('updateMenulist')
+//     router.push({
+//       name: 'home_index'
+//     })
+//     resolve()
+//   })
+// }
 /**
  * @param {Array} menuTree 菜单树结构循环
  * @returns {Array}
@@ -87,13 +155,18 @@ export const forTreeArr1 = (arr, num) => { // 循环部门树形数据
  * @returns {Array}
  */
 export const getBreadCrumbList = (route, homeRoute) => {
-  let homeItem = { ...homeRoute, icon: homeRoute.meta.icon }
+  let homeItem = {
+    ...homeRoute,
+    icon: homeRoute.meta.icon
+  }
   let routeMetched = route.matched
   if (routeMetched.some(item => item.name === homeRoute.name)) return [homeItem]
   let res = routeMetched.filter(item => {
     return item.meta === undefined || !item.meta.hideInBread
   }).map(item => {
-    let meta = { ...item.meta }
+    let meta = {
+      ...item.meta
+    }
     if (meta.title && typeof meta.title === 'function') {
       meta.__titleIsFunction__ = true
       meta.title = meta.title(route)
@@ -108,12 +181,19 @@ export const getBreadCrumbList = (route, homeRoute) => {
   res = res.filter(item => {
     return !item.meta.hideInMenu
   })
-  return [{ ...homeItem, to: homeRoute.path }, ...res]
+  return [{
+    ...homeItem,
+    to: homeRoute.path
+  }, ...res]
 }
 
 export const getRouteTitleHandled = (route) => {
-  let router = { ...route }
-  let meta = { ...route.meta }
+  let router = {
+    ...route
+  }
+  let meta = {
+    ...route.meta
+  }
   let title = ''
   if (meta.title) {
     if (typeof meta.title === 'function') {
@@ -127,7 +207,10 @@ export const getRouteTitleHandled = (route) => {
 }
 
 export const showTitle = (item, vm) => {
-  let { title, __titleIsFunction__ } = item.meta
+  let {
+    title,
+    __titleIsFunction__
+  } = item.meta
   if (!title) return
   if (useI18n) {
     if (title.includes('{{') && title.includes('}}') && useI18n) title = title.replace(/({{[\s\S]+?}})/, (m, str) => str.replace(/{{([\s\S]*)}}/, (m, _) => vm.$t(_.trim())))
@@ -177,10 +260,20 @@ export const getHomeRoute = (routers, homeName = 'home') => {
  * @description 如果该newRoute已经存在则不再添加
  */
 export const getNewTagList = (list, newRoute) => {
-  const { name, path, meta } = newRoute
+  const {
+    name,
+    path,
+    meta
+  } = newRoute
   let newList = [...list]
   if (newList.findIndex(item => item.name === name) >= 0) return newList
-  else newList.push({ name, path, meta })
+  else {
+    newList.push({
+      name,
+      path,
+      meta
+    })
+  }
   return newList
 }
 

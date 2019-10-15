@@ -8,7 +8,7 @@
         <Col span="6">
           <div class="col-sm-7 left-login-text">
             <h3>美粤文化</h3>
-            <h5>欢迎使用 美粤文化后台管理系统</h5>
+            <h5>欢迎使用 应悦汇管理系统</h5>
             <ul class="list">
               <li><Icon type="md-arrow-round-forward" />供应商管理</li>
               <li><Icon type="md-arrow-round-forward" />商品管理</li>
@@ -42,7 +42,7 @@
 
 <script>
 import LoginForm from '_c/login-form'
-import { login } from '@/api/login'
+import { login, userMemu } from '@/api/login'
 import Cookies from 'js-cookie'
 import { mapActions } from 'vuex'
 export default {
@@ -67,20 +67,20 @@ export default {
         Cookies.set('userId', res.data.content.userId)
         Cookies.set('username', res.data.content.username)
         Cookies.set('sessionId', res.data.content.sessionId)
+        this.userMemu()
         this.$router.push({
           name: this.$config.homeName
         })
       }
     },
-    handleSubmit123 ({ userName, password }) {
-      console.log(this.$config.homeName)
-      this.handleLogin({ userName, password }).then(res => {
-        this.getUserInfo().then(res => {
-          this.$router.push({
-            name: this.$config.homeName
-          })
-        })
-      })
+    async userMemu () {
+      let res = await userMemu()
+      if (res.data.code === 0) {
+        console.log(res)
+        let menus = JSON.stringify(res.data.content.menus)
+        sessionStorage.setItem('menus', menus)
+        // sessionStorage
+      }
     }
   }
 }
