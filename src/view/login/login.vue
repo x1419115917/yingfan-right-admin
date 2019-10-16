@@ -45,14 +45,27 @@ import LoginForm from '_c/login-form'
 import { login, userMemu } from '@/api/login'
 import Cookies from 'js-cookie'
 import { mapActions } from 'vuex'
+import router from '@/router'
+import { initRouter, appRouter, routers } from '@/router/routers'
+import {
+  getMenuByRouter
+} from '@/libs/util'
 export default {
   components: {
     LoginForm
   },
+  data () {
+    return {
+      menusList: [],
+      menuList: [],
+      appRouter: []
+    }
+  },
   methods: {
     ...mapActions([
       'handleLogin',
-      'getUserInfo'
+      'getUserInfo',
+      'getuserMenuInit'
     ]),
     async handleSubmit ({ userName, password }) {
       let data = {
@@ -68,19 +81,51 @@ export default {
         Cookies.set('username', res.data.content.username)
         Cookies.set('sessionId', res.data.content.sessionId)
         this.userMemu()
+      }
+    },
+    async userMemu () {
+      let res = await userMemu()
+      this.menusList = []
+      if (res.data.code === 0) {
+        let menus = JSON.stringify(res.data.content.menus)
+        this.forGetTitle(res.data.content.menus)
+        sessionStorage.setItem('menus', JSON.stringify(this.menusList))
+        this.getuserMenuInit()
+        sessionStorage.setItem('isfirst', '1')
         this.$router.push({
           name: this.$config.homeName
         })
       }
     },
-    async userMemu () {
-      let res = await userMemu()
-      if (res.data.code === 0) {
-        console.log(res)
-        let menus = JSON.stringify(res.data.content.menus)
-        sessionStorage.setItem('menus', menus)
-        // sessionStorage
-      }
+    routerFor (arr1, arr) {
+      arr1.forEach((item1, index) => {
+        arr.forEach((item, index) => {
+          if (item.meta.title === item1.title) {
+            item.meta.hideInMenu = item1.hideMenu === 1
+          }
+          if (item.children) {
+            item.children.forEach((value, index) => {
+              if (value.meta.title === item1.title) {
+                value.meta.hideInMenu = item1.hideMenu === 1
+              }
+            })
+          }
+        })
+      })
+      return arr
+    },
+    forGetTitle (arr) {
+      arr.forEach(item => {
+        this.menusList.push(
+          {
+            title: item.text,
+            hideMenu: item.showMenu === 1 ? 0 : 1
+          }
+        )
+        if (item.children && item.children.length > 0) {
+          this.forGetTitle(item.children)
+        }
+      })
     }
   }
 }

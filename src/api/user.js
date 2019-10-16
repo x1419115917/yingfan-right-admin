@@ -36,6 +36,15 @@ export const getUnreadCount = () => {
   })
 }
 
+export const userMemu = () => {
+  let data = {}
+  return axios.request({
+    url: '/userMemu',
+    data,
+    method: 'get'
+  })
+}
+
 export const getMessage = () => {
   return axios.request({
     url: 'message/init',

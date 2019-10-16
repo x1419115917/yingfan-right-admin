@@ -4,7 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import iView from 'iview'
+import { Spin } from iView from 'iview'
+
 import i18n from '@/locale'
 import config from '@/config'
 import importDirective from '@/directive'
@@ -17,6 +18,7 @@ import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
 import util from './libs/util'
 Vue.prototype.$util = util
+Vue.prototype.$Spin = Spin
 // 实际打包时应该不引入mock
 /* eslint-disable */
 // if (process.env.NODE_ENV !== 'production') require('@/mock')

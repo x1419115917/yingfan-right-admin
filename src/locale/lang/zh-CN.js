@@ -17,6 +17,8 @@ export default {
   brandList: '品牌管理',
   sup: '供应商',
   supplier: '供应商管理',
+  addsupr: '编辑供应商',
+  addsupplier: '新增供应商',
   testexcel: '测试页',
   components: '组件',
   count_to_page: '数字渐变',

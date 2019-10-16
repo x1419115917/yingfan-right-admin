@@ -42,7 +42,9 @@ export default {
         Cookies.remove('access_token')
         Cookies.remove('userId')
         Cookies.remove('username')
-        this.$router.push({
+        sessionStorage.setItem('menus', JSON.stringify([]))
+        this.$forceUpdate()
+        this.$router.replace({
           name: 'login'
         })
       }

@@ -9,7 +9,9 @@ import {
   restoreTrash,
   getUnreadCount
 } from '@/api/user'
-import { setToken, getToken } from '@/libs/util'
+import { setToken, getToken, routerFor, getMenuByRouter } from '@/libs/util'
+import router from '@/router'
+import { appRouter } from '@/router/routers'
 
 export default {
   state: {
@@ -17,6 +19,7 @@ export default {
     userId: '',
     avatarImgPath: '',
     token: getToken(),
+    menuLists: [],
     access: '',
     hasGetInfo: false,
     unreadCount: 0,
@@ -48,6 +51,10 @@ export default {
     setMessageCount (state, count) {
       state.unreadCount = count
     },
+    setMenuLists (state, menuLists) {
+      state.menuLists = null
+      state.menuLists = menuLists
+    },
     setMessageUnreadList (state, list) {
       state.messageUnreadList = list
     },
@@ -70,7 +77,9 @@ export default {
   getters: {
     messageUnreadCount: state => state.messageUnreadList.length,
     messageReadedCount: state => state.messageReadedList.length,
-    messageTrashCount: state => state.messageTrashList.length
+    messageTrashCount: state => state.messageTrashList.length,
+    getMenusLists: state => state.menusLists,
+    getMenusListes: (state) => getMenuByRouter(routerFor(state.menuLists, appRouter), '')
   },
   actions: {
     // 登录
@@ -132,6 +141,22 @@ export default {
       //   const { data } = res
       //   commit('setMessageCount', data)
       // })
+    },
+    // 此方法用来获取路由菜单是否展示访问
+    getuserMemu ({ state, commit }) {
+      let menus = JSON.parse(sessionStorage.getItem('menus'))
+      console.log('menus1111', menus)
+      commit('setMenuLists', menus)
+      // userMemu().then(res => {
+      //   const { data } = res
+      //   let menus = data.content.menus
+      //   commit('setMenuLists', menus)
+      //   sessionStorage.setItem('getMenusLists', JSON.stringify(menus))
+      //   // router.addRoutes(menusList)
+      // })
+    },
+    getuserMenuInit ({ state, commit }) {
+      commit('setMenuLists', [])
     },
     // 获取消息列表，其中包含未读、已读、回收站三个列表
     getMessageList ({ state, commit }) {

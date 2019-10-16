@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import routes from './routers'
+import { initRouter, appRouter, routers } from './routers'
 import store from '@/store'
 import iView from 'iview'
 import { setToken, getToken, canTurnTo, setTitle } from '@/libs/util'
@@ -9,9 +9,26 @@ import config from '@/config'
 
 Vue.use(Router)
 const router = new Router({
-  routes,
+  routes: routers,
   mode: 'history'
 })
+// let routerSessionData = JSON.parse(localStorage.getItem('menus'))// 从session中取出动态路由
+// // 防止f5刷新导致动态路由失效
+// if (routerSessionData) {
+//     router.addRoutes(routerSessionData)
+// }
+// if (appRoutersSessionData) {
+//     for (let i = 0; i < appRoutersSessionData.length; i++) {
+//         appRouter.push(appRoutersSessionData[i])
+//     }
+// }
+// const RouterConfig = {
+//   mode: 'history',
+//   routes: routers
+// }
+
+// export const router = new VueRouter(RouterConfig)
+
 const LOGIN_PAGE_NAME = 'login'
 
 const turnTo = (to, access, next) => {
@@ -20,6 +37,7 @@ const turnTo = (to, access, next) => {
 }
 
 router.beforeEach((to, from, next) => {
+  iView.LoadingBar.start()
   let token = Cookies.get('access_token')
   if (!token && to.name !== LOGIN_PAGE_NAME) {
     // 未登录且要跳转的页面不是登录页

@@ -1,38 +1,38 @@
 <template>
-  <Layout style="height: 100%" class="main">
-    <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
-      <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
-        <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-        <div class="logo-con" :class="{'logon-con-height': !collapsed}">
-          <img v-show="!collapsed" :src="minLogo" key="max-logo" />
-          <h1 v-show="!collapsed" class="title-text">应悦汇管理系统</h1>
-          <img v-show="collapsed" :src="minLogo" key="min-logo" />
-        </div>
-      </side-menu>
-    </Sider>
-    <Layout>
-      <Header class="header-con">
-        <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-          <user :message-unread-count="unreadCount" :user-avatar="minLogo"/>
-          <language v-if="$config.useI18n" @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
-          <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store>
-          <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
-        </header-bar>
-      </Header>
-      <Content class="main-content-con">
-        <Layout class="main-layout-con">
-          <div class="tag-nav-wrapper">
-            <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
+  <Layout style="height: 100%" class="main" v-show="isfirst == '0'">
+      <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
+        <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="getMenusList">
+          <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
+          <div class="logo-con" :class="{'logon-con-height': !collapsed}">
+            <img v-show="!collapsed" :src="minLogo" key="max-logo" />
+            <h1 v-show="!collapsed" class="title-text">应悦汇管理系统</h1>
+            <img v-show="collapsed" :src="minLogo" key="min-logo" />
           </div>
-          <Content class="content-wrapper">
-            <keep-alive :include="cacheList">
-              <router-view/>
-            </keep-alive>
-            <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper"></ABackTop>
-          </Content>
-        </Layout>
-      </Content>
-    </Layout>
+        </side-menu>
+      </Sider>
+      <Layout>
+        <Header class="header-con">
+          <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
+            <user :message-unread-count="unreadCount" :user-avatar="minLogo"/>
+            <language v-if="$config.useI18n" @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
+            <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store>
+            <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
+          </header-bar>
+        </Header>
+        <Content class="main-content-con">
+          <Layout class="main-layout-con">
+            <div class="tag-nav-wrapper">
+              <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
+            </div>
+            <Content class="content-wrapper">
+              <keep-alive :include="cacheList">
+                <router-view/>
+              </keep-alive>
+              <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper"></ABackTop>
+            </Content>
+          </Layout>
+        </Content>
+      </Layout>
   </Layout>
 </template>
 <script>
@@ -46,7 +46,8 @@ import Language from './components/language'
 import ErrorStore from './components/error-store'
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import { getNewTagList, routeEqual } from '@/libs/util'
-import routers from '@/router/routers'
+import Cookies from 'js-cookie'
+import { routers } from '@/router/routers'
 import minLogo from '@/assets/images/photo_s.jpg'
 import './main.less'
 export default {
@@ -65,12 +66,16 @@ export default {
     return {
       collapsed: false,
       minLogo,
-      isFullscreen: false
+      isFullscreen: false,
+      getMenusList: [],
+      isfirst: '0',
+      spinShow: false
     }
   },
   computed: {
     ...mapGetters([
-      'errorCount'
+      'errorCount',
+      'getMenusListes'
     ]),
     tagNavList () {
       return this.$store.state.app.tagNavList
@@ -109,7 +114,8 @@ export default {
     ]),
     ...mapActions([
       'handleLogin',
-      'getUnreadMessageCount'
+      'getUnreadMessageCount',
+      'getuserMemu'
     ]),
     turnToPage (route) {
       let { name, params, query } = {}
@@ -159,6 +165,22 @@ export default {
       this.setTagNavList(getNewTagList(this.tagNavList, newRoute))
       this.$refs.sideMenu.updateOpenName(newRoute.name)
     }
+    // getMenusList: { //监听指定位置勾选
+    //   handler: function (val, oldval) {
+    //       console.log('val+++++++++++',val);
+    //     if (val != oldval) {
+    //       this.$nextTick(() => {
+    //         this.getMenusList = val;
+    //       })
+    //     } else {
+    //       this.$nextTick(() => {
+    //         this.getMenusList = oldval;
+    //       })
+    //     }
+    //   },
+    //   immediate: true, //关键
+    //   deep: true
+    // },
   },
   mounted () {
     /**
@@ -181,6 +203,28 @@ export default {
     }
     // 获取未读消息条数
     this.getUnreadMessageCount()
+    this.getuserMemu()
+    let menus = sessionStorage.getItem('menus')
+    if (!menus) {
+      Cookies.remove('access_token')
+      Cookies.remove('userId')
+      Cookies.remove('username')
+      sessionStorage.removeItem('menus')
+      this.$router.replace({
+        path: '/login'
+      })
+    }
+    let isfirst = sessionStorage.getItem('isfirst')
+    this.isfirst = isfirst
+    if (isfirst == '1') {
+      this.$router.go(0)
+      sessionStorage.setItem('isfirst', '0')
+    }
+    this.$nextTick(() => {
+      this.getMenusList = [...this.getMenusListes]
+      console.log('sessionStorage.getMenusLists', this.getMenusList)
+    })
+    this.$forceUpdate()
   }
 }
 </script>

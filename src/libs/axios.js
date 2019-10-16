@@ -2,6 +2,7 @@ import axios from 'axios'
 import store from '@/store'
 import { Spin, Modal } from 'iview'
 import Cookies from 'js-cookie'
+import router from '@/router'
 const addErrorLog = errorInfo => {
   // const { statusText, status, request: { responseURL } } = errorInfo
   // let info = {
@@ -53,7 +54,7 @@ class HttpRequest {
       }
       this.queue[url] = true
       // 可在此设置要发送的token
-      console.log(config.data)
+      // console.log(config.data)
       let token = Cookies.get('access_token')
       let sessionId = Cookies.get('sessionId')
       token && (config.headers.token = token)
@@ -84,6 +85,10 @@ class HttpRequest {
             Cookies.remove('access_token')
             Cookies.remove('userId')
             Cookies.remove('username')
+            sessionStorage.removeItem('menus')
+            router.replace({
+              path: '/login'
+            })
             window.location.href = '/login'
           }
         })

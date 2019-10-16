@@ -13,7 +13,7 @@ import {
 } from '@/libs/util'
 import { saveErrorLogger } from '@/api/data'
 import router from '@/router'
-import routers from '@/router/routers'
+import { routers, appRouter } from '@/router/routers'
 import config from '@/config'
 const { homeName } = config
 
@@ -35,7 +35,7 @@ export default {
     hasReadErrorPage: false
   },
   getters: {
-    menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access),
+    menuList: (state, getters, rootState) => getMenuByRouter(appRouter, rootState.user.access),
     errorCount: state => state.errorList.length
   },
   mutations: {

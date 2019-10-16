@@ -6,14 +6,6 @@ import {
   hasOneOf,
   objEqual
 } from '@/libs/tools'
-// import {
-//   router
-// } from '@/router/index'
-// import {
-//   routers,
-//   otherRouter,
-//   appRouter
-// } from '@/router/router.js'
 const {
   title,
   cookieExpires,
@@ -66,6 +58,40 @@ export const getMenuByRouter = (list, access) => {
   })
   return res
 }
+
+export const routerFor = (arr1, arr2) => {
+  let arr = arr2 ? [...arr2] : []
+  let arr0 = arr1 ? [...arr1] : []
+  arr0.forEach((item1, index) => {
+    arr.forEach((item, index) => {
+      if (item.meta.title === item1.title) {
+        item.meta.hideInMenu = item1.hideMenu === 1
+      }
+      if (item.children) {
+        // alert(123)
+        item.children.forEach((value, index) => {
+          if (value.meta.title === item1.title) {
+            value.meta.hideInMenu = item1.hideMenu === 1
+          }
+        })
+      }
+    })
+  })
+  return arr
+}
+// export const forGetTitle = (arr) => {
+//   arr.forEach(item => {
+//     this.menusList.push(
+//       {
+//         title: item.text,
+//         hideMenu: item.showMenu === 1 ? 0 : 1
+//       }
+//     )
+//     if (item.children && item.children.length > 0) {
+//       forGetTitle(item.children)
+//     }
+//   })
+// }
 // 更新路由
 // util.UpdateRouter = function (data) {
 //   return new Promise((resolve, reject) => {
@@ -155,9 +181,10 @@ export const forTreeArr1 = (arr, num) => { // 循环部门树形数据
  * @returns {Array}
  */
 export const getBreadCrumbList = (route, homeRoute) => {
+  let icon = homeRoute.meta && homeRoute.meta.icon ? homeRoute.meta.icon : ''
   let homeItem = {
     ...homeRoute,
-    icon: homeRoute.meta.icon
+    icon: icon
   }
   let routeMetched = route.matched
   if (routeMetched.some(item => item.name === homeRoute.name)) return [homeItem]
@@ -240,7 +267,8 @@ export const getTagNavListFromLocalstorage = () => {
  */
 export const getHomeRoute = (routers, homeName = 'home') => {
   let i = -1
-  let len = routers.length
+  console.log(routers)
+  let len = routers ? routers.length : 0
   let homeRoute = {}
   while (++i < len) {
     let item = routers[i]

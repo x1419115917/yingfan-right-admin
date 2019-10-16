@@ -288,7 +288,7 @@ export default {
           url: data.url,
           roleSign: data.perms,
           sort: data.orderNum,
-          showMenu: data.showMenu,
+          showMenu: data.showMenu.toString(),
           icon: data.icon
         }
         console.log(data.type)
