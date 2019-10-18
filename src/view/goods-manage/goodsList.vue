@@ -3,16 +3,119 @@
 </style>
 <template>
   <div>
-    <Card title="角色管理">
-      <Row class="role-top">
-        <div class="role-top-left">
+    <Card title="商品列表">
+      <Row class="role-top com_submenu">
+        <Row>
+          <div class="role-top-input">
+            <div class="td-line">
+              <span class="name">商品标题</span>
+              <!-- @on-enter="updateDataList" -->
+              <Input
+                placeholder="请输入商品标题"
+                class="w162"
+                v-model="value"
+              />
+            </div>
+            <div class="td-line">
+              <Select v-model="model1" style="width:80px;margin-right:6px">
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+              <!-- @on-enter="updateDataList" -->
+              <Input
+                placeholder="请输入"
+                class="w162"
+                v-model="value"
+                style="margin-right:10px;"
+              />
+            </div>
+            <div class="td-line">
+              <span class="name">品牌</span>
+              <Select class="w162" v-model="model1">
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </div>
+            <div class="td-line" v-show="isExpand == 1">
+              <span class="name">供应商</span>
+              <Select class="w162" v-model="model1" filterable>
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </div>
+            <div class="td-line" v-show="isExpand == 1">
+              <span class="name">剩余库存</span>
+              <!-- @on-enter="updateDataList" -->
+              <Input
+                placeholder="请输入"
+                class="w80"
+                v-model="value"
+              />
+              <span style="margin:0 5px;">至</span>
+              <Input
+                placeholder="请输入"
+                class="w80"
+                v-model="value"
+              />
+            </div>
+            <div class="td-line" v-show="isExpand == 1">
+              <span class="name">是否新品</span>
+              <Select class="w162" v-model="model1" filterable>
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </div>
+            <div class="td-line" v-show="isExpand == 1">
+              <span class="name">是否爆款</span>
+              <Select class="w162" v-model="model1" filterable>
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </div>
+            <div class="td-line" v-show="isExpand == 1">
+              <span class="name">上架日期</span>
+              <!-- @on-enter="updateDataList" -->
+              <DatePicker type="date" placeholder="开始日期" style="width: 120px"></DatePicker>
+              <span style="margin:0 5px;">-</span>
+              <DatePicker type="date" placeholder="结束日期" placement="bottom-end" style="width: 120px"></DatePicker>
+            </div>
+            <div class="td-line" v-show="isExpand == 1">
+              <span class="name">类目分类</span>
+              <Select class="w132" v-model="model1" filterable style="margin-right:6px">
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+              <Select class="w132" v-model="model1" filterable style="margin-right:6px">
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+              <Select class="w132" v-model="model1" filterable>
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </div>
+            <div class="td-line" v-show="isExpand == 1">
+              <span class="name">商品状态</span>
+              <Select class="w162" v-model="model1" filterable>
+                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </div>
+            <div class="expand-box" @click="expandFn(1)" v-show="isExpand == 0">展开 <Icon type="ios-arrow-down" /></div>
+            <div class="expand-box" @click="expandFn(0)" v-show="isExpand == 1">收起 <Icon type="ios-arrow-up" /></div>
+            <div class="td-line btn">
+              <Button type="primary" @click="searchFn">查询</Button>
+              <Button @click="">重置</Button>
+            </div>
+            <!-- <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button> -->
+          </div>
+        </Row>
+        <Row>
+          <div class="set-con">
+            <span style="margin-right: 10px">设置：</span>
+            <Button class="btn" type="primary" :loading="uploadLoading" @click="addFn">上架</Button>
+            <Button class="btn" type="primary" ghost :loading="uploadLoading" @click="addFn">下架</Button>
+            <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">设置新品</Button>
+            <Button class="btn" type="info" ghost :loading="uploadLoading" @click="addFn">取消新品</Button>
+            <Button class="btn" type="warning" :loading="uploadLoading" @click="addFn">设置爆款</Button>
+            <Button class="btn" type="warning" ghost :loading="uploadLoading" @click="addFn">取消爆款</Button>
+          </div>
+        </Row>
+        <!-- <div class="role-top-left">
           <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
           <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
-        </div>
-        <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
-          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
-        </div>
+        </div> -->
       </Row>
       <Row>
         <div class="ivu-upload-list-file" v-if="file !== null">
@@ -33,6 +136,12 @@
       </Row>
     </Card>
     <Row class="margin-top-10">
+      <Row>
+        <div class="set-con set-top" style="background:#fff;">
+          <span @click="upperShelfFn(1)" class="btn" :class="isupperShelf == 1 ? 'btn-active' : ''">已上架(50)</span>
+          <span @click="upperShelfFn(0)" class="btn" :class="isupperShelf == 0 ? 'btn-active' : ''">待下架(10)</span>
+        </div>
+      </Row>
       <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
       <div class="bank_table" style="position:relative;">
           <Table
@@ -49,11 +158,19 @@
             <template slot-scope="{ row, index }" slot="action">
               <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
                 <i></i>
+                <span>查看详情</span>
+              </Button>
+              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+                <i></i>
                 <span>编辑</span>
               </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
+              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)" v-show="isupperShelf == 0">
                 <i></i>
-                <span>删除</span>
+                <span>上架</span>
+              </Button>
+              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)" v-show="isupperShelf == 1">
+                <i></i>
+                <span>下架</span>
               </Button>
             </template>
           </Table>
@@ -75,21 +192,10 @@
           />
         </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑角色': '新增角色'"  width="640" @on-cancel="cancelModal1">
-			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-				<FormItem label="角色名:" prop="roleName">
-					<Input v-model="formValidate.roleName" placeholder="请输入角色名"></Input>
-				</FormItem>
-        <FormItem label="角色标识:" prop="roleSign">
-					<Input v-model="formValidate.roleSign" placeholder="请输入角色标识"></Input>
-				</FormItem>
-				<FormItem label="备注:" prop="roleDesc">
-					<Input v-model="formValidate.roleDesc" placeholder="请输入备注"></Input>
-				</FormItem>
-				<FormItem label="菜单权限:" prop="power" class="is-checked">
-					<Tree :data="ztreesData" show-checkbox multiple style="height: 290px;overflow: auto;"></Tree>
-				</FormItem>
-			</Form>
+    <Modal v-model="modal1" class="smsModel" title="基本信息"  width="640" @on-cancel="cancelModal1">
+     <div>
+        <Table :columns="columns1" :data="data1" border></Table>
+     </div>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
@@ -101,7 +207,7 @@
 				@on-ok="delRole"
 				:closable="false"
 				class-name="vertical-center-modal">
-			<p>确定删除？</p>
+			<p>确定下架？</p>
 		</Modal>
     <Modal
 				width="20"
@@ -121,47 +227,80 @@ export default {
     return {
       value: '',
       modal1: false,
+      columns1: [
+        {
+          title: '供货价',
+          key: 'name'
+        },
+        {
+          title: '零售价',
+          key: 'age'
+        },
+        {
+          title: '批发价',
+          key: 'address'
+        },
+        {
+          title: '可售卖库存',
+          key: 'sku'
+        },
+        {
+          title: '已售',
+          key: 'buynum'
+        }
+      ],
+      data1: [
+        {
+          name: 'John Brown',
+          age: 18,
+          address: 'New York No. 1 Lake Park',
+          date: '2016-10-03',
+          sku: 320,
+          buynum: '10'
+        },
+        {
+          name: 'Jim Green',
+          age: 24,
+          address: 'London No. 1 Lake Park',
+          date: '2016-10-01',
+          sku: 320,
+          buynum: '10'
+        },
+        {
+          name: 'Joe Black',
+          age: 30,
+          address: 'Sydney No. 1 Lake Park',
+          date: '2016-10-02',
+          sku: 320,
+          buynum: '10'
+        }
+      ],
+      model1: '商品ID',
+      goodsType: [
+        {
+          value: '商品ID',
+          label: '商品ID'
+        },
+        {
+          value: 'skuID',
+          label: 'skuID'
+        },
+        {
+          value: '商家编码',
+          label: '商家编码'
+        },
+        {
+          value: '商品条形码',
+          label: '商品条形码'
+        }
+      ],
       operationShow: false,
       delBatchModal: false,
       delModal: false,
       checkedIds: [],
       checkedId: '',
       menuIdsArr: [],
-      ztreesData: [
-        {
-          title: 'parent 1',
-          expand: true,
-          selected: true,
-          children: [
-            {
-              title: 'parent 1-1',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-1-1',
-                  disabled: true
-                },
-                {
-                  title: 'leaf 1-1-2'
-                }
-              ]
-            },
-            {
-              title: 'parent 1-2',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-2-1',
-                  checked: true
-                },
-                {
-                  title: 'leaf 1-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      ztreesData: [],
       formValidate: {
         roleName: '',
         roleDesc: '',
@@ -187,24 +326,32 @@ export default {
           align: 'center'
         },
         {
-          title: '序号',
-          key: 'roleId'
+          title: '商品图片',
+          key: 'goodsImg'
         },
         {
-          title: '角色名',
-          key: 'roleName'
+          title: '商品ID',
+          key: 'id'
         },
         {
-          title: '备注',
-          key: 'remark'
+          title: '商品标题',
+          key: 'name'
         },
         {
-          title: '权限',
-          key: 'menuIds'
+          title: '品牌',
+          key: 'pinpai'
+        },
+        {
+          title: '类目',
+          key: 'catg'
+        },
+        {
+          title: '供应商',
+          key: 'product'
         },
         {
           title: '操作',
-          width: 180,
+          width: 200,
           slot: 'action',
           align: 'center'
         }
@@ -222,6 +369,8 @@ export default {
       pageSize: 10,
       delIndex: '',
       total: 0,
+      isExpand: 0,
+      isupperShelf: 1,
       loading: false, // 分割线
       uploadLoading: false,
       progressPercent: 0,
@@ -251,6 +400,12 @@ export default {
           item.menuIds = item.menuIds === null ? '-' : item.menuIds
         })
       }
+    },
+    expandFn (val) {
+      this.isExpand = val
+    },
+    upperShelfFn (val) {
+      this.isupperShelf = val
     },
     async roleDetail (id) {
       let res = await roleDetail(id)
@@ -567,9 +722,49 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
+.set-top{
+  padding: 10px;
+  span{
+    display: inline-block;
+    width: 112px;
+    height: 51px;
+    text-align: center;
+    line-height: 51px;
+    border: 1px solid #e6e6e6;
+    cursor: pointer;
+  }
+  .btn-active{
+    color: #6699CC;
+    // border-color: #6699CC;
+  }
+}
 .role-top{
-  overflow: hidden;
   width: 100%;
+  position: relative;
+  .set-con{
+    margin-top: 15px;
+  }
+  .td-line{
+    float: left;
+    margin-right: 24px;
+    margin-bottom: 10px;
+    .name{
+      display: inline-block;
+      margin-right: 6px;
+    }
+  }
+  .expand-box{
+    position: absolute;
+    right: 8px;
+    top: 0px;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover{
+      color: #ff0036;
+      text-decoration: none;
+    }
+  }
   .role-top-left{
     float: left;
     width: 300px;
@@ -584,6 +779,7 @@ export default {
     margin-right: 10px;
   }
 }
+
 .no-data {
     position: absolute;
     left: 50%;

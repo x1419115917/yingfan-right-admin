@@ -24,4 +24,13 @@ html,body{
 #app {
   .size;
 }
+.com_submenu,
+.step-two-item {
+  padding: 18px 0 18px 22px;
+  border: 1px solid #e3eaf2;
+  background-color: #fff;
+  margin-bottom: 16px;
+  /* 设置下拉框placeholder的样式*/
+  /* 设置输入框placeholder的样式*/
+}
 </style>

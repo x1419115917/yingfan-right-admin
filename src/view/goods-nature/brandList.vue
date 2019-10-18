@@ -3,16 +3,29 @@
 </style>
 <template>
   <div>
-    <Card title="角色管理">
-      <Row class="role-top">
-        <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
-        </div>
-        <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
-          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
-        </div>
+    <Card title="品牌列表">
+      <Row class="role-top com_submenu">
+        <Row>
+          <div class="set-con">
+            <Button class="btn" type="success" :loading="uploadLoading" @click="addFn">添加品牌</Button>
+            <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
+          </div>
+          <div class="role-top-input">
+            <div class="td-line">
+              <span class="name">品牌名称</span>
+              <!-- @on-enter="updateDataList" -->
+              <Input
+                placeholder="请输入品牌名称"
+                class="w162"
+                v-model="value"
+              />
+            </div>
+            <div class="td-line btn">
+              <Button @click="clearInputs" style="margin-right: 6px;">重置</Button>
+              <Button type="primary" @click="searchFn">查询</Button>
+            </div>
+          </div>
+        </Row>
       </Row>
       <Row>
         <div class="ivu-upload-list-file" v-if="file !== null">
@@ -33,7 +46,6 @@
       </Row>
     </Card>
     <Row class="margin-top-10">
-      <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
       <div class="bank_table" style="position:relative;">
           <Table
             :columns="columnsList"
@@ -75,16 +87,26 @@
           />
         </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑角色': '新增角色'"  width="640" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑品牌': '新增品牌'"  width="640" @on-cancel="cancelModal1">
 			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-				<FormItem label="角色名:" prop="roleName">
-					<Input v-model="formValidate.roleName" placeholder="请输入角色名"></Input>
+				<FormItem label="中文名:" prop="name">
+					<Input v-model="formValidate.name" placeholder="请输入中文名"></Input>
 				</FormItem>
-        <FormItem label="角色标识:" prop="roleSign">
-					<Input v-model="formValidate.roleSign" placeholder="请输入角色标识"></Input>
+        <FormItem label="英文名:" prop="nameEn">
+					<Input v-model="formValidate.nameEn" placeholder="请输入英文名"></Input>
 				</FormItem>
-				<FormItem label="备注:" prop="roleDesc">
-					<Input v-model="formValidate.roleDesc" placeholder="请输入备注"></Input>
+        <!-- <div>
+					 <input type="file" class="img-ipt"
+                      ref="filezm"
+                      @change="filezm"
+                      accept="image/*"
+                      capture="camera">
+                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <img :src="imgUrl" class="img-box1"
+                    id="ad21" v-show="imgShow1">
+				</div> -->
+				<FormItem label="品牌介绍:" prop="intro">
+          <Input v-model="formValidate.intro" maxlength="300" show-word-limit type="textarea" placeholder="请输入品牌介绍"  />
 				</FormItem>
 				<FormItem label="菜单权限:" prop="power" class="is-checked">
 					<Tree :data="ztreesData" show-checkbox multiple style="height: 290px;overflow: auto;"></Tree>
@@ -114,69 +136,52 @@
   </div>
 </template>
 <script>
-import { roleList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
+import { listBrandsPage } from '@/api/nature'
 export default {
   name: 'role-name',
   data () {
     return {
       value: '',
       modal1: false,
+      columns1: [],
+      data1: [],
+      model1: '商品ID',
+      goodsType: [
+        {
+          value: '商品ID',
+          label: '商品ID'
+        },
+        {
+          value: 'skuID',
+          label: 'skuID'
+        },
+        {
+          value: '商家编码',
+          label: '商家编码'
+        },
+        {
+          value: '商品条形码',
+          label: '商品条形码'
+        }
+      ],
       operationShow: false,
       delBatchModal: false,
       delModal: false,
       checkedIds: [],
       checkedId: '',
       menuIdsArr: [],
-      ztreesData: [
-        {
-          title: 'parent 1',
-          expand: true,
-          selected: true,
-          children: [
-            {
-              title: 'parent 1-1',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-1-1',
-                  disabled: true
-                },
-                {
-                  title: 'leaf 1-1-2'
-                }
-              ]
-            },
-            {
-              title: 'parent 1-2',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-2-1',
-                  checked: true
-                },
-                {
-                  title: 'leaf 1-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      ztreesData: [],
       formValidate: {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
+        name: '',
+        nameEn: '',
+        intro: ''
       },
       ruleValidate: {
-        roleName: [
-          { required: true, message: '角色名称不能为空', trigger: 'blur' }
+        name: [
+          { required: true, message: '中文名不能为空', trigger: 'blur' }
         ],
-        roleSign: [
-          { required: true, message: '角色标识不能为空', trigger: 'blur' }
-        ],
-        roleDesc: [
-          { required: true, message: '备注不能为空', trigger: 'blur' }
+        nameEn: [
+          { required: true, message: '英文名不能为空', trigger: 'blur' }
         ]
       },
       roleName: '',
@@ -187,24 +192,24 @@ export default {
           align: 'center'
         },
         {
-          title: '序号',
-          key: 'roleId'
+          title: '品牌ID',
+          key: 'id'
         },
         {
-          title: '角色名',
-          key: 'roleName'
+          title: '中文名',
+          key: 'name'
         },
         {
-          title: '备注',
-          key: 'remark'
+          title: '英文名',
+          key: 'nameEn'
         },
         {
-          title: '权限',
-          key: 'menuIds'
+          title: '品牌LOGO',
+          key: 'pictureUrl'
         },
         {
           title: '操作',
-          width: 180,
+          width: 200,
           slot: 'action',
           align: 'center'
         }
@@ -239,18 +244,19 @@ export default {
         FLAG: 1,
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        roleName: this.value,
-        roleSign: this.roleSign,
-        userIdCreate: this.userIdCreate
+        name: this.value
       }
-      let res = await roleList(data)
+      let res = await listBrandsPage(data)
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
-        this.dataList.forEach((item) => {
-          item.menuIds = item.menuIds === null ? '-' : item.menuIds
-        })
       }
+    },
+    expandFn (val) {
+      this.isExpand = val
+    },
+    upperShelfFn (val) {
+      this.isupperShelf = val
     },
     async roleDetail (id) {
       let res = await roleDetail(id)
@@ -542,7 +548,7 @@ export default {
     clearInputs () {
       this.pageNum = 1
       this.pageSize = 10
-      this.keyword2 = ''
+      this.value = ''
       this.getPageList()
     },
     goBack () {
@@ -559,7 +565,7 @@ export default {
   },
   created () {
     this.getPageList()
-    this.menuTree()
+    // this.menuTree()
   },
   mounted () {
 
@@ -567,9 +573,48 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.set-top{
+  padding: 10px;
+  span{
+    display: inline-block;
+    width: 112px;
+    height: 51px;
+    text-align: center;
+    line-height: 51px;
+    border: 1px solid #e6e6e6;
+    cursor: pointer;
+  }
+  .btn-active{
+    color: #6699CC;
+    // border-color: #6699CC;
+  }
+}
 .role-top{
-  overflow: hidden;
   width: 100%;
+  position: relative;
+  .set-con{
+    margin-top: 15px;
+  }
+  .td-line{
+    float: left;
+    margin-right: 24px;
+    margin-bottom: 10px;
+    .name{
+      display: inline-block;
+      margin-right: 6px;
+    }
+  }
+  .expand-box{
+    position: absolute;
+    right: 8px;
+    top: 0px;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover{
+      color: #ff0036;
+      text-decoration: none;
+    }
+  }
   .role-top-left{
     float: left;
     width: 300px;
@@ -584,6 +629,7 @@ export default {
     margin-right: 10px;
   }
 }
+
 .no-data {
     position: absolute;
     left: 50%;
@@ -613,5 +659,17 @@ export default {
 }
 .btn-item{
   margin-left: 6px;
+}
+.com_submenu{
+  padding: 0;
+  margin-bottom: 0;
+  border: 0;
+}
+.role-top .set-con{
+  float: left;
+  margin-top: 0;
+}
+.role-top-input{
+  float: right;
 }
 </style>

@@ -1,18 +1,10 @@
 <style lang="less">
-  @import "./common.less";
+  // @import "./common.less";
 </style>
 <template>
   <div>
-    <Card :title="type == 'edit' ? '编辑供应商' : '新增供应商'">
+    <Card :title="type == 'edit' ? '编辑商品信息' : '发布商品'">
       <Row class="role-top">
-        <!-- <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加供应商</Button>
-          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
-        </div> -->
-        <!-- <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="请输入供应商名称" style="width: 200px"></Input>
-          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
-        </div> -->
       </Row>
       <Row>
         <div class="ivu-upload-list-file" v-if="file !== null">
@@ -33,53 +25,170 @@
       </Row>
     </Card>
     <Row class="margin-top-10" style="background:#fff;padding:30px;">
-      <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
-      <div class="bank_table" style="position:relative;">
-          <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-            <FormItem label="供应商名称:" prop="name">
-              <Input v-model="formValidate.name" placeholder="请输入供应商名称"></Input>
-            </FormItem>
-            <FormItem label="联系人:" prop="operator">
-              <Input v-model="formValidate.operator" placeholder="请输入联系人"></Input>
-            </FormItem>
-            <FormItem label="手机号码:" prop="phone">
-              <Input v-model="formValidate.phone" placeholder="请输入手机号码"></Input>
-            </FormItem>
-            <div class="deloy-pro">
-              <div class="deloy-left">
-                <span>代理类目/品牌：</span>
-                <Button style="margin-left: 5px; padding: 5px 10px;" size="large" @click="addFn" type="primary">新增代理类目/品牌</Button>
+      <div class="nav-top">
+        <span class="nav-top-item" :class="vsShowNav == 0 ? 'nav-top-item-active' : ''">选择供应商</span>
+        <span class="nav-top-item" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">编辑商品共有信息</span>
+        <span class="nav-top-item" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">编辑商品属性信息</span>
+      </div>
+      <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 0">
+        <Row>
+          <div class="tb-line">
+            <span class="name">供应商：</span>
+            <Select class="w422" v-model="model1" filterable>
+                <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+        </Row>
+        <Row>
+          <div class="tb-line btn">
+            <Button type="success">下一步，编辑商品共有信息</Button>
+          </div>
+        </Row>
+      </div>
+      <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 1">
+        <Row class="">
+          <div class="tb-title">
+            <h5 class="name">商品基本信息</h5>
+          </div>
+          <div class="tb-line">
+            <span class="name"><span>*</span>商品标题：</span>
+            <Input class="w687" v-model="value3" placeholder="请输入商品标题" />
+          </div>
+          <div class="tb-line">
+            <span class="name">商品副标题：</span>
+            <Input class="w687" v-model="value3" placeholder="输入商品副标题"  />
+          </div>
+          <div class="tb-line">
+            <span class="name"><span>*</span>品牌：</span>
+            <Select class="w687" v-model="model1" filterable>
+                <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+          <div class="tb-line">
+            <span class="name"><span></span>是否新款：</span>
+            <Select v-model="newGoods" style="width: 286px" filterable>
+                <Option v-for="item in newGoodsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <span class="name"><span></span>是否爆款：</span>
+            <Select style="width: 286px" v-model="explosiveGoods" filterable>
+                <Option v-for="item in explosiveGoodsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+          <div class="tb-line photo-con">
+            <span class="name"><span>*</span>商品图片：</span>
+            <ul class="photo-list">
+              <li class="photo-item">
+                <input type="file" class="img-ipt"
+                      ref="filezm"
+                      @change="filezm"
+                      accept="image/*"
+                      capture="camera">
+                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <img :src="imgUrl" class="img-box1"
+                    id="ad21" v-show="imgShow1">
+              </li>
+              <li class="photo-item">
+                <input type="file" class="img-ipt"
+                      ref="filezm"
+                      @change="filezm"
+                      accept="image/*"
+                      capture="camera">
+                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <img :src="imgUrl" class="img-box1"
+                    id="ad21" v-show="imgShow1">
+              </li>
+              <li class="photo-item">
+                <input type="file" class="img-ipt"
+                      ref="filezm"
+                      @change="filezm"
+                      accept="image/*"
+                      capture="camera">
+                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <img :src="imgUrl" class="img-box1"
+                    id="ad21" v-show="imgShow1">
+              </li>
+              <li class="photo-item">
+                <input type="file" class="img-ipt"
+                      ref="filezm"
+                      @change="filezm"
+                      accept="image/*"
+                      capture="camera">
+                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <img :src="imgUrl" class="img-box1"
+                    id="ad21" v-show="imgShow1">
+              </li>
+              <li class="photo-item">
+                <input type="file" class="img-ipt"
+                      ref="filezm"
+                      @change="filezm"
+                      accept="image/*"
+                      capture="camera">
+                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <img :src="imgUrl" class="img-box1"
+                    id="ad21" v-show="imgShow1">
+              </li>
+            </ul>
+          </div>
+          <div class="tb-line tb-editor">
+            <span class="name"><span>*</span>品牌：</span>
+            <div class="editor">
+              <editor></editor>
+            </div>
+          </div>
+        </Row>
+        <Row>
+          <div class="tb-line btn btn-goods">
+            <Button type="success">下一步，编辑商品属性信息</Button>
+          </div>
+        </Row>
+      </div>
+      <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 2">
+        <Row class="">
+          <div class="tb-title">
+            <h5 class="name">商品属性信息<span class="sub-name">（错误填写商品属性，可能会引起商品描述不正确，影响您的正常销售，请认真准确填写！）</span></h5>
+          </div>
+          <div class="tb-line tb-line2">
+            <span class="name"><span>*</span>基本属性：：</span>
+            <div class="name-left w687">
+              <div class="tb-top-item">
+                <span class="top-name">适用人群：</span>
+                <CheckboxGroup v-model="brandListcheck" class="check-box">
+                  <Checkbox class="check-item" :label="item.id" v-for="(item, index) in crowcdListArr" :key="index">
+                      <span class="brand-name">{{item.name}}</span>
+                  </Checkbox>
+                  <Checkbox class="check-item" label="0">
+                      <span class="brand-name">男</span>
+                  </Checkbox>
+                  <Checkbox class="check-item" label="1">
+                      <span class="brand-name">女</span>
+                  </Checkbox>
+              </CheckboxGroup>
+              <div class="edit-item">
+                <Icon v-show="!isEditCrowcd" @click="editFn(0)" type="ios-create-outline" size="22" />
+                <div class="edit-ipt" style="float: left;" v-show="isEditCrowcd">
+                  <Input class="edit-modal-ipt" v-model="value3" placeholder="请输入" style="width: 100px" />
+                  <Button class="edit-btn" type="info">保存</Button>
+                </div>
               </div>
-              <div class="deloy-right">
-                <Table
-                  :columns="columnsList"
-                  :data="dataList"
-                  height="350"
-                  border
-                  ref="mainTable"
-                  stripe
-                  :loading="tableLoading"
-                  no-data-text
-                  @on-selection-change="selected"
-                >
-                  <template slot-scope="{ row, index }" slot="action">
-                    <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
-                      <i></i>
-                      <span>编辑</span>
-                    </Button>
-                    <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
-                      <i></i>
-                      <span>删除</span>
-                    </Button>
-                  </template>
-                </Table>
               </div>
             </div>
-          </Form>
-          <div class="bank_table_footer">
-            <Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 15px; padding: 5px 38px;">取消</Button>
-            <Button size="large" @click="operationRole" type="primary" style="padding: 5px 38px;">确定</Button>
           </div>
+          <div class="tb-line">
+            <span class="name">商品副标题：</span>
+            <Input class="w687" v-model="value3" placeholder="输入商品副标题"  />
+          </div>
+          <div class="tb-line">
+            <span class="name"><span>*</span>品牌：</span>
+            <Select class="w687" v-model="model1" filterable>
+                <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+        </Row>
+        <Row>
+          <div class="tb-line btn btn-goods">
+            <Button type="success">下一步，编辑商品属性信息</Button>
+          </div>
+        </Row>
       </div>
     </Row>
     <Modal v-model="modal1" class="smsModel" :title="'新增代理类目/品牌'"  width="840" @on-cancel="cancelModal1">
@@ -149,19 +258,19 @@
             </Row>
             <Row style="margin-top: 15px;">
               <CheckboxGroup v-model="brandListcheck">
-                <Checkbox class="check-item" :label="item.id" v-for="(item, index) in brandListArr" :key="index">
-                    <span class="brand-name">{{item.brandName}}</span>
-                </Checkbox>
-                <Checkbox class="check-item" label="facebook">
-                    <span class="brand-name">品牌名称</span>
-                </Checkbox>
-                <Checkbox class="check-item" label="github">
-                    <span class="brand-name">品牌名称</span>
-                </Checkbox>
-                <Checkbox class="check-item" label="snapchat">
-                    <span class="brand-name">品牌名称</span>
-                </Checkbox>
-            </CheckboxGroup>
+                  <Checkbox class="check-item" :label="item.id" v-for="(item, index) in crowcdListArr" :key="index">
+                      <span class="brand-name">{{item.brandName}}</span>
+                  </Checkbox>
+                  <Checkbox class="check-item" label="facebook">
+                      <span class="brand-name">品牌名称</span>
+                  </Checkbox>
+                  <Checkbox class="check-item" label="github">
+                      <span class="brand-name">品牌名称</span>
+                  </Checkbox>
+                  <Checkbox class="check-item" label="snapchat">
+                      <span class="brand-name">品牌名称</span>
+                  </Checkbox>
+              </CheckboxGroup>
               <!-- <Col span="7">
                 <Input v-model="value3" placeholder="输入品牌关键字" style="width: 200px" />
               </Col>
@@ -197,12 +306,61 @@
   </div>
 </template>
 <script>
-import { brandList, procategoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/supplier'
+import { brandList, procategoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
+import editor from '@/components/editor'
 export default {
   name: 'supplier',
   data () {
     return {
+      vsShowNav: 2,
+      crowcd: '',
+      crowcdListArr: [],
+      isEditCrowcd: false,
+      imgUrl: '',
+      img1: '',
+      imgShow1: false,
       brandListcheck: ['facebook', 'github'],
+      newGoods: '',
+      newGoodsList: [
+        {
+          value: '1',
+          label: '是'
+        },
+        {
+          value: '0',
+          label: '否'
+        }
+      ],
+      explosiveGoods: '',
+      explosiveGoodsList: [
+        {
+          value: '1',
+          label: '是'
+        },
+        {
+          value: '0',
+          label: '否'
+        }
+      ],
+      model1: '商品ID',
+      goodsType: [
+        {
+          value: '商品ID',
+          label: '商品ID'
+        },
+        {
+          value: 'skuID',
+          label: 'skuID'
+        },
+        {
+          value: '商家编码',
+          label: '商家编码'
+        },
+        {
+          value: '商品条形码',
+          label: '商品条形码'
+        }
+      ],
       brandListArr: [],
       title: '新增供应商',
       type: this.$route.query.tyoe,
@@ -278,6 +436,9 @@ export default {
       tableLoading: false
     }
   },
+  components: {
+    editor
+  },
   methods: {
     async getBrandList () {
       let data = {
@@ -291,6 +452,17 @@ export default {
         this.brandListArr = res.data.content.rows
       }
     },
+    editFn (val) {
+      switch (val) {
+        case 0:
+          this.isEditCrowcd = true
+          break
+        case 1:
+          console.log(1)
+          break
+      }
+    },
+    filezm () {},
     async procategoryList () {
       let data = {
         FLAG: 1,
@@ -610,8 +782,8 @@ export default {
   },
   created () {
     // this.getPageList()
-    this.getBrandList()
-    this.procategoryList()
+    // this.getBrandList()
+    // this.procategoryList()
     // this.menuTree()
   },
   mounted () {
@@ -620,6 +792,95 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.tb-top-item{
+  overflow: hidden;
+  .top-name{
+    float: left;
+    line-height: 32px;
+  }
+  .check-box{
+    float: left;
+    margin-left: 10px;
+    .brand-name{
+      font-size: 12px;
+    }
+    .check-item{
+      margin-left: 0;
+    }
+  }
+}
+.photo-con{
+  width: 800px;
+  margin: 0 auto;
+  overflow: hidden;
+  .name{
+    float: left;
+  }
+}
+.photo-list{
+  float: left;
+  .photo-item{
+    display: inline-block;
+    position: relative;
+    width: 120px;
+    height: 140px;
+    cursor: pointer;
+    margin-right: 15px;
+    &:last-child{
+      margin-right: 0;
+    }
+    .img-box1{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 120px;
+      height: 140px;
+      z-index: 2;
+      background-color: #f20;
+    }
+    .bg-glay-add{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 120px;
+      height: 140px;
+      z-index: 1;
+      background-color: #f9f9f9;
+      .icon-add{
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        color: #ccc;
+      }
+    }
+    .img-ipt{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 120px;
+      height: 140px;
+      opacity: 0;
+      z-index: 3;
+    }
+  }
+
+}
+.nav-top{
+  text-align: center;
+  .nav-top-item{
+    display: inline-block;
+    font-size: 16px;
+    color: rgb(102, 153, 204);
+    padding: 10px 34px;
+    border: 1px solid #e6e6e6;
+  }
+  .nav-top-item-active{
+    background: #19be6b;
+    color: #fff;
+    border-color: #19be6b;
+  }
+}
 .goto-brand{
   font-weight: 400;
   font-style: normal;
@@ -682,6 +943,81 @@ export default {
   }
   .ipt{
     margin-right: 10px;
+  }
+}
+.sub-name{
+  color: red;
+  font-size: 12px;
+  font-weight: 400;
+}
+.bank_content{
+  min-height: 350px;
+  margin-top: 30px;
+  padding-bottom: 30px;
+  .tb-line{
+    text-align: center;
+    margin-bottom: 25px;
+    /deep/ .ivu-select-item{
+      text-align: left;
+    }
+    .name{
+      display: inline-block;
+      width: 100px;
+      text-align: right;
+      margin-right: 10px;
+      span{
+        display: inline-block;
+        margin-right: 4px;
+        line-height: 1;
+        font-family: SimSun;
+        font-size: 12px;
+        color: #ed4014;
+      }
+    }
+  }
+  .tb-line2{
+    ::before{
+      clear: both;
+    }
+    width: 800px;
+    margin: 0 auto 25px;
+    text-align: center;
+    overflow: hidden;
+    .name{
+      float: left;
+    }
+    .name-left{
+      float: left;
+      text-align: left;
+      padding: 10px;
+      min-height: 50px;
+      line-height: 30px;
+      background-color: #f9f9f9;
+      .edit-ipt{
+        float: left;
+        .edit-btn{
+          height: 30px;
+        }
+        .edit-modal-ipt{
+          margin-right: 6px;
+          height: 32px;
+        }
+      }
+    }
+  }
+  .tb-title{
+    h5{
+      width: 738px;
+      margin: 0 auto;
+      font-size: 14px;
+      margin-bottom: 26px;
+    }
+  }
+  .tb-line.btn{
+    margin-top: 200px;
+  }
+  .btn.btn-goods{
+    margin-top: 50px;
   }
 }
 .no-data {
@@ -765,5 +1101,16 @@ export default {
 .bot-row div{
     float: left;
     margin: 15px;
+}
+.tb-editor{
+  width: 800px;
+  margin: 0 auto 25px;
+  .name{
+    float: left;
+  }
+  .editor{
+    float: left;
+    text-align: left;
+  }
 }
 </style>
