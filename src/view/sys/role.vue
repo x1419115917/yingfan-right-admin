@@ -247,6 +247,7 @@ export default {
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
+        this.total = +res.data.content.total
         this.dataList.forEach((item) => {
           item.menuIds = item.menuIds === null ? '-' : item.menuIds
         })

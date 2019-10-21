@@ -7,22 +7,45 @@
       <Col class="user-left" span="5">
         <div class="user-bg">
           <div class="ibox-title">
-						<h5>选择部门</h5>
+						<h5>商品分类</h5>
           </div>
           <Tree :data="treeData1" @on-select-change="treeChange"></Tree>
         </div>
       </Col>
       <Col class="user-right" span="19">
-        <Card title="用户管理">
-          <Row class="role-top">
+        <Card title="属性模板列表">
+          <!-- <Row class="role-top">
             <div class="role-top-left">
               <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-              <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
-            </div>
+              <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
+            <!-- </div>
             <div class="role-top-right">
-              <Input class="ipt" v-model="value" placeholder="请输入姓名" style="width: 200px"></Input>
+              <Input class="ipt" v-model="value" placeholder="请输入属性模板名称" style="width: 200px"></Input>
               <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
             </div>
+          </Row> -->
+          <Row class="role-top com_submenu">
+            <Row>
+              <div class="set-con">
+                <Button class="btn" type="success" :loading="uploadLoading" @click="addFn">添加模板</Button>
+                <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
+              </div>
+              <div class="role-top-input">
+                <div class="td-line">
+                  <span class="name">关键词</span>
+                  <!-- @on-enter="updateDataList" -->
+                  <Input
+                    placeholder="请输入属性模板名称"
+                    class="w162"
+                    v-model="value"
+                  />
+                </div>
+                <div class="td-line btn">
+                  <Button @click="clearInputs" style="margin-right: 6px;">重置</Button>
+                  <Button type="primary" @click="searchFn">查询</Button>
+                </div>
+              </div>
+            </Row>
           </Row>
           <Row>
             <div class="ivu-upload-list-file" v-if="file !== null">
@@ -61,13 +84,13 @@
                     <i></i>
                     <span>编辑</span>
                   </Button>
+                  <Button class="btn-item del-btn" type="text" size="small" @click="replacePwd(index)">
+                    <i></i>
+                    <span>取消关联类目</span>
+                  </Button>
                   <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
                     <i></i>
                     <span>删除</span>
-                  </Button>
-                  <Button class="btn-item del-btn" type="text" size="small" @click="replacePwd(index)">
-                    <i></i>
-                    <span>重置密码</span>
                   </Button>
                 </template>
               </Table>
@@ -164,6 +187,7 @@
 </template>
 <script>
 import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
+import { categoryTreeList, specList } from '@/api/nature'
 export default {
   name: 'role-name',
   data () {
@@ -222,27 +246,24 @@ export default {
         },
         {
           title: '序号',
-          key: 'userId'
+          key: 'id'
         },
         {
-          title: '姓名',
-          key: 'name'
+          title: '属性模板名称',
+          width: 240,
+          key: 'specName'
         },
         {
-          title: '用户名',
-          key: 'username'
+          title: '类目分类',
+          key: 'catg'
         },
         {
-          title: '邮箱',
-          key: 'email'
-        },
-        {
-          title: '状态',
-          key: 'status'
+          title: '权重',
+          key: 'operateType'
         },
         {
           title: '操作',
-          width: 200,
+          width: 230,
           slot: 'action',
           align: 'center'
         }
@@ -278,19 +299,38 @@ export default {
         FLAG: 1,
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        name: this.value,
-        deptId: this.formValidate.deptId,
-        deptName: this.formValidate.dept
+        specName: this.value,
+        categoryId: ''
       }
-      let res = await userList(data)
+      let res = await specList(data)
       console.log(res.data.content)
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
+        this.total = +res.data.content.total
         this.dataList.forEach((item) => {
-          item.status = item.status == 1 ? '正常' : '禁用'
+          item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
       }
+    },
+    async getCategoryTreeList () {
+      let data = {
+        FLAG: 1
+      }
+      let res = await categoryTreeList(data)
+      if (res.data.code === 0) {
+        let data = [{ ...res.data.content }]
+        this.treeData1 = this.forArr1(data, -2)
+      }
+    },
+    forTreeCatg (arr) {
+      arr.forEach(item => {
+        item.levelNo = item.data.level
+        item.showIS = item.data.isShow
+        if (item.children) {
+          this.forTreeCatg(item.children)
+        }
+      })
     },
     async getRoleList () {
       let data = {
@@ -452,13 +492,6 @@ export default {
         this.ztreesData = this.forArr1(data, 0)
       }
     },
-    async sysDeptTree () {
-      let res = await sysDeptTree({})
-      if (res.data.code === 0) {
-        let data = [{ ...res.data.content }]
-        this.treeData1 = this.forArr1(data, -1)
-      }
-    },
     // 取消选中的部门
     forTreesIds (arr) {
       arr.forEach((item, index) => {
@@ -482,9 +515,9 @@ export default {
       this.forTreesIds(this.treeData1)
     },
     treeChange (data) {
-      this.formValidate.deptId = data[0].id == -1 ? '' : data[0].id
-      this.formValidate.dept = data[0].title == '顶级节点' ? '' : data[0].title
-      this.getPageList()
+      // this.formValidate.deptId = data[0].id == -1 ? '' : data[0].id
+      // this.formValidate.dept = data[0].title == '顶级节点' ? '' : data[0].title
+      // this.getPageList()
     },
     //  添加用户
     saveUser () {
@@ -719,7 +752,7 @@ export default {
     clearInputs () {
       this.pageNum = 1
       this.pageSize = 10
-      this.keyword2 = ''
+      this.value = ''
       this.getPageList()
     },
     goBack () {
@@ -738,7 +771,7 @@ export default {
     this.getPageList()
     this.getRoleList()
     // this.menuTree()
-    this.sysDeptTree()
+    this.getCategoryTreeList()
   },
   mounted () {
     // this.getPageList()
@@ -812,6 +845,46 @@ export default {
     margin-right: 10px;
   }
 }
+.role-top{
+  width: 100%;
+  position: relative;
+  .set-con{
+    margin-top: 15px;
+  }
+  .td-line{
+    float: left;
+    margin-right: 24px;
+    margin-bottom: 10px;
+    .name{
+      display: inline-block;
+      margin-right: 6px;
+    }
+  }
+  .expand-box{
+    position: absolute;
+    right: 8px;
+    top: 0px;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover{
+      color: #ff0036;
+      text-decoration: none;
+    }
+  }
+  .role-top-left{
+    float: left;
+    width: 300px;
+  }
+  .role-top-right{
+    float: right;
+  }
+  .btn{
+    margin-right: 10px;
+  }
+  .ipt{
+    margin-right: 10px;
+  }
+}
 .no-data {
     position: absolute;
     left: 50%;
@@ -841,5 +914,22 @@ export default {
 }
 .btn-item{
   margin-left: 6px;
+}
+.com_submenu{
+  padding: 0;
+  margin-bottom: 0;
+  border: 0;
+}
+.role-top .set-con{
+  float: left;
+  margin-top: 0;
+}
+.role-top-input{
+  float: right;
+}
+.brand-list-modal{
+  /deep/ .ivu-modal, .ivu-modal{
+    top: 22px;
+  }
 }
 </style>

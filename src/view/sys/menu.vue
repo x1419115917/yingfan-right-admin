@@ -258,6 +258,7 @@ export default {
       let res = await treeList(data)
       if (res.data.code === 0) {
         this.data = [...res.data.content.children]
+        // this.total = +res.data.content.total
         this.forDataRow(this.data)
       }
     },

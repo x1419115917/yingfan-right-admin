@@ -13,31 +13,31 @@
               <Input
                 placeholder="请输入商品标题"
                 class="w162"
-                v-model="value"
+                v-model="title"
               />
             </div>
-            <div class="td-line">
-              <Select v-model="model1" style="width:80px;margin-right:6px">
+            <!-- <div class="td-line">
+              <Select v-model="model1" style="width:100px;margin-right:6px">
                   <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
               <!-- @on-enter="updateDataList" -->
-              <Input
+              <!-- <Input
                 placeholder="请输入"
                 class="w162"
                 v-model="value"
                 style="margin-right:10px;"
               />
-            </div>
+            </div> -->
             <div class="td-line">
               <span class="name">品牌</span>
-              <Select class="w162" v-model="model1">
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w162" v-model="brandId" filterable>
+                  <Option v-for="item in brandArr" :value="item.id" :key="item.id">{{ item.label }}</Option>
               </Select>
             </div>
-            <div class="td-line" v-show="isExpand == 1">
+            <div class="td-line">
               <span class="name">供应商</span>
-              <Select class="w162" v-model="model1" filterable>
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w162" v-model="supplierID" filterable>
+                  <Option v-for="item in supplierList" :value="item.id" :key="item.id">{{ item.label }}</Option>
               </Select>
             </div>
             <div class="td-line" v-show="isExpand == 1">
@@ -46,57 +46,65 @@
               <Input
                 placeholder="请输入"
                 class="w80"
-                v-model="value"
+                type="number"
+                v-model="minStockNum"
               />
               <span style="margin:0 5px;">至</span>
               <Input
                 placeholder="请输入"
                 class="w80"
-                v-model="value"
+                type="number"
+                v-model="maxStockNum"
               />
             </div>
-            <div class="td-line" v-show="isExpand == 1">
+            <!-- <div class="td-line" v-show="isExpand == 1">
               <span class="name">是否新品</span>
-              <Select class="w162" v-model="model1" filterable>
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w162" v-model="isNew">
+                  <Option value="">全部</Option>
+                  <Option value="1">是</Option>
+                  <Option value="0">否</Option>
               </Select>
             </div>
             <div class="td-line" v-show="isExpand == 1">
               <span class="name">是否爆款</span>
-              <Select class="w162" v-model="model1" filterable>
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w162" v-model="isBurst">
+                  <Option value="">全部</Option>
+                  <Option value="1">是</Option>
+                  <Option value="0">否</Option>
               </Select>
-            </div>
+            </div> -->
             <div class="td-line" v-show="isExpand == 1">
               <span class="name">上架日期</span>
               <!-- @on-enter="updateDataList" -->
-              <DatePicker type="date" placeholder="开始日期" style="width: 120px"></DatePicker>
+              <DatePicker v-model="beginTime" type="datetime" placeholder="开始日期" style="width: 158px"></DatePicker>
               <span style="margin:0 5px;">-</span>
-              <DatePicker type="date" placeholder="结束日期" placement="bottom-end" style="width: 120px"></DatePicker>
+              <DatePicker v-model="endTime" type="datetime" placeholder="结束日期" placement="bottom-end" style="width: 158px"></DatePicker>
             </div>
             <div class="td-line" v-show="isExpand == 1">
               <span class="name">类目分类</span>
-              <Select class="w132" v-model="model1" filterable style="margin-right:6px">
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w132" v-model="cid1" filterable style="margin-right:6px">
+                  <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.label }}</Option>
               </Select>
-              <Select class="w132" v-model="model1" filterable style="margin-right:6px">
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w132" v-model="cid2" filterable style="margin-right:6px">
+                  <Option v-for="item in clist2" :value="item.id" :key="item.id">{{ item.label }}</Option>
               </Select>
-              <Select class="w132" v-model="model1" filterable>
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w132" v-model="cid3" filterable>
+                  <Option v-for="item in clist3" :value="item.id" :key="item.id">{{ item.label }}</Option>
               </Select>
             </div>
-            <div class="td-line" v-show="isExpand == 1">
+            <!-- <div class="td-line" v-show="isExpand == 1">
               <span class="name">商品状态</span>
-              <Select class="w162" v-model="model1" filterable>
-                  <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              <Select class="w162" v-model="isupperShelf">
+                  <Option value="">全部</Option>
+                  <Option value="1">已上架</Option>
+                  <Option value="0">已下架</Option>
               </Select>
-            </div>
+            </div> -->
             <div class="expand-box" @click="expandFn(1)" v-show="isExpand == 0">展开 <Icon type="ios-arrow-down" /></div>
             <div class="expand-box" @click="expandFn(0)" v-show="isExpand == 1">收起 <Icon type="ios-arrow-up" /></div>
             <div class="td-line btn">
               <Button type="primary" @click="searchFn">查询</Button>
-              <Button @click="">重置</Button>
+              <Button @click="clearInputs">重置</Button>
             </div>
             <!-- <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button> -->
           </div>
@@ -104,12 +112,12 @@
         <Row>
           <div class="set-con">
             <span style="margin-right: 10px">设置：</span>
-            <Button class="btn" type="primary" :loading="uploadLoading" @click="addFn">上架</Button>
-            <Button class="btn" type="primary" ghost :loading="uploadLoading" @click="addFn">下架</Button>
-            <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">设置新品</Button>
+            <Button class="btn" type="primary" :loading="uploadLoading" @click="gunderFn(1)">上架</Button>
+            <Button class="btn" type="primary" ghost :loading="uploadLoading" @click="gunderFn(0)">下架</Button>
+            <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">设置新品</Button>
             <Button class="btn" type="info" ghost :loading="uploadLoading" @click="addFn">取消新品</Button>
             <Button class="btn" type="warning" :loading="uploadLoading" @click="addFn">设置爆款</Button>
-            <Button class="btn" type="warning" ghost :loading="uploadLoading" @click="addFn">取消爆款</Button>
+            <Button class="btn" type="warning" ghost :loading="uploadLoading" @click="addFn">取消爆款</Button> -->
           </div>
         </Row>
         <!-- <div class="role-top-left">
@@ -138,8 +146,9 @@
     <Row class="margin-top-10">
       <Row>
         <div class="set-con set-top" style="background:#fff;">
-          <span @click="upperShelfFn(1)" class="btn" :class="isupperShelf == 1 ? 'btn-active' : ''">已上架(50)</span>
-          <span @click="upperShelfFn(0)" class="btn" :class="isupperShelf == 0 ? 'btn-active' : ''">待下架(10)</span>
+          <!-- <span @click="upperShelfFn(1)" class="btn" :class="isupperShelf == '' ? 'btn-active' : isupperShelf == 1 ? '' : ''">已上架(50)</span> -->
+          <span @click="upperShelfFn(1)" class="btn" :class="isupperShelf == 1 ? 'btn-active' : ''">已上架</span>
+          <span @click="upperShelfFn(0)" class="btn" :class="isupperShelf == 0 ? 'btn-active' : ''">待上架</span>
         </div>
       </Row>
       <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
@@ -156,19 +165,19 @@
             @on-selection-change="selected"
           >
             <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+              <Button class="btn-item preview-btn" type="text" size="small" @click="look(index)">
                 <i></i>
-                <span>查看详情</span>
+                <span>基本信息</span>
               </Button>
               <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
                 <i></i>
                 <span>编辑</span>
               </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)" v-show="isupperShelf == 0">
+              <Button class="btn-item del-btn" type="text" size="small" @click="grounding(row)" v-show="row.saleable == 0">
                 <i></i>
                 <span>上架</span>
               </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)" v-show="isupperShelf == 1">
+              <Button class="btn-item del-btn" type="text" size="small" @click="undercarriage(row)" v-show="row.saleable == 1">
                 <i></i>
                 <span>下架</span>
               </Button>
@@ -221,6 +230,7 @@
 </template>
 <script>
 import { roleList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
+import { listGoodsPage, saleableFn } from '@/api/goods'
 export default {
   name: 'role-name',
   data () {
@@ -294,6 +304,23 @@ export default {
           label: '商品条形码'
         }
       ],
+      title: '',
+      brandId: '',
+      brandArr: [],
+      supplierID: '',
+      supplierList: [],
+      isBurst: '',
+      isNew: '',
+      minStockNum: '',
+      maxStockNum: '',
+      beginTime: '',
+      endTime: '',
+      cid1: '',
+      cid2: '',
+      cid3: '',
+      clist1: [],
+      clist2: [],
+      clist3: [],
       operationShow: false,
       delBatchModal: false,
       delModal: false,
@@ -327,19 +354,37 @@ export default {
         },
         {
           title: '商品图片',
-          key: 'goodsImg'
+          key: 'goodsImg',
+          width: 100,
+          render: (h, params) => {
+            return h('div', [
+              h('img', {
+                domProps: {
+                  'src': params.row.images[0]
+                },
+                style: {
+                  display: 'block',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '3px'
+                }
+              })
+            ])
+          }
         },
         {
           title: '商品ID',
+          width: 100,
           key: 'id'
         },
         {
           title: '商品标题',
-          key: 'name'
+          width: 300,
+          key: 'title'
         },
         {
           title: '品牌',
-          key: 'pinpai'
+          key: 'brandName'
         },
         {
           title: '类目',
@@ -347,7 +392,7 @@ export default {
         },
         {
           title: '供应商',
-          key: 'product'
+          key: 'supplierName'
         },
         {
           title: '操作',
@@ -384,28 +429,96 @@ export default {
   },
   methods: {
     async getPageList () {
+      // console.log(new Date(this.beginTime))
+      // return;
       let data = {
         FLAG: 1,
+        beginTime: this.beginTime != '' ? this.date2string(this.beginTime) : '',
+        brandId: this.brandId,
+        endTime: this.beginTime != '' ? this.date2string(
+          this.endTime) : '',
+        // maxRetailPrice: this.maxRetailPrice,
+        maxStockNum: this.maxStockNum ? parseInt(this.maxStockNum) : '',
+        // maxSupplyPrice: this.maxSupplyPrice,
+        minStockNum: this.minStockNum ? parseInt(this.minStockNum) : '',
+        categoryId: this.cid3 ? +this.cid3 : '',
+        // minSupplyPrice: this.minSupplyPrice,
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        roleName: this.value,
-        roleSign: this.roleSign,
-        userIdCreate: this.userIdCreate
+        saleable: this.isupperShelf,
+        title: this.title
       }
-      let res = await roleList(data)
+      let res = await listGoodsPage(data)
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
+        this.total = +res.data.content.total
         this.dataList.forEach((item) => {
-          item.menuIds = item.menuIds === null ? '-' : item.menuIds
+          item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
       }
+    },
+    numberDoubled (n) {
+      n = n + ''
+      return n.length == 1 ? '0' + n : n
+    },
+    date2string (d, sp) {
+      sp = sp || '-'
+      let year = d.getFullYear()
+      let month = d.getMonth() + 1
+      let date = d.getDate()
+      let hour = d.getHours()
+      let min = d.getMinutes()
+      let sec = d.getSeconds()
+      return year + sp + this.numberDoubled(month) + sp + date + ' ' + this.numberDoubled(hour) + ':' + this.numberDoubled(min) + ':' + this.numberDoubled(sec)
+    },
+    async look (i) {
+
+    },
+    async saleableFn (ids, saleableStatus) {
+      let data = {
+        FLAG: 1,
+        ids: ids,
+        saleable: saleableStatus
+      }
+      let res = await saleableFn(data)
+      if (res.data.code === 0) {
+        // console.log(res)
+        this.$Modal.success({
+          title: '提示',
+          content: '更新成功'
+        })
+        this.getPageList()
+      }
+    },
+    gunderFn (i) {
+      let ids = []
+      let saleableStatus = i
+      this.selectedList.forEach(item => {
+        ids.push(item.id)
+      })
+      this.saleableFn(ids, saleableStatus)
+    },
+    grounding (row) {
+      let ids = []
+      let saleableStatus = ''
+      ids.push(row.id)
+      saleableStatus = row.saleable == 1 ? 0 : 1
+      this.saleableFn(ids, saleableStatus)
+    },
+    undercarriage (row) {
+      let ids = []
+      let saleableStatus = ''
+      ids.push(row.id)
+      saleableStatus = row.saleable == 1 ? 0 : 1
+      this.saleableFn(ids, saleableStatus)
     },
     expandFn (val) {
       this.isExpand = val
     },
     upperShelfFn (val) {
-      this.isupperShelf = val
+      this.isupperShelf = +val
+      this.getPageList()
     },
     async roleDetail (id) {
       let res = await roleDetail(id)
@@ -697,7 +810,13 @@ export default {
     clearInputs () {
       this.pageNum = 1
       this.pageSize = 10
-      this.keyword2 = ''
+      this.title = ''
+      this.beginTime = ''
+      this.brandId = ''
+      this.beginTime = ''
+      this.maxStockNum = ''
+      this.minStockNum = ''
+      this.isupperShelf = 1
       this.getPageList()
     },
     goBack () {
@@ -714,7 +833,7 @@ export default {
   },
   created () {
     this.getPageList()
-    this.menuTree()
+    // this.menuTree()
   },
   mounted () {
 

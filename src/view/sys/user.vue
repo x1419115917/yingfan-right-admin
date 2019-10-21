@@ -285,8 +285,9 @@ export default {
       let res = await userList(data)
       console.log(res.data.content)
       if (res.data.code === 0) {
-        console.log(res.data.content)
+        // console.log(res.data.content)
         this.dataList = res.data.content.rows
+        this.total = +res.data.content.total
         this.dataList.forEach((item) => {
           item.status = item.status == 1 ? '正常' : '禁用'
         })

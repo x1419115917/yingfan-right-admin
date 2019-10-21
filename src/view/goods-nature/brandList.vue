@@ -87,7 +87,7 @@
           />
         </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑品牌': '新增品牌'"  width="640" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel brand-list-modal" :title="operationShow? '编辑品牌': '新增品牌'"  width="640" @on-cancel="cancelModal1">
 			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
 				<FormItem label="中文名:" prop="name">
 					<Input v-model="formValidate.name" placeholder="请输入中文名"></Input>
@@ -95,21 +95,23 @@
         <FormItem label="英文名:" prop="nameEn">
 					<Input v-model="formValidate.nameEn" placeholder="请输入英文名"></Input>
 				</FormItem>
-        <!-- <div>
-					 <input type="file" class="img-ipt"
-                      ref="filezm"
-                      @change="filezm"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="imgUrl" class="img-box1"
+        <div class="form-item">
+          <span class="name"><span>*</span>品牌LOGO:</span>
+          <span class="form-item-img" v-show="!imgShow1"></span>
+          <img :src="imgUrl" class="img-box1"
                     id="ad21" v-show="imgShow1">
-				</div> -->
+          <div class="btn-upload">
+            <Button type="primary" class="upload-img">上传图片</Button>
+					  <input type="file" class="img-ipt"
+              ref="filezm" @change="filezm" accept="image/*" capture="camera">
+              <span class="tips-upload">(180*180，jpg，小于20k)</span>
+          </div>
+				</div>
 				<FormItem label="品牌介绍:" prop="intro">
-          <Input v-model="formValidate.intro" maxlength="300" show-word-limit type="textarea" placeholder="请输入品牌介绍"  />
+          <Input v-model="formValidate.intro" :maxlength="200" show-word-limit type="textarea" placeholder="请输入品牌介绍"  />
 				</FormItem>
-				<FormItem label="菜单权限:" prop="power" class="is-checked">
-					<Tree :data="ztreesData" show-checkbox multiple style="height: 290px;overflow: auto;"></Tree>
+				<FormItem label="关联分类:" prop="power" class="is-checked">
+					<Tree :data="ztreesData" @on-check-change="catgCheckFn" show-checkbox multiple style="height: 200px;overflow: auto;"></Tree>
 				</FormItem>
 			</Form>
 			<div slot="footer">
@@ -120,7 +122,7 @@
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok="delRole"
+				@on-ok="brandRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除？</p>
@@ -128,7 +130,7 @@
     <Modal
 				width="20"
 				v-model="delBatchModal"
-				@on-ok="batchRemove"
+				@on-ok="brandRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除选中的数据？</p>
@@ -136,12 +138,14 @@
   </div>
 </template>
 <script>
-import { listBrandsPage } from '@/api/nature'
+import { listBrandsPage, categoryTreeList, singleUpload, brandSave, brandDetail, brandUpdate, brandRemove } from '@/api/nature'
 export default {
   name: 'role-name',
   data () {
     return {
       value: '',
+      imgShow1: '',
+      imgUrl: '',
       modal1: false,
       columns1: [],
       data1: [],
@@ -205,7 +209,23 @@ export default {
         },
         {
           title: '品牌LOGO',
-          key: 'pictureUrl'
+          key: 'pictureUrl',
+          width: 100,
+          render: (h, params) => {
+            return h('div', [
+              h('img', {
+                domProps: {
+                  'src': params.row.pictureUrl ? params.row.pictureUrl : ''
+                },
+                style: {
+                  display: 'block',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '3px'
+                }
+              })
+            ])
+          }
         },
         {
           title: '操作',
@@ -222,6 +242,7 @@ export default {
       sendContractBut: false,
       selectedList: [],
       contractInfo: '',
+      catgCheckList: [],
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
@@ -258,16 +279,45 @@ export default {
     upperShelfFn (val) {
       this.isupperShelf = val
     },
-    async roleDetail (id) {
-      let res = await roleDetail(id)
-      if (res.data.code === 0) {
-        this.formValidate = {
-          roleName: res.data.content.roleName,
-          roleDesc: res.data.content.remark,
-          roleSign: res.data.content.roleSign,
-          power: ''
+    catgCheckFn (res) {
+      this.catgCheckList = []
+      res.forEach((item, index) => {
+        if (item.dataInfo.level === 3) {
+          this.catgCheckList.push(item.dataInfo.branchIds)
         }
-        this.menuIds = res.data.content.menuIds
+      })
+      console.log('this.catgCheckList', this.catgCheckList)
+    },
+    async filezm () {
+      console.log(this.$refs.filezm.files[0])
+      let data = {
+        file: this.$refs.filezm.files[0],
+        tag: 2
+      }
+      let res = await singleUpload(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        this.imgShow1 = true
+        this.$refs.filezm.value = ''
+        this.imgUrl = res.data.content
+      }
+    },
+    async brandDetail (id) {
+      let data = {
+        FLAG: 1,
+        id: id
+      }
+      let res = await brandDetail(data)
+      if (res.data.code === 0) {
+        let data = res.data.content
+        this.formValidate = {
+          name: data.name,
+          nameEn: data.nameEn,
+          intro: data.desc
+        }
+        this.imgShow1 = true
+        this.imgUrl = data.pictureUrl
+        this.menuIds = data.braCatRefs
         if (this.menuIds && this.menuIds.length > 0) {
           this.forIds(this.menuIds)
         }
@@ -291,24 +341,33 @@ export default {
         }
       })
     },
-    async roleUpdate () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
+    async brandUpdate () {
+      let branchIds = this.catgCheckList
+      if (branchIds && branchIds.length === 0) {
         this.$Modal.warning({
           title: '提示',
-          content: '请选择菜单权限'
+          content: '请选择关联分类'
         })
         return
       }
       let data = {
         FLAG: 1,
-        menuIds: menuIds,
-        roleId: this.checkedId,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
+        id: this.checkedId,
+        branchIds: branchIds,
+        desc: this.formValidate.intro,
+        name: this.formValidate.name,
+        nameEn: this.formValidate.nameEn,
+        pictureUrl: this.imgUrl
       }
-      let res = await roleUpdate(data)
+      // let data = {
+      //   FLAG: 1,
+      //   menuIds: menuIds,
+      //   roleId: this.checkedId,
+      //   remark: this.formValidate.roleDesc,
+      //   roleName: this.formValidate.roleName,
+      //   roleSign: this.formValidate.roleSign
+      // }
+      let res = await brandUpdate(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -317,13 +376,14 @@ export default {
           content: '编辑成功'
         })
         this.checkedId = ''
-        this.checkedIds = []
+        this.catgCheckList = []
         this.formValidate = {
-          roleName: '',
-          roleDesc: '',
-          roleSign: '',
-          power: ''
+          name: '',
+          nameEn: '',
+          intro: ''
         }
+        this.imgShow1 = false
+        this.imgUrl = ''
         this.getPageList()
       }
     },
@@ -337,6 +397,7 @@ export default {
             parentId: value.parentId,
             title: value.text,
             checked: value.selected === 'true',
+            dataInfo: value.data,
             expand: num < 1,
             children: this.forArr1(value.children, num + 1),
             hasParent: value.hasParent,
@@ -346,6 +407,7 @@ export default {
           datav = {
             id: value.id,
             parentId: value.parentId,
+            dataInfo: value.data,
             title: value.text,
             expand: true,
             hasParent: value.hasParent,
@@ -388,12 +450,14 @@ export default {
       this.formValidate.power = this.checkedIds.join(',')
     },
     //  菜单树结构
-    async menuTree () {
-      let res = await menuTree({})
+    async categoryTreeList () {
+      let data = {
+        FLAG: 1
+      }
+      let res = await categoryTreeList(data)
       console.log(res.data)
       if (res.data.code === 0) {
         let data = [{ ...res.data.content }]
-        console.log(data)
         this.ztreesData = this.forArr1(data, 0)
       }
     },
@@ -401,27 +465,28 @@ export default {
     saveRole () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          this.addRole()
+          this.brandSave()
         }
       })
     },
-    async addRole () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
+    async brandSave () {
+      let branchIds = this.catgCheckList
+      if (branchIds && branchIds.length === 0) {
         this.$Modal.warning({
           title: '提示',
-          content: '请选择菜单权限'
+          content: '请选择关联分类'
         })
         return
       }
       let data = {
         FLAG: 1,
-        menuIds: menuIds,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
+        branchIds: branchIds,
+        desc: this.formValidate.intro,
+        name: this.formValidate.name,
+        nameEn: this.formValidate.nameEn,
+        pictureUrl: this.imgUrl
       }
-      let res = await saveRole(data)
+      let res = await brandSave(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -429,7 +494,14 @@ export default {
           title: '提示',
           content: '添加成功'
         })
-        this.checkedIds = []
+        this.catgCheckList = []
+        this.formValidate = {
+          name: '',
+          nameEn: '',
+          intro: ''
+        }
+        this.imgShow1 = false
+        this.imgUrl = ''
         this.getPageList()
       }
     },
@@ -446,11 +518,9 @@ export default {
     bactchDel () {
       this.delBatchModal = true
     },
-    async batchRemove () {
+    async brandRemove () {
       let ids = []
-      this.selectedList.forEach(item => {
-        ids.push(item.roleId)
-      })
+      ids.push(this.dataList[this.delIndex].id)
       if (ids && ids.length == 0) {
         this.$Modal.warning({
           title: '提示',
@@ -462,14 +532,14 @@ export default {
         FLAG: 1,
         ids: ids
       }
-      let res = await batchRemove(data)
+      let res = await brandRemove(data)
       if (res.data.code === 0) {
-        this.delBatchModal = false
+        this.delModal = false
         this.$Modal.success({
           title: '提示',
           content: '删除成功'
         })
-        this.selectedList = []
+        this.delIndex = ''
         this.getPageList()
       }
     },
@@ -479,7 +549,7 @@ export default {
     operationRole () {
       if (this.operationShow) {
         this.forTreesIds(this.ztreesData)
-        this.roleUpdate()
+        this.brandUpdate()
       } else {
         this.forTreesIds(this.ztreesData)
         this.saveRole()
@@ -488,8 +558,8 @@ export default {
     edit (i) {
       this.modal1 = true
       this.operationShow = true
-      this.checkedId = this.dataList[i].roleId
-      this.roleDetail(this.dataList[i].roleId)
+      this.checkedId = this.dataList[i].id
+      this.brandDetail(this.dataList[i].id)
     },
     remove (i) {
       this.delModal = true
@@ -565,7 +635,7 @@ export default {
   },
   created () {
     this.getPageList()
-    // this.menuTree()
+    this.categoryTreeList()
   },
   mounted () {
 
@@ -573,6 +643,64 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.form-item{
+  padding-left: 6px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  position: relative;
+  & > * {
+    float: left;
+  }
+  .name{
+    float: left;
+    margin-right: 13px;
+    span{
+      display: inline-block;
+      margin-right: 4px;
+      line-height: 1;
+      font-family: SimSun;
+      font-size: 12px;
+      color: #ed4014;
+    }
+  }
+  .btn-upload{
+    position: relative;
+    .upload-img{
+      margin-top: 10px;
+      margin-left: 8px;
+      width: 80px;
+      height: 32px;
+    }
+    .img-ipt{
+      position: absolute;
+      left: 8px;
+      top: 10px;
+      opacity: 0;
+      width: 80px;
+      height: 32px;
+    }
+    .tips-upload{
+      font-size: 12px;
+      color: #999;
+      position: absolute;
+      top: 49px;
+      width: 154px;
+      left: 8px;
+    }
+  }
+  .form-item-img{
+    width: 80px;
+    height: 80px;
+    display: inline-block;
+    border: 1px solid #e6e6e6;
+  }
+  .img-box1{
+    width: 80px;
+    height: 80px;
+    display: inline-block;
+    border: 1px solid #e6e6e6;
+  }
+}
 .set-top{
   padding: 10px;
   span{
@@ -671,5 +799,10 @@ export default {
 }
 .role-top-input{
   float: right;
+}
+.brand-list-modal{
+  /deep/ .ivu-modal, .ivu-modal{
+    top: 22px;
+  }
 }
 </style>

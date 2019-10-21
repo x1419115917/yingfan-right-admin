@@ -7,21 +7,21 @@
       <Col class="user-left" span="5">
         <div class="user-bg">
           <div class="ibox-title">
-						<h5>选择部门</h5>
+						<h5>商品分类</h5>
           </div>
           <Tree :data="treeData1" @on-select-change="treeChange"></Tree>
         </div>
       </Col>
       <Col class="user-right" span="19">
-        <Card title="用户管理">
+        <Card title="类目管理">
           <Row class="role-top">
             <div class="role-top-left">
               <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-              <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
+              <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
             </div>
             <div class="role-top-right">
-              <Input class="ipt" v-model="value" placeholder="请输入姓名" style="width: 200px"></Input>
-              <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
+              <!-- <Input class="ipt" v-model="value" placeholder="请输入姓名" style="width: 200px"></Input>
+              <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button> -->
             </div>
           </Row>
           <Row>
@@ -42,84 +42,54 @@
             </transition>
           </Row>
         </Card>
-        <Row class="margin-top-10">
-          <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
-          <div class="bank_table" style="position:relative;">
-              <Table
-                :columns="columnsList"
-                :data="dataList"
-                height="450"
-                border
-                ref="mainTable"
-                stripe
-                :loading="tableLoading"
-                no-data-text
-                @on-selection-change="selected"
-              >
-                <template slot-scope="{ row, index }" slot="action">
-                  <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
-                    <i></i>
-                    <span>编辑</span>
-                  </Button>
-                  <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
-                    <i></i>
-                    <span>删除</span>
-                  </Button>
-                  <Button class="btn-item del-btn" type="text" size="small" @click="replacePwd(index)">
-                    <i></i>
-                    <span>重置密码</span>
-                  </Button>
-                </template>
-              </Table>
-              <div class="no-data" v-if="dataList.length < 1">
-                <!-- <div class="no-data-img"></div> -->
-                <div class="no-tit">暂无数据</div>
-              </div>
-            </div>
-            <div class="pages">
-              <Page
-                :current="pageNum"
-                :page-size="pageSize"
-                :total="total"
-                show-total
-                show-elevator
-                show-sizer
-                @on-page-size-change="changePageSize"
-                @on-change="pageChange"
-              />
-            </div>
-        </Row>
+        <Row class="margin-top-10 bank-table-content">
+      <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
+      <div class="bank_table" style="position:relative;min-height: 200px;">
+        <tree-grid
+          :items='data'
+          :columns='columns'
+          @on-row-click='rowClick'
+          @on-selection-change='selectionClick'
+          @on-sort-change='sortClick'
+        >
+        </tree-grid>
+          <div class="no-data" v-if="data.length < 1">
+            <!-- <div class="no-data-img"></div> -->
+            <div class="no-tit">暂无数据</div>
+          </div>
+        </div>
+    </Row>
       </Col>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑用户': '新增用户'"  width="640" @on-cancel="cancelModal1">
-			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-        <FormItem label="姓名:" prop="name">
-					<Input v-model="formValidate.name" placeholder="请输入姓名"></Input>
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑类目': '新增类目'"  width="640" @on-cancel="cancelModal1">
+			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate1" :label-width="90">
+        <FormItem :disable="level > 1" label="一级类目:" prop="categoryFirst">
+					<Input v-model="formValidate.categoryFirst" :disabled="level > 1" placeholder="请输入一级类目"></Input>
 				</FormItem>
-				<FormItem label="用户名:" prop="username">
-					<Input :disabled="operationShow" v-model="formValidate.username" placeholder="请输入用户名"></Input>
+				<FormItem :disable="level > 2" label="二级类目:" prop="categorySecond" v-show="level >= 2">
+					<Input v-model="formValidate.categorySecond" :disabled="level > 2" placeholder="请输入二级类目"></Input>
 				</FormItem>
-        <FormItem v-show="!operationShow" label="密码:" prop="pwd">
-					<Input type="password" v-model="formValidate.pwd" placeholder="请输入密码"></Input>
-				</FormItem>
-        <FormItem label="部门:" prop="dept">
-					<!-- <Input class="dept-ipt" @click="deptModal" v-model="formValidate.dept" style="cursor: pointer;" disabled placeholder="所属部门"></Input> -->
-          <span class="dept-ipt" @click="deptModal" >{{formValidate.dept ? formValidate.dept : '所属部门'}}</span>
-        </FormItem>
-				<FormItem label="E-mail:" prop="email">
-					<Input v-model="formValidate.email" placeholder="请输入E-mail"></Input>
+        <FormItem label="三级类目:" prop="categoryThird" v-show="level == 3">
+					<Input v-model="formValidate.categoryThird" placeholder="请输入三级类目"></Input>
 				</FormItem>
         <FormItem label="状态:" prop="status">
 					<RadioGroup v-model="formValidate.status">
-            <Radio label="1">正常</Radio>
-            <Radio label="0">禁用</Radio>
+            <Radio label="1">显示</Radio>
+            <Radio label="0">隐藏</Radio>
           </RadioGroup>
 				</FormItem>
-        <FormItem label="角色:" prop="roleIds">
-          <CheckboxGroup v-model="formValidate.roleIds" @on-change="checkAllGroupChange">
-              <Checkbox v-for="(item,index) in rolelistArr" :key="index" :label="item.roleId"><span>{{item.roleName}}</span></Checkbox>
-          </CheckboxGroup>
-				</FormItem>
+        <div class="form-item" v-show="level == 3">
+          <span class="name"><span>*</span>类目图标:</span>
+          <span class="form-item-img" v-show="!imgShow1"></span>
+          <img :src="imgUrl" class="img-box1"
+                    id="ad21" v-show="imgShow1">
+          <div class="btn-upload">
+            <Button type="primary" class="upload-img">上传图片</Button>
+					  <input type="file" class="img-ipt"
+              ref="filezm" @change="filezm" accept="image/*" capture="camera">
+              <span class="tips-upload">(180*180，jpg，小于20k)</span>
+          </div>
+				</div>
 			</Form>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
@@ -146,30 +116,34 @@
 		</Modal>
     <Modal
 				width="20"
-				v-model="delModal"
-				@on-ok="delRole"
+				v-model="delBatchModal"
+				@on-ok="catgRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除？</p>
 		</Modal>
-    <Modal
+    <!-- <Modal
 				width="20"
 				v-model="delBatchModal"
-				@on-ok="batchRemove"
+				@on-ok="catgRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
-			<p>确定删除选中的数据？</p>
+			<p>确定删除选中的数据？</p> -->
 		</Modal>
   </div>
 </template>
 <script>
 import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
+import { categoryTreeList, catgSave, singleUpload, catgDetail, catgUpdate, catgRemove } from '@/api/nature'
+import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
   name: 'role-name',
   data () {
     return {
       value: '',
       modal1: false,
+      imgShow1: false,
+      imgUrl: '',
       modal3: false,
       modal5: false,
       operationShow: false,
@@ -189,65 +163,60 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
+      level: 1,
       formValidate: {
-        name: '',
-        username: '',
-        pwd: '',
-        dept: '',
-        deptId: '',
-        email: '',
-        status: '',
-        roleIds: []
+        categoryFirst: '',
+        categorySecond: '',
+        categoryThird: '',
+        parentId: '0',
+        status: ''
       },
-      ruleValidate: {
-        name: [
+      ruleValidate1: {
+        categoryFirst: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        username: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        pwd: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        email: [
+        status: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
       roleName: '',
-      columnsList: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
+      columns: [
+      // {
+      //   type: 'selection',
+      //   width: '50'
+      // },
         {
           title: '序号',
-          key: 'userId'
+          key: 'id',
+          sortable: true,
+          width: '100'
         },
         {
-          title: '姓名',
-          key: 'name'
-        },
-        {
-          title: '用户名',
-          key: 'username'
-        },
-        {
-          title: '邮箱',
-          key: 'email'
-        },
-        {
-          title: '状态',
-          key: 'status'
+          title: '类目名称',
+          key: 'text',
+          width: '400'
         },
         {
           title: '操作',
-          width: 200,
-          slot: 'action',
-          align: 'center'
+          type: 'action',
+          actions: [
+            {
+              type: 'primary',
+              text: '编辑'
+            },
+            {
+              type: 'error',
+              text: '删除'
+            },
+            {
+              type: 'success',
+              text: '添加类目'
+            }
+          ],
+          width: '180'
         }
       ],
-      dataList: [],
+      data: [],
       userIdCreate: '',
       roleSign: '',
       dataDel: [],
@@ -272,26 +241,99 @@ export default {
       tableLoading: false
     }
   },
+  components: { TreeGrid },
   methods: {
     async getPageList () {
       let data = {
-        FLAG: 1,
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize,
-        name: this.value,
-        deptId: this.formValidate.deptId,
-        deptName: this.formValidate.dept
+        FLAG: 1
       }
-      let res = await userList(data)
-      console.log(res.data.content)
+      let res = await categoryTreeList(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.dataList = res.data.content.rows
-        this.dataList.forEach((item) => {
-          item.status = item.status == 1 ? '正常' : '禁用'
-        })
+        this.data = [...res.data.content.children]
+        this.forTreeCatg(this.data)
+        let data = [{ ...res.data.content }]
+        this.treeData1 = this.forArr1(data, -2)
       }
     },
+    forTreeCatg (arr) {
+      arr.forEach(item => {
+        item.levelNo = item.data.level
+        item.showIS = item.data.isShow
+        if (item.children) {
+          this.forTreeCatg(item.children)
+        }
+      })
+    },
+    async filezm () {
+      // console.log(this.$refs.filezm.files[0])
+      let data = {
+        file: this.$refs.filezm.files[0],
+        tag: 1
+      }
+      let res = await singleUpload(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        this.imgShow1 = true
+        this.$refs.filezm.value = ''
+        this.imgUrl = res.data.content
+      }
+    },
+    rowClick (data, index, event, text) {
+      console.log('当前行数据:' + data)
+      console.log('点击行号:' + index)
+      console.log('点击事件:' + event)
+      console.log('text', text)
+      switch (text) {
+        case '添加类目':
+          let categoryFirst = ''
+          this.level = data.levelNo + 1
+          // console.log('data.parentId', data.parentId)
+          if (data.levelNo === 1) {
+            categoryFirst = data.text
+          } else if (data.levelNo === 2) {
+            categoryFirst = data.data.branchNames.split('>')[0]
+          }
+          this.formValidate = {
+            categoryFirst: categoryFirst,
+            categorySecond: data.levelNo === 2 ? data.text : '',
+            categoryThird: '',
+            parentId: data.id,
+            status: ''
+          }
+          this.modal1 = true
+          this.operationShow = false
+          console.log(data)
+          break
+        case '删除':
+          this.delBatchModal = true
+          this.delID = data.id
+          break
+        case '编辑':
+          this.editID = data.id
+          this.catgDetail(this.editID)
+          this.editInfo = data
+          this.modal1 = true
+          this.operationShow = true
+          // this.formValidate = {
+          //   superiorMenu: data.parentId ==0 ? '根目录' : data.parentId,
+          //   parentId: data.parentId,
+          //   menuType: '',
+          //   menuName: '',
+          //   url: '',
+          //   roleSign: '',
+          //   sort: '',
+          //   icon: ''
+          // }
+          break
+      }
+    },
+    selectionClick (arr) {
+      console.log('选中数据id数组:' + arr)
+    },
+    sortClick (key, type) {
+      console.log('排序字段:' + key)
+      console.log('排序规则:' + type)
+    }, // 分割线
     async getRoleList () {
       let data = {
         FLAG: 1,
@@ -303,25 +345,41 @@ export default {
         this.rolelistArr = res.data.content.rows
       }
     },
-    async detailUser (id) {
-      let res = await detailUser(id)
+    async catgDetail (id) {
+      let data = {
+        id: id,
+        FLAG: 1
+      }
+      let res = await catgDetail(data)
       if (res.data.code === 0) {
-        // this.formValidate = {
-        //   roleName: res.data.content.roleName,
-        //   roleDesc: res.data.content.remark,
-        //   roleSign: res.data.content.roleSign,
-        //   power: ''
-        // }
-        this.formValidate = {
-          name: res.data.content.name,
-          username: res.data.content.username,
-          pwd: res.data.content.password,
-          dept: res.data.content.deptName,
-          deptId: res.data.content.deptId,
-          email: res.data.content.email,
-          status: res.data.content.status.toString(),
-          roleIds: res.data.content.roleIds
+        let data = res.data.content
+        this.level = data.level
+        this.imgShow1 = true
+        this.imgUrl = data.pictureUrl
+        let categoryFirst = ''
+        let categorySecond = ''
+        let categoryThird = ''
+        let categoryArr = data.branchNames.split('>')
+        if (categoryArr && categoryArr.length == 1) {
+          categoryFirst = categoryArr[0]
+        } else if (categoryArr && categoryArr.length == 2) {
+          categoryFirst = categoryArr[0]
+          categorySecond = categoryArr[1]
+        } else if (categoryArr && categoryArr.length == 3) {
+          categoryFirst = categoryArr[0]
+          categorySecond = categoryArr[1]
+          categoryThird = categoryArr[2]
         }
+        this.formValidate = {
+          categoryFirst: categoryFirst,
+          categorySecond: categorySecond,
+          categoryThird: categoryThird,
+          parentId: data.parentId,
+          status: data.isShow.toString()
+        }
+        // this.formValidate = {
+
+        // }
       }
     },
     forIds (arr) {
@@ -346,19 +404,31 @@ export default {
       this.roleIds = data
     },
     async updateUser () {
+      let categoryName = this.level == 1 ? this.formValidate.categoryFirst : this.level == 2 ? this.formValidate.categorySecond : this.formValidate.categoryThird
+      if (categoryName == '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请输入分类名称'
+        })
+        return
+      }
+      if (this.editID && this.level == 3 && this.imgUrl == '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请上传图片'
+        })
+        return
+      }
       let data = {
         FLAG: 1,
-        userId: this.checkedId,
-        deptId: this.formValidate.deptId,
-        deptName: this.formValidate.dept,
-        email: this.formValidate.email,
-        status: parseInt(this.formValidate.status),
-        username: this.formValidate.username,
-        name: this.formValidate.name,
-        roleIds: this.formValidate.roleIds,
-        password: this.formValidate.pwd
+        id: this.editID,
+        isShow: this.formValidate.status,
+        name: categoryName,
+        // parentId: this.formValidate.parentId,
+        pictureUrl: this.imgUrl,
+        sortOrder: 0
       }
-      let res = await updateUser(data)
+      let res = await catgUpdate(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -452,13 +522,6 @@ export default {
         this.ztreesData = this.forArr1(data, 0)
       }
     },
-    async sysDeptTree () {
-      let res = await sysDeptTree({})
-      if (res.data.code === 0) {
-        let data = [{ ...res.data.content }]
-        this.treeData1 = this.forArr1(data, -1)
-      }
-    },
     // 取消选中的部门
     forTreesIds (arr) {
       arr.forEach((item, index) => {
@@ -486,35 +549,39 @@ export default {
       this.formValidate.dept = data[0].title == '顶级节点' ? '' : data[0].title
       this.getPageList()
     },
-    //  添加用户
+    //  添加
     saveUser () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          if (!this.formValidate.deptId) {
-            this.$Modal.warning({
-              title: '提示',
-              content: '请选择部门'
-            })
-            return
-          }
-          this.addUser()
+          this.catgSave()
         }
       })
     },
-    async addUser () {
+    async catgSave () {
+      let categoryName = this.level == 1 ? this.formValidate.categoryFirst : this.level == 2 ? this.formValidate.categorySecond : this.formValidate.categoryThird
+      if (categoryName == '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请输入分类名称'
+        })
+        return
+      }
+      if (this.level == 3 && this.imgUrl == '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请上传图片'
+        })
+        return
+      }
       let data = {
         FLAG: 1,
-        deptId: this.formValidate.deptId,
-        deptName: this.formValidate.dept,
-        email: this.formValidate.email,
-        status: parseInt(this.formValidate.status),
-        deptName: this.formValidate.dept,
-        username: this.formValidate.username,
-        name: this.formValidate.name,
-        roleIds: this.formValidate.roleIds,
-        password: this.formValidate.pwd
+        isShow: this.formValidate.status,
+        name: categoryName,
+        parentId: this.formValidate.parentId,
+        pictureUrl: this.imgUrl,
+        sortOrder: 0
       }
-      let res = await userSave(data)
+      let res = await catgSave(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -523,43 +590,33 @@ export default {
           content: '添加成功'
         })
         this.checkedIds = []
+        this.imgShow1 = false
+        this.imgUrl = ''
+        this.formValidate = {
+          categoryFirst: '',
+          categorySecond: '',
+          categoryThird: '',
+          parentId: 0,
+          status: ''
+        }
         this.getPageList()
       }
     },
     addFn () {
+      this.level = 1
       this.modal1 = true
       this.operationShow = false
       this.formValidate = {
-        deptId: '',
-        dept: '',
-        email: '',
-        status: '',
-        deptName: '',
-        username: '',
-        name: '',
-        roleIds: [],
-        pwd: ''
+        categoryFirst: '',
+        categorySecond: '',
+        categoryThird: '',
+        parentId: 0,
+        status: ''
       }
     },
-    bactchDel () {
+    async catgRemove () {
       let ids = []
-      this.selectedList.forEach(item => {
-        ids.push(item.userId)
-      })
-      if (ids && ids.length == 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择数据进行删除'
-        })
-        return
-      }
-      this.delBatchModal = true
-    },
-    async batchRemove () {
-      let ids = []
-      this.selectedList.forEach(item => {
-        ids.push(item.userId)
-      })
+      ids.push(this.delID)
       if (ids && ids.length == 0) {
         this.$Modal.warning({
           title: '提示',
@@ -569,11 +626,12 @@ export default {
       }
       let data = {
         FLAG: 1,
-        userIds: ids
+        ids: ids
       }
-      let res = await batchRemoveUser(data)
+      let res = await catgRemove(data)
       if (res.data.code === 0) {
         this.delBatchModal = false
+        this.delID = ''
         this.$Modal.success({
           title: '提示',
           content: '删除成功'
@@ -598,7 +656,7 @@ export default {
       this.modal1 = true
       this.operationShow = true
       this.checkedId = this.dataList[i].userId
-      this.detailUser(this.dataList[i].userId)
+      this.catgDetail(this.dataList[i].userId)
     },
     replacePwd (i) {
       this.modal3 = true
@@ -670,18 +728,21 @@ export default {
       this.modal1 = false
       this.menuIds = []
       this.checkedId = ''
-      this.formValidate = {
-        deptId: '',
-        dept: '',
-        email: '',
-        status: '',
-        deptName: '',
-        username: '',
-        name: '',
-        roleIds: [],
-        pwd: ''
-      }
-      this.checkedPrentFn(this.ztreesData)
+      this.imgShow1 = false
+      this.imgUrl = ''
+      this.$refs.formValidate.resetFields()
+      // this.formValidate = {
+      //   deptId: '',
+      //   dept: '',
+      //   email: '',
+      //   status: '',
+      //   deptName: '',
+      //   username: '',
+      //   name: '',
+      //   roleIds: [],
+      //   pwd: ''
+      // }
+      // this.checkedPrentFn(this.ztreesData)
     },
     cancelModal3 () {
       this.modal3 = false
@@ -738,15 +799,16 @@ export default {
     this.getPageList()
     this.getRoleList()
     // this.menuTree()
-    this.sysDeptTree()
   },
   mounted () {
     // this.getPageList()
-    // this.sysDeptTree()
   }
 }
 </script>
 <style lang="less" scoped>
+.bank-table-content{
+  position: relative;
+}
 .dept-ipt{
   display: inline-block;
   width: 100%;
@@ -841,5 +903,63 @@ export default {
 }
 .btn-item{
   margin-left: 6px;
+}
+.form-item{
+  padding-left: 6px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  position: relative;
+  & > * {
+    float: left;
+  }
+  .name{
+    float: left;
+    margin-right: 13px;
+    span{
+      display: inline-block;
+      margin-right: 4px;
+      line-height: 1;
+      font-family: SimSun;
+      font-size: 12px;
+      color: #ed4014;
+    }
+  }
+  .btn-upload{
+    position: relative;
+    .upload-img{
+      margin-top: 10px;
+      margin-left: 8px;
+      width: 80px;
+      height: 32px;
+    }
+    .img-ipt{
+      position: absolute;
+      left: 8px;
+      top: 10px;
+      opacity: 0;
+      width: 80px;
+      height: 32px;
+    }
+    .tips-upload{
+      font-size: 12px;
+      color: #999;
+      position: absolute;
+      top: 49px;
+      width: 154px;
+      left: 8px;
+    }
+  }
+  .form-item-img{
+    width: 80px;
+    height: 80px;
+    display: inline-block;
+    border: 1px solid #e6e6e6;
+  }
+  .img-box1{
+    width: 80px;
+    height: 80px;
+    display: inline-block;
+    border: 1px solid #e6e6e6;
+  }
 }
 </style>
