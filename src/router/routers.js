@@ -346,7 +346,7 @@ export const appRouter = [
         path: 'supplier',
         name: 'supplier',
         meta: {
-          icon: '',
+          icon: 'ios-stats',
           title: '供应商管理',
           hideInMenu: true
         },

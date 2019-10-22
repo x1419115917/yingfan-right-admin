@@ -87,7 +87,7 @@ export const saveSupplier = data => {
 // 删除供应商
 export const removeSupplier = data => {
   return axios.request({
-    url: '/account/supplier/remove',
+    url: '/account/supplier/batchRemove',
     data,
     method: 'post'
   })

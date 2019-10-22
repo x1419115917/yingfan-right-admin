@@ -84,10 +84,10 @@
                     <i></i>
                     <span>编辑</span>
                   </Button>
-                  <Button class="btn-item del-btn" type="text" size="small" @click="replacePwd(index)">
+                  <!-- <Button class="btn-item del-btn" type="text" size="small" @click="replacePwd(index)">
                     <i></i>
                     <span>取消关联类目</span>
-                  </Button>
+                  </Button> -->
                   <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
                     <i></i>
                     <span>删除</span>
@@ -116,48 +116,35 @@
     </Row>
     <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑用户': '新增用户'"  width="640" @on-cancel="cancelModal1">
 			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-        <FormItem label="姓名:" prop="name">
-					<Input v-model="formValidate.name" placeholder="请输入姓名"></Input>
-				</FormItem>
-				<FormItem label="用户名:" prop="username">
-					<Input :disabled="operationShow" v-model="formValidate.username" placeholder="请输入用户名"></Input>
-				</FormItem>
-        <FormItem v-show="!operationShow" label="密码:" prop="pwd">
-					<Input type="password" v-model="formValidate.pwd" placeholder="请输入密码"></Input>
-				</FormItem>
-        <FormItem label="部门:" prop="dept">
-					<!-- <Input class="dept-ipt" @click="deptModal" v-model="formValidate.dept" style="cursor: pointer;" disabled placeholder="所属部门"></Input> -->
-          <span class="dept-ipt" @click="deptModal" >{{formValidate.dept ? formValidate.dept : '所属部门'}}</span>
-        </FormItem>
-				<FormItem label="E-mail:" prop="email">
-					<Input v-model="formValidate.email" placeholder="请输入E-mail"></Input>
-				</FormItem>
-        <FormItem label="状态:" prop="status">
+        <FormItem label="属性类型:" prop="status">
 					<RadioGroup v-model="formValidate.status">
-            <Radio label="1">正常</Radio>
-            <Radio label="0">禁用</Radio>
+            <Radio label="1">通用属性</Radio>
+            <Radio label="0">扩展属性</Radio>
           </RadioGroup>
 				</FormItem>
-        <FormItem label="角色:" prop="roleIds">
-          <CheckboxGroup v-model="formValidate.roleIds" @on-change="checkAllGroupChange">
-              <Checkbox v-for="(item,index) in rolelistArr" :key="index" :label="item.roleId"><span>{{item.roleName}}</span></Checkbox>
+        <FormItem label="属性值性质:" prop="nature">
+          <CheckboxGroup v-model="formValidate.nature" @on-change="checkAllGroupChange">
+              <Checkbox :label="1"><span>下拉框</span></Checkbox>
+              <Checkbox :label="2"><span>复选框</span></Checkbox>
+              <Checkbox :label="3"><span>文本框</span></Checkbox>
           </CheckboxGroup>
+				</FormItem>
+				<FormItem label="属性名称:" prop="name">
+					<Input v-model="formValidate.name" placeholder="请输入属性名称"></Input>
+				</FormItem>
+        <FormItem label="属性值:" class="check-attr">
+          <ul class="attr-list">
+            <li class="attr-item">
+              <Input class="attr-ipt" v-model="attrItem" placeholder="请输入属性值"></Input>
+
+            </li>
+          </ul>
+          <span class="add-attr" size="large" type="primary">增加属性值</span>
 				</FormItem>
 			</Form>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
-			</div>
-		</Modal>
-    <Modal v-model="modal3" class="smsModel" title="重置密码"  width="540" @on-cancel="cancelModal3">
-      <Form ref="formValidPwd" :model="formValidPwd" :rules="ruleValidPwd" :label-width="90">
-        <FormItem label="密码:" prop="password">
-					<Input type="password" v-model="formValidPwd.password" placeholder="请输入密码"></Input>
-				</FormItem>
-			</Form>
-			<div slot="footer">
-				<Button size="large" @click="cancelModal3" class="cancel" style="margin-right: 10px">取消</Button>
-				<Button size="large" @click="replacePwdFn" type="primary">确定</Button>
 			</div>
 		</Modal>
     <Modal v-model="modal5" class="smsModel deptsms-modal" title="选择部门"  width="340" @on-cancel="cancelModal5">
@@ -194,12 +181,12 @@ export default {
     return {
       value: '',
       modal1: false,
-      modal3: false,
       modal5: false,
       operationShow: false,
       delBatchModal: false,
       delModal: false,
       checkedIds: [],
+      attrList: [],
       checkedId: '',
       deptId: '',
       menuIdsArr: [],
@@ -246,24 +233,33 @@ export default {
         },
         {
           title: '序号',
+          width: 80,
           key: 'id'
         },
         {
-          title: '属性模板名称',
+          title: '属性名称',
           width: 240,
           key: 'specName'
         },
         {
-          title: '类目分类',
-          key: 'catg'
+          title: '属性值',
+          width: 240,
+          key: 'specValsStr'
+        },
+        {
+          title: '属性类型',
+          width: 100,
+          key: 'operate'
         },
         {
           title: '权重',
+          width: 80,
           key: 'operateType'
         },
         {
           title: '操作',
-          width: 230,
+          width: 180,
+          fixed: 'right',
           slot: 'action',
           align: 'center'
         }
@@ -309,7 +305,8 @@ export default {
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
-          item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
+          item.specValsStr = item.specVals.join('，')
+          // item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
       }
     },
@@ -633,36 +630,6 @@ export default {
       this.checkedId = this.dataList[i].userId
       this.detailUser(this.dataList[i].userId)
     },
-    replacePwd (i) {
-      this.modal3 = true
-      this.checkedId = this.dataList[i].userId
-      this.detailUser(this.dataList[i].userId)
-    },
-    replacePwdValid () {
-      this.$refs.formValidPwd.validate((valid) => {
-        if (valid) {
-          this.replacePwdFn()
-        }
-      })
-    },
-    async replacePwdFn () {
-      let data = {
-        FLAG: 1,
-        pwdNew: this.formValidPwd.password,
-        pwdOld: this.formValidate.pwd,
-        userId: this.checkedId
-      }
-      let res = await adminResetPwd(data)
-      if (res.data.code === 0) {
-        this.modal3 = false
-        this.formValidPwd.password = ''
-        this.checkedId = ''
-        this.$Modal.success({
-          title: '提示',
-          content: '修改成功'
-        })
-      }
-    },
     remove (i) {
       this.delModal = true
       this.delIndex = i
@@ -715,21 +682,6 @@ export default {
         pwd: ''
       }
       this.checkedPrentFn(this.ztreesData)
-    },
-    cancelModal3 () {
-      this.modal3 = false
-      this.checkedId = ''
-      this.formValidate = {
-        deptId: '',
-        deptName: '',
-        email: '',
-        status: '',
-        dept: '',
-        username: '',
-        name: '',
-        roleIds: [],
-        pwd: ''
-      }
     },
     selected (res) {
       this.selectedList = res
@@ -797,6 +749,36 @@ export default {
   opacity: 1;
   cursor: pointer;
   color: #ccc;
+}
+.attr-list{
+  list-style: none;
+  .attr-item{
+    position: relative;
+    .attr-ipt{
+      width: 100px;
+      height: 34px;
+    }
+  }
+}
+.add-attr{
+  display: inline-block;
+  background-color: #78b5f6;
+  border-radius: 4px;
+  width: 90px;
+  height: 34px;
+  line-height: 34px;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+}
+.check-attr /deep/ .ivu-form-item-label:before {
+    content: '*';
+    display: inline-block;
+    margin-right: 4px;
+    line-height: 1;
+    font-family: SimSun;
+    font-size: 12px;
+    color: #ed4014;
 }
 .ibox-title {
     background-color: #ffffff;

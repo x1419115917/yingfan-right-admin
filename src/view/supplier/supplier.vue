@@ -510,13 +510,14 @@ export default {
       this.$router.push({
         name: 'addsupr'
       })
+      sessionStorage.setItem('type', 'add')
     },
     bactchDel () {
       this.delBatchModal = true
     },
     async brandRemove () {
-      // let ids = []
-      // ids.push()
+      let ids = []
+      ids.push(this.dataList[this.delIndex].id)
       // if (ids && ids.length == 0) {
       //   this.$Modal.warning({
       //     title: '提示',
@@ -526,7 +527,7 @@ export default {
       // }
       let data = {
         FLAG: 1,
-        id: this.dataList[this.delIndex].id
+        ids: ids
       }
       let res = await removeSupplier(data)
       if (res.data.code === 0) {
@@ -552,15 +553,13 @@ export default {
       }
     },
     edit (i) {
-      this.modal1 = true
+      // this.modal1 = true
       this.operationShow = true
       this.checkedId = this.dataList[i].id
+      sessionStorage.setItem('type', 'edit')
+      sessionStorage.setItem('id', this.checkedId)
       this.$router.push({
-        path: 'addsupr',
-        query: {
-          type: 'edit',
-          id: this.dataList[i].id
-        }
+        name: 'addsupr'
       })
     },
     remove (i) {
