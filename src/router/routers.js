@@ -333,8 +333,8 @@ export const appRouter = [
     ]
   },
   {
-    path: '/sup',
-    name: 'sup',
+    path: '/supplierManager',
+    name: 'supplierManager',
     meta: {
       icon: 'ios-stats',
       title: '供应商',
@@ -356,21 +356,11 @@ export const appRouter = [
         path: 'addsupr',
         name: 'addsupr',
         meta: {
-          hideInMenu: true,
           icon: '',
-          title: '编辑供应商'
+          title: '供应商添加',
+          hideInMenu: true
         },
         component: () => import('@/view/supplier/add-supplier.vue')
-      },
-      {
-        path: 'testexcel',
-        name: 'testexcel',
-        meta: {
-          hideInMenu: false,
-          icon: '',
-          title: '测试页'
-        },
-        component: () => import('@/view/supplier/export-excel.vue')
       }
     ]
   },

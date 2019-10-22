@@ -5,14 +5,6 @@
   <div>
     <Card :title="type == 'edit' ? '编辑供应商' : '新增供应商'">
       <Row class="role-top">
-        <!-- <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加供应商</Button>
-          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
-        </div> -->
-        <!-- <div class="role-top-right">
-          <Input class="ipt" v-model="value" placeholder="请输入供应商名称" style="width: 200px"></Input>
-          <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
-        </div> -->
       </Row>
       <Row>
         <div class="ivu-upload-list-file" v-if="file !== null">
@@ -63,10 +55,10 @@
                   @on-selection-change="selected"
                 >
                   <template slot-scope="{ row, index }" slot="action">
-                    <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+                    <!-- <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
                       <i></i>
                       <span>编辑</span>
-                    </Button>
+                    </Button> -->
                     <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
                       <i></i>
                       <span>删除</span>
@@ -78,57 +70,43 @@
           </Form>
           <div class="bank_table_footer">
             <Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 15px; padding: 5px 38px;">取消</Button>
-            <Button size="large" @click="operationRole" type="primary" style="padding: 5px 38px;">确定</Button>
+            <Button size="large" @click="saveSupplierData" type="primary" style="padding: 5px 38px;">确定</Button>
           </div>
       </div>
     </Row>
     <Modal v-model="modal1" class="smsModel" :title="'新增代理类目/品牌'"  width="840" @on-cancel="cancelModal1">
-      <div class="create-catg">
+      <div class="create-catg" style="min-height: 400px;">
         <div class="title">
           <div class="row">
               <span>基本信息</span>
               <span>没有相关类目？去创建类目</span>
           </div>
         </div>
-        <Row>
-          <Col span="2" class="sub-left-item">类目：</Col>
-          <Col span="22">
-            <Row>
+        <Row style="margin-top: 40px;">
+          <Col span="3" class="sub-left-item">类目：</Col>
+          <Col span="21">
+            <!-- <Row>
+              <Tree :data="treeData1" @on-check-change="catgCheckFn" show-checkbox multiple style="height: 200px;overflow: auto;"></Tree>
+            </Row> -->
+            <Row style="margin-bottom: 35px;">
               <Col span="7">
-                <p class="ul-title">选择一级分类</p>
-                <ul class="list-group ul-content">
-                    <li class="list-group-item">服装</li>
-                    <li class="list-group-item">餐厨</li>
-                    <li class="list-group-item">配件</li>
-                    <li class="list-group-item">电子产品</li>
-                    <li class="list-group-item">生活用品</li>
-                </ul>
+                <Select v-model="cur1" filterable allow-create @on-change="selClist1">
+                  <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                </Select>
               </Col>
-              <Col span="1">
-                <Icon type="ios-arrow-dropright-circle" size="30" style="margin-top: 99px;" />
+              <Col span="1" style="width: 15px;height: 10px;">
               </Col>
               <Col span="7">
-                <p class="ul-title">选择二级分类</p>
-                <ul class="list-group ul-content">
-                    <li class="list-group-item">服装</li>
-                    <li class="list-group-item">餐厨</li>
-                    <li class="list-group-item">配件</li>
-                    <li class="list-group-item">电子产品</li>
-                    <li class="list-group-item">生活用品</li>
-                </ul>
+                <Select v-model="cur2" filterable allow-create @on-change="selClist2">
+                  <Option v-for="item in clist2" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                </Select>
               </Col>
-              <Col span="1">
-                <Icon type="ios-arrow-dropright-circle" size="30" style="margin-top: 99px;" />
+              <Col span="1" style="width: 15px;height: 10px;">
               </Col>
               <Col span="7">
-                <p class="ul-title">选择三级分类</p>
-                <ul class="list-group ul-content">
-                    <li class="list-group-item">服装</li>
-                    <li class="list-group-item">餐厨</li>
-                    <li class="list-group-item">配件</li>
-                    <li class="list-group-item">电子产品</li>
-                    <li class="list-group-item">生活用品</li>
-                </ul>
+                <Select v-model="cur3" filterable allow-create @on-change="selClist3">
+                  <Option v-for="(item, index) in clist3" :value="index" :key="item.id">{{ item.name }}</Option>
+                </Select>
               </Col>
             </Row>
           </Col>
@@ -138,68 +116,66 @@
           <Col span="21">
             <Row>
               <Col span="7">
-                <Input v-model="value3" placeholder="输入品牌关键字" style="width: 200px" />
+                <Input v-model="checkName" placeholder="输入品牌关键字" style="width: 200px" />
               </Col>
               <Col span="3">
-                <Button size="large" @click="operationRole" type="primary">确定</Button>
+                <Button size="large" @click="searchBrand" type="primary">确定</Button>
               </Col>
               <Col span="6">
                 <span class="goto-brand">没有相关品牌？去创建品牌</span>
               </Col>
             </Row>
-            <Row style="margin-top: 15px;">
+            <Row style="margin-top: 30px;">
               <CheckboxGroup v-model="brandListcheck">
                 <Checkbox class="check-item" :label="item.id" v-for="(item, index) in brandListArr" :key="index">
-                    <span class="brand-name">{{item.brandName}}</span>
-                </Checkbox>
-                <Checkbox class="check-item" label="facebook">
-                    <span class="brand-name">品牌名称</span>
+                    <span class="brand-name">{{item.name}}</span>
                 </Checkbox>
             </CheckboxGroup>
-              <!-- <Col span="7">
-                <Input v-model="value3" placeholder="输入品牌关键字" style="width: 200px" />
-              </Col>
-              <Col span="3">
-              </Col>
-              <Col span="6">
-              </Col> -->
             </Row>
           </Col>
         </Row>
       </div>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
-				<Button size="large" @click="operationRole" type="primary">确定</Button>
+				<Button size="large" @click="opearSave" type="primary">确定</Button>
 			</div>
 		</Modal>
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok="delRole"
+				@on-ok="removeBrand"
 				:closable="false"
 				class-name="vertical-center-modal">
-			<p>确定删除？</p>
+			<p>确定移除列表？</p>
 		</Modal>
-    <Modal
+    <!-- <Modal
 				width="20"
 				v-model="delBatchModal"
-				@on-ok="batchRemove"
+				@on-ok=""
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除选中的数据？</p>
-		</Modal>
+		</Modal> -->
   </div>
 </template>
 <script>
-import { brandList, procategoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/supplier'
+import { categoryTreeList, brandListBrands } from '@/api/nature'
+import { editSupplier, categList, listBrands, saveSupplier, updateSupplier } from '@/api/supplier'
 export default {
   name: 'supplier',
   data () {
     return {
-      brandListcheck: ['facebook', 'github'],
+      brandListcheck: [],
       brandListArr: [],
       title: '新增供应商',
-      type: this.$route.query.tyoe,
+      type: this.$route.query.type,
+      editId: this.$route.query.id,
+      clist1: [],
+      clist2: [],
+      clist3: [],
+      cur1: '',
+      cur2: '',
+      cur3: '',
       value: '',
       value3: '',
       modal1: false,
@@ -209,7 +185,6 @@ export default {
       checkedIds: [],
       checkedId: '',
       menuIdsArr: [],
-      ztreesData: [],
       formValidate: {
         name: '',
         operator: '',
@@ -228,18 +203,18 @@ export default {
       },
       roleName: '',
       columnsList: [
+        {
+          type: 'selection',
+          width: 60,
+          align: 'center'
+        },
         // {
-        //   type: 'selection',
-        //   width: 60,
-        //   align: 'center'
+        //   title: '序号',
+        //   key: 'id'
         // },
         {
-          title: '序号',
-          key: 'id'
-        },
-        {
           title: '类目名称',
-          key: 'categoryName'
+          key: 'fullCategoryName'
         },
         {
           title: '操作',
@@ -249,7 +224,9 @@ export default {
         }
       ],
       dataList: [],
+      treeData1: [],
       userIdCreate: '',
+      parentId: 0,
       roleSign: '',
       dataDel: [],
       addShow: false,
@@ -261,6 +238,10 @@ export default {
       pageSize: 10,
       delIndex: '',
       total: 0,
+      checkName: '',
+      checkSelId: '',
+      selList: [],
+      selObj: {},
       loading: false, // 分割线
       uploadLoading: false,
       progressPercent: 0,
@@ -273,98 +254,201 @@ export default {
     }
   },
   methods: {
-    async getBrandList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let res = await brandList(data)
-      if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.brandListArr = res.data.content.rows
+    selClist1 (id) {
+      this.getcategList(id, '', 1)
+      this.cur2 = ''
+      this.cur3 = ''
+      this.brandListcheck = []
+      this.brandListArr = []
+    },
+    selClist2 (id) {
+      if (id) {
+        this.getcategList(id, '', 2)
+        this.cur3 = ''
+        this.brandListcheck = []
+        this.brandListArr = []
       }
     },
-    async procategoryList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let res = await procategoryList(data)
-      if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.dataList = res.data.content.rows
+    selClist3 (i) {
+      if (i >= 0) {
+        this.checkSelId = this.clist3[i].id
+        this.listBrands(this.clist3[i].id)
+        this.selObj = { ...this.clist3[i] }
       }
     },
-    async roleDetail (id) {
-      let res = await roleDetail(id)
-      if (res.data.code === 0) {
-        this.formValidate = {
-          roleName: res.data.content.roleName,
-          roleDesc: res.data.content.remark,
-          roleSign: res.data.content.roleSign,
-          power: ''
-        }
-        this.menuIds = res.data.content.menuIds
-        if (this.menuIds && this.menuIds.length > 0) {
-          this.forIds(this.menuIds)
-        }
+    opearSave () {
+      // console.log('this.selObj',this.selObj)
+      // console.log('brandListcheck',this.brandListcheck)
+      this.selList = JSON.parse(sessionStorage.getItem('selList')) || []
+      let selCatgArr = this.selObj.branchIds.split('>')
+      let obj = {
+        firstCategoryId: selCatgArr[0],
+        secondCategoryId: selCatgArr[1],
+        thirdCategoryId: selCatgArr[2],
+        brandIds: this.brandListcheck,
+        fullCategoryName: this.selObj.branchNames
       }
-    },
-    forIds (arr) {
-      let zTreeData = [...this.ztreesData]
-      for (let i = 0; i < arr.length; i++) {
-        this.parentFn(zTreeData, arr[i])
-      }
-      this.ztreesData = [...zTreeData]
-    },
-    parentFn (arr, roleId) {
-      arr.forEach((item, index) => {
-        if (item.id == roleId) {
-          this.$set(item, 'checked', true)
-        } else {
-          if (item.children) {
-            this.parentFn(item.children, roleId)
-          }
-        }
+      this.selList.push(obj)
+      this.dataList = [...this.selList]
+      // console.log('this.selList',this.dataList)
+      sessionStorage.setItem('selList', JSON.stringify(this.selList))
+      this.clist2 = []
+      this.clist3 = []
+      this.cur1 = this.cur2 = this.cur3 = ''
+      this.modal1 = false
+      this.brandListArr = []
+      this.brandListcheck = []
+      this.selObj = {}
+      this.$Modal.success({
+        title: '提示',
+        content: '已加入列表'
       })
     },
-    async roleUpdate () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
+    saveSupplierData () {
+      if (this.editId) {
+        this.updateSupplier()
+      } else {
+        this.saveSupplier()
+      }
+    },
+    async saveSupplier () {
+      let supCatAges = JSON.parse(sessionStorage.getItem('selList')) || []
+      if (supCatAges && supCatAges.length === 0) {
         this.$Modal.warning({
           title: '提示',
-          content: '请选择菜单权限'
+          content: '请添加代理类目/品牌'
         })
         return
       }
       let data = {
         FLAG: 1,
-        menuIds: menuIds,
-        roleId: this.checkedId,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
+        contacts: this.formValidate.operator,
+        name: this.formValidate.name,
+        phone: this.formValidate.phone,
+        supCatAges: supCatAges
       }
-      let res = await roleUpdate(data)
+      let res = await saveSupplier(data)
       if (res.data.code === 0) {
-        console.log(res)
-        this.modal1 = false
+        // console.log(res)
         this.$Modal.success({
           title: '提示',
-          content: '编辑成功'
+          content: '保存成功'
         })
-        this.checkedId = ''
-        this.checkedIds = []
         this.formValidate = {
-          roleName: '',
-          roleDesc: '',
-          roleSign: '',
-          power: ''
+          operator: '',
+          name: '',
+          phone: ''
         }
-        this.getPageList()
+        this.dataList = []
+        sessionStorage.removeItem('selList')
+        this.$router.push({ name: 'supplier' })
       }
+    },
+    async updateSupplier () {
+      let supCatAges = JSON.parse(sessionStorage.getItem('selList')) || []
+      if (supCatAges && supCatAges.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请添加代理类目/品牌'
+        })
+        return
+      }
+      let data = {
+        FLAG: 1,
+        id: this.editId,
+        contacts: this.formValidate.operator,
+        name: this.formValidate.name,
+        phone: this.formValidate.phone,
+        supCatAges: supCatAges
+      }
+      let res = await saveSupplier(data)
+      if (res.data.code === 0) {
+        // console.log(res)
+        this.$Modal.success({
+          title: '提示',
+          content: '更新成功'
+        })
+        this.formValidate = {
+          operator: '',
+          name: '',
+          phone: ''
+        }
+        this.dataList = []
+        sessionStorage.removeItem('selList')
+        this.$router.push({ name: 'supplier' })
+      }
+    },
+    removeBrand () {
+      this.dataList.splice(this.delIndex, 1)
+      sessionStorage.setItem('selList', JSON.stringify(this.dataList))
+      this.$Modal.success({
+        title: '提示',
+        content: '已移除列表'
+      })
+    },
+    async getcategList (parentId, i, val) {
+      let data = {
+        FLAG: 1,
+        parentId: parentId
+      }
+      let res = await categList(data)
+      if (res.data.code === 0) {
+        let data = res.data.content
+        if (data && data.length > 0) {
+          let levelNo = data[0].level
+          switch (levelNo) {
+            case 1:
+              this.clist1 = data
+              this.clist2 = []
+              this.clist3 = []
+              break
+            case 2:
+              this.clist2 = data
+              this.clist3 = []
+              break
+            case 3:
+              this.clist3 = data
+              break
+          }
+        }
+      }
+    },
+    async listBrands (id) {
+      let data = {
+        FLAG: 1,
+        name: this.checkName,
+        thirdCategoryId: id
+      }
+      let res = await listBrands(data)
+      if (res.data.code === 0) {
+        // console.log(res)
+        this.brandListArr = res.data.content
+      }
+    },
+    async SupplierDetail (id) {
+      let data = {
+        id: id,
+        FLAG: 1
+      }
+      let res = await editSupplier(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        let data = res.data.content
+        this.formValidate = {
+          operator: data.contacts,
+          name: data.name,
+          phone: data.phone
+        }
+        this.dataList = data.supCatAges
+        sessionStorage.setItem('selList', JSON.stringify(this.dataList))
+      }
+    },
+    searchBrand () {
+      this.listBrands(this.checkSelId)
+    },
+    addFn () {
+      this.modal1 = true
+      this.getcategList(0, '', 1)
     },
     forArr1 (arr, num) { // 循环部门树形数据
       let data = []
@@ -376,6 +460,7 @@ export default {
             parentId: value.parentId,
             title: value.text,
             checked: value.selected === 'true',
+            dataInfo: value.data,
             expand: num < 1,
             children: this.forArr1(value.children, num + 1),
             hasParent: value.hasParent,
@@ -385,6 +470,7 @@ export default {
           datav = {
             id: value.id,
             parentId: value.parentId,
+            dataInfo: value.data,
             title: value.text,
             expand: true,
             hasParent: value.hasParent,
@@ -394,93 +480,6 @@ export default {
         data.push(datav)
       })
       return data
-    },
-    // 循环树形结构，得到选中id
-    forTreesIds (arr) {
-      arr.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          this.forTreesIds(item.children)
-        }
-      })
-    },
-    // 循环树形结构，得到选中id
-    forTrees () {
-      this.ztreesData.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          item.children.forEach((value, index) => {
-            if (value.checked == true) {
-              this.checkedIds.push(value.id)
-              // this.checkedIds.push(item.id)
-              // value.children.forEach
-            }
-            if (value.children) {}
-          })
-        }
-      })
-      this.checkedIds = [...new Set(this.checkedIds)]
-      this.formValidate.power = this.checkedIds.join(',')
-    },
-    //  菜单树结构
-    async menuTree () {
-      let res = await menuTree({})
-      console.log(res.data)
-      if (res.data.code === 0) {
-        let data = [{ ...res.data.content }]
-        console.log(data)
-        this.ztreesData = this.forArr1(data, 0)
-      }
-    },
-    // saveRole 添加角色
-    saveRole () {
-      this.$refs.formValidate.validate((valid) => {
-        if (valid) {
-          this.addRole()
-        }
-      })
-    },
-    async addRole () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择菜单权限'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        menuIds: menuIds,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
-      }
-      let res = await saveRole(data)
-      if (res.data.code === 0) {
-        console.log(res)
-        this.modal1 = false
-        this.$Modal.success({
-          title: '提示',
-          content: '添加成功'
-        })
-        this.checkedIds = []
-        this.getPageList()
-      }
-    },
-    addFn () {
-      this.modal1 = true
-      this.operationShow = false
-      this.formValidate = {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
-      }
     },
     bactchDel () {
       this.delBatchModal = true
@@ -527,8 +526,12 @@ export default {
     edit (i) {
       this.modal1 = true
       this.operationShow = true
-      this.checkedId = this.dataList[i].roleId
-      this.roleDetail(this.dataList[i].roleId)
+      this.checkSelObj = this.dataList[i]
+      this.getcategList(0, '', 1)
+      // this.roleDetail(this.dataList[i].roleId)
+    },
+    editBarndList () {
+
     },
     remove (i) {
       this.delModal = true
@@ -564,7 +567,6 @@ export default {
       // this.parentDataId = ''
       this.modal1 = false
       this.menuIds = []
-      this.checkedPrentFn(this.ztreesData)
     },
     selected (res) {
       this.selectedList = res
@@ -603,13 +605,17 @@ export default {
 
   },
   created () {
+    this.getcategList(0, '', 1)
     // this.getPageList()
-    this.getBrandList()
-    this.procategoryList()
+    sessionStorage.removeItem('selList')
+    this.dataList = JSON.parse(sessionStorage.getItem('selList')) || []
+    // this.procategoryList()
     // this.menuTree()
   },
   mounted () {
-
+    if (this.type === 'edit') {
+      this.SupplierDetail(this.editId)
+    }
   }
 }
 </script>
@@ -623,7 +629,7 @@ export default {
   cursor: pointer;
 }
 .check-item{
-  margin-left: 20px;
+  margin-right: 20px;
   &:first-child{
     margin-left: 0;
   }
@@ -634,6 +640,7 @@ export default {
 .sub-left-item{
   font-style: normal;
   font-size: 16px;
+  text-align: right;
   color: rgba(51, 51, 51, 0.8);
 }
 .list-group{
@@ -643,6 +650,8 @@ export default {
     list-style: none;
     background-color: inherit;
     border: 1px solid #e7eaec;
+    border-left: 0;
+    border-right: 0;
     display: block;
     margin-bottom: -1px;
     padding: 10px 15px;
@@ -651,6 +660,9 @@ export default {
     &:last-child{
       border-bottom: 1px solid #e7eaec;
     }
+  }
+  .list-group-item-active{
+    background-color: #f6f6f6;
   }
 }
 .bank_table_footer{
@@ -734,6 +746,10 @@ export default {
     width: 50px;
     height: 45px;
     margin-top: 110px;
+}
+.ul-content{
+  border: 1px solid #e6e6e6;
+  border-top: 0;
 }
 .ul-content li:hover{
     background: #f9f9f9;

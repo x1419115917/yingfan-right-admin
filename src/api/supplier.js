@@ -52,3 +52,51 @@ export const procategoryList = data => {
     method: 'post'
   })
 }
+// 供应商详情
+export const editSupplier = data => {
+  return axios.request({
+    url: '/account/supplier/edit',
+    data,
+    method: 'post'
+  })
+}
+// 分类列表
+export const categList = data => {
+  return axios.request({
+    url: '/category/operation/list',
+    data,
+    method: 'post'
+  })
+}
+// 根据品类id查询品牌
+export const listBrands = data => {
+  return axios.request({
+    url: '/brand/operation/listBrands',
+    data,
+    method: 'post'
+  })
+}
+// 新增供应商
+export const saveSupplier = data => {
+  return axios.request({
+    url: '/account/supplier/save',
+    data,
+    method: 'post'
+  })
+}
+// 删除供应商
+export const removeSupplier = data => {
+  return axios.request({
+    url: '/account/supplier/remove',
+    data,
+    method: 'post'
+  })
+}
+// 更新供应商
+export const updateSupplier = data => {
+  return axios.request({
+    url: '/account/supplier/update',
+    data,
+    method: 'post'
+  })
+}

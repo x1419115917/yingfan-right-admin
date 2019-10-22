@@ -334,6 +334,7 @@ export default {
       arr.forEach((item, index) => {
         if (item.id == roleId) {
           this.$set(item, 'checked', true)
+          this.catgCheckList.push(item.branchIds)
         } else {
           if (item.children) {
             this.parentFn(item.children, roleId)

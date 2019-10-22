@@ -104,3 +104,11 @@ export const specBatchRemove = data => {
     method: 'post'
   })
 }
+// 品牌类型
+export const brandListBrands = data => {
+  return axios.request({
+    url: '/brand/operation/listBrands',
+    data,
+    method: 'post'
+  })
+}

@@ -13,7 +13,7 @@
         </div>
       </Col>
       <Col class="user-right" span="19">
-        <Card title="属性模板列表">
+        <Card title="该类目属性列表">
           <!-- <Row class="role-top">
             <div class="role-top-left">
               <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
@@ -30,11 +30,11 @@
                 <Button class="btn" type="success" :loading="uploadLoading" @click="addFn">添加模板</Button>
                 <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
               </div>
-              <div class="role-top-input">
+              <!-- <div class="role-top-input">
                 <div class="td-line">
                   <span class="name">关键词</span>
                   <!-- @on-enter="updateDataList" -->
-                  <Input
+                  <!--<Input
                     placeholder="请输入属性模板名称"
                     class="w162"
                     v-model="value"
@@ -44,7 +44,7 @@
                   <Button @click="clearInputs" style="margin-right: 6px;">重置</Button>
                   <Button type="primary" @click="searchFn">查询</Button>
                 </div>
-              </div>
+              </div> -->
             </Row>
           </Row>
           <Row>
