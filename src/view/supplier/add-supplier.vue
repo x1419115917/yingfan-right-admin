@@ -69,7 +69,7 @@
             </div>
           </Form>
           <div class="bank_table_footer">
-            <Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 15px; padding: 5px 38px;">取消</Button>
+            <Button size="large" @click="cancelList" class="cancel" style="margin-right: 15px; padding: 5px 38px;">取消</Button>
             <Button size="large" @click="saveSupplierData" type="primary" style="padding: 5px 38px;">确定</Button>
           </div>
       </div>
@@ -363,6 +363,9 @@ export default {
         sessionStorage.removeItem('selList')
         this.$router.push({ name: 'supplier' })
       }
+    },
+    cancelList () {
+      this.$router.push({ name: 'supplier' })
     },
     async updateSupplier () {
       let supCatAges = JSON.parse(sessionStorage.getItem('selList')) || []

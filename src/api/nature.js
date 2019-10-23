@@ -112,3 +112,36 @@ export const brandListBrands = data => {
     method: 'post'
   })
 }
+// 新增规格属性
+export const saveSpec = data => {
+  return axios.request({
+    url: '/product/spec/save',
+    data,
+    method: 'post'
+  })
+}
+// 编辑
+export const editSpec = id => {
+  let data = {}
+  return axios.request({
+    url: `/product/spec/edit?id=${id}`,
+    data,
+    method: 'get'
+  })
+}
+// 更新属性
+export const updateSpec = data => {
+  return axios.request({
+    url: '/product/spec/update',
+    data,
+    method: 'post'
+  })
+}
+// 批量删除属性/product/spec/batchRemove
+export const batchRemoveSpec = data => {
+  return axios.request({
+    url: '/product/spec/batchRemove',
+    data,
+    method: 'post'
+  })
+}

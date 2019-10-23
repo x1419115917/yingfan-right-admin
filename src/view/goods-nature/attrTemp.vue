@@ -114,32 +114,32 @@
         </Row>
       </Col>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑用户': '新增用户'"  width="640" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑用户': '新增用户'"  width="660" @on-cancel="cancelModal1">
 			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
         <FormItem label="属性类型:" prop="status">
-					<RadioGroup v-model="formValidate.status">
-            <Radio label="1">通用属性</Radio>
-            <Radio label="0">扩展属性</Radio>
+					<RadioGroup v-model="formValidate.status" @on-change="radioChange">
+            <Radio label="1">基本属性</Radio>
+            <Radio label="0">规格属性</Radio>
           </RadioGroup>
 				</FormItem>
-        <FormItem label="属性值性质:" prop="nature">
-          <CheckboxGroup v-model="formValidate.nature" @on-change="checkAllGroupChange">
-              <Checkbox :label="1"><span>下拉框</span></Checkbox>
-              <Checkbox :label="2"><span>复选框</span></Checkbox>
-              <Checkbox :label="3"><span>文本框</span></Checkbox>
-          </CheckboxGroup>
+        <FormItem label="属性值性质:" prop="natures" :class="formValidate.status==0 ? 'boxNone' : ''">
+          <RadioGroup v-model="formValidate.natures">
+            <Radio label="1">下拉框</Radio>
+            <Radio label="2">复选框</Radio>
+            <Radio label="3">文本框</Radio>
+          </RadioGroup>
 				</FormItem>
 				<FormItem label="属性名称:" prop="name">
 					<Input v-model="formValidate.name" placeholder="请输入属性名称"></Input>
 				</FormItem>
         <FormItem label="属性值:" class="check-attr">
-          <ul class="attr-list">
-            <li class="attr-item">
-              <Input class="attr-ipt" v-model="attrItem" placeholder="请输入属性值"></Input>
-
-            </li>
-          </ul>
-          <span class="add-attr" size="large" type="primary">增加属性值</span>
+          <div class="attr-list">
+            <div class="attr-item" v-for="(item,index) in attrListArr" :key="index">
+              <Input class="attr-ipt" v-model="item.attrItem" placeholder="请输入属性值"></Input>
+              <Icon class="attr-close" size="20" type="md-close-circle" @click="removeAttr(index)" />
+            </div>
+            <span class="add-attr" size="large" type="primary" @click="addAttr">增加属性值</span>
+          </div>
 				</FormItem>
 			</Form>
 			<div slot="footer">
@@ -157,7 +157,7 @@
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok="delRole"
+				@on-ok="batchRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除？</p>
@@ -173,10 +173,10 @@
   </div>
 </template>
 <script>
-import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
-import { categoryTreeList, specList } from '@/api/nature'
+import { sysDeptTree, userList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
+import { categoryTreeList, specList, saveSpec, editSpec, updateSpec, batchRemoveSpec } from '@/api/nature'
 export default {
-  name: 'role-name',
+  name: 'spec-name',
   data () {
     return {
       value: '',
@@ -187,41 +187,28 @@ export default {
       delModal: false,
       checkedIds: [],
       attrList: [],
+      attrListArr: [],
       checkedId: '',
       deptId: '',
       menuIdsArr: [],
+      levelCheck: '',
+      branchIdsCheck: '',
       treeData1: [],
       ztreesData: [],
-      formValidPwd: {
-        password: ''
-      },
-      ruleValidPwd: {
-        password: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ]
-      },
       formValidate: {
-        name: '',
-        username: '',
-        pwd: '',
-        dept: '',
-        deptId: '',
-        email: '',
         status: '',
-        roleIds: []
+        natures: '',
+        name: ''
       },
       ruleValidate: {
         name: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        username: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+        status: [
+          { required: true, message: '请选择', trigger: 'blur' }
         ],
-        pwd: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+        natures: [
+          { required: true, message: '请选择', trigger: 'blur' }
         ]
       },
       roleName: '',
@@ -266,6 +253,7 @@ export default {
       ],
       dataList: [],
       userIdCreate: '',
+      categoryId: '',
       roleSign: '',
       dataDel: [],
       addShow: false,
@@ -278,6 +266,7 @@ export default {
       delIndex: '',
       total: 0,
       rolelistArr: [],
+      detailInfo: {},
       loading: false, // 分割线
       uploadLoading: false,
       progressPercent: 0,
@@ -296,7 +285,7 @@ export default {
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
         specName: this.value,
-        categoryId: ''
+        categoryId: this.categoryId
       }
       let res = await specList(data)
       console.log(res.data.content)
@@ -310,6 +299,11 @@ export default {
         })
       }
     },
+    radioChange () {
+      if (this.formValidate.status == 0) {
+        this.formValidate.natures = '3'
+      }
+    },
     async getCategoryTreeList () {
       let data = {
         FLAG: 1
@@ -320,6 +314,12 @@ export default {
         this.treeData1 = this.forArr1(data, -2)
       }
     },
+    removeAttr (index) {
+      this.attrListArr.splice(index, 1)
+    },
+    addAttr () {
+      this.attrListArr.push({ attrItem: '' })
+    },
     forTreeCatg (arr) {
       arr.forEach(item => {
         item.levelNo = item.data.level
@@ -329,36 +329,22 @@ export default {
         }
       })
     },
-    async getRoleList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let res = await roleList(data)
+    async editSpec (id) {
+      let res = await editSpec(id)
       if (res.data.code === 0) {
-        this.rolelistArr = res.data.content.rows
-      }
-    },
-    async detailUser (id) {
-      let res = await detailUser(id)
-      if (res.data.code === 0) {
-        // this.formValidate = {
-        //   roleName: res.data.content.roleName,
-        //   roleDesc: res.data.content.remark,
-        //   roleSign: res.data.content.roleSign,
-        //   power: ''
-        // }
+        let data = res.data.content
+        this.detailInfo = data
         this.formValidate = {
-          name: res.data.content.name,
-          username: res.data.content.username,
-          pwd: res.data.content.password,
-          dept: res.data.content.deptName,
-          deptId: res.data.content.deptId,
-          email: res.data.content.email,
-          status: res.data.content.status.toString(),
-          roleIds: res.data.content.roleIds
+          name: data.specName,
+          status: data.specType.toString(),
+          natures: data.operateType.toString()
         }
+        data.specVals.forEach(item => {
+          this.attrListArr.push({
+            attrItem: item
+          })
+        })
+        console.log(this.attrListArr)
       }
     },
     forIds (arr) {
@@ -382,20 +368,25 @@ export default {
     checkAllGroupChange (data) {
       this.roleIds = data
     },
-    async updateUser () {
+    async updateSpec () {
+      let specVals = []
+      this.attrListArr.forEach((item, index) => {
+        if (item.attrItem != '') {
+          specVals.push(item.attrItem)
+        }
+      })
       let data = {
         FLAG: 1,
-        userId: this.checkedId,
-        deptId: this.formValidate.deptId,
-        deptName: this.formValidate.dept,
-        email: this.formValidate.email,
-        status: parseInt(this.formValidate.status),
-        username: this.formValidate.username,
-        name: this.formValidate.name,
-        roleIds: this.formValidate.roleIds,
-        password: this.formValidate.pwd
+        id: this.checkedId,
+        cid1: this.detailInfo.cid1.categoryId,
+        cid2: this.detailInfo.cid2.categoryId,
+        cid3: this.detailInfo.cid3.categoryId,
+        specName: this.formValidate.name,
+        specType: this.formValidate.status,
+        operateType: this.formValidate.natures,
+        specVals: specVals
       }
-      let res = await updateUser(data)
+      let res = await updateSpec(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -403,17 +394,15 @@ export default {
           title: '提示',
           content: '编辑成功'
         })
-        this.checkedId = ''
+        this.checkedIds = []
+        this.branchIdsCheck = ''
+        this.attrListArr = []
         this.formValidate = {
-          deptId: '',
-          dept: '',
-          email: '',
-          status: '',
-          username: '',
           name: '',
-          roleIds: [],
-          pwd: ''
+          status: '',
+          natures: ''
         }
+
         this.getPageList()
       }
     },
@@ -426,6 +415,7 @@ export default {
             id: value.id,
             parentId: value.parentId,
             title: value.text,
+            data: value.data,
             checked: value.selected === 'true',
             selected: false,
             expand: num < 1,
@@ -438,6 +428,7 @@ export default {
             id: value.id,
             parentId: value.parentId,
             title: value.text,
+            data: value.data,
             expand: true,
             selected: false,
             hasParent: value.hasParent,
@@ -512,39 +503,53 @@ export default {
       this.forTreesIds(this.treeData1)
     },
     treeChange (data) {
+      console.log(data)
+      this.categoryId = data[0].id
+      this.levelCheck = data[0].data.level
+      this.branchIdsCheck = data[0].data.branchIds.split('>')
+      this.getPageList()
+      console.log('this.levelCheck', this.levelCheck)
       // this.formValidate.deptId = data[0].id == -1 ? '' : data[0].id
       // this.formValidate.dept = data[0].title == '顶级节点' ? '' : data[0].title
       // this.getPageList()
     },
     //  添加用户
-    saveUser () {
+    saveSepcs () {
+      let itemVal = []
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          if (!this.formValidate.deptId) {
+          itemVal = this.attrListArr.filter((item, index) => {
+            return item.attrItem != ''
+          })
+          if (itemVal && itemVal.length === 0) {
             this.$Modal.warning({
               title: '提示',
-              content: '请选择部门'
+              content: '请添加属性值'
             })
             return
           }
-          this.addUser()
+          this.addSpec()
         }
       })
     },
-    async addUser () {
+    async addSpec () {
+      let specVals = []
+      this.attrListArr.forEach((item, index) => {
+        if (item.attrItem != '') {
+          specVals.push(item.attrItem)
+        }
+      })
       let data = {
         FLAG: 1,
-        deptId: this.formValidate.deptId,
-        deptName: this.formValidate.dept,
-        email: this.formValidate.email,
-        status: parseInt(this.formValidate.status),
-        deptName: this.formValidate.dept,
-        username: this.formValidate.username,
-        name: this.formValidate.name,
-        roleIds: this.formValidate.roleIds,
-        password: this.formValidate.pwd
+        cid1: this.branchIdsCheck[0],
+        cid2: this.branchIdsCheck[1],
+        cid3: this.branchIdsCheck[2],
+        specName: this.formValidate.name,
+        specType: this.formValidate.status,
+        operateType: this.formValidate.natures,
+        specVals: specVals
       }
-      let res = await userSave(data)
+      let res = await saveSpec(data)
       if (res.data.code === 0) {
         console.log(res)
         this.modal1 = false
@@ -553,28 +558,36 @@ export default {
           content: '添加成功'
         })
         this.checkedIds = []
+        this.attrListArr = []
+        this.formValidate = {
+          name: '',
+          status: '',
+          operateType: ''
+        }
         this.getPageList()
       }
     },
     addFn () {
-      this.modal1 = true
-      this.operationShow = false
-      this.formValidate = {
-        deptId: '',
-        dept: '',
-        email: '',
-        status: '',
-        deptName: '',
-        username: '',
-        name: '',
-        roleIds: [],
-        pwd: ''
+      if (this.levelCheck === 3) {
+        this.modal1 = true
+        this.operationShow = false
+        this.checkedIds = []
+        this.formValidate = {
+          name: '',
+          status: '',
+          natures: ''
+        }
+      } else {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择第三级分类添加属性'
+        })
       }
     },
     bactchDel () {
       let ids = []
       this.selectedList.forEach(item => {
-        ids.push(item.userId)
+        ids.push(item.id)
       })
       if (ids && ids.length == 0) {
         this.$Modal.warning({
@@ -588,7 +601,7 @@ export default {
     async batchRemove () {
       let ids = []
       this.selectedList.forEach(item => {
-        ids.push(item.userId)
+        ids.push(item.id)
       })
       if (ids && ids.length == 0) {
         this.$Modal.warning({
@@ -599,9 +612,9 @@ export default {
       }
       let data = {
         FLAG: 1,
-        userIds: ids
+        ids: ids
       }
-      let res = await batchRemoveUser(data)
+      let res = await batchRemoveSpec(data)
       if (res.data.code === 0) {
         this.delBatchModal = false
         this.$Modal.success({
@@ -618,21 +631,21 @@ export default {
     operationRole () {
       if (this.operationShow) {
         // this.forTreesIds(this.ztreesData)
-        this.updateUser()
+        this.updateSpec()
       } else {
-        // this.forTreesIds(this.ztreesData)
-        this.saveUser()
+        this.saveSepcs()
       }
     },
     edit (i) {
       this.modal1 = true
       this.operationShow = true
-      this.checkedId = this.dataList[i].userId
-      this.detailUser(this.dataList[i].userId)
+      this.checkedId = this.dataList[i].id
+      this.editSpec(this.dataList[i].id)
     },
     remove (i) {
       this.delModal = true
       this.delIndex = i
+      this.selectedList = [{ ...this.dataList[i] }]
       console.log(this.delIndex)
     },
     async delRole () {
@@ -721,7 +734,7 @@ export default {
   },
   created () {
     this.getPageList()
-    this.getRoleList()
+    // this.getRoleList()
     // this.menuTree()
     this.getCategoryTreeList()
   },
@@ -752,8 +765,21 @@ export default {
 }
 .attr-list{
   list-style: none;
+  margin-right: 6px;
+  &::before{
+    clear: both;
+  }
   .attr-item{
     position: relative;
+    margin-right: 4px;
+    float: left;
+    margin-bottom: 6px;
+    .attr-close{
+      position: absolute;
+      right: -6px;
+      top: -10px;
+      cursor: pointer;
+    }
     .attr-ipt{
       width: 100px;
       height: 34px;
@@ -761,7 +787,8 @@ export default {
   }
 }
 .add-attr{
-  display: inline-block;
+  // display: inline-block;
+  float: left;
   background-color: #78b5f6;
   border-radius: 4px;
   width: 90px;
@@ -770,6 +797,15 @@ export default {
   color: #fff;
   text-align: center;
   cursor: pointer;
+}
+.check-attr{
+  ::before{
+    clear: both;
+    overflow: hidden;
+  }
+  .attr-list{
+    float: left;
+  }
 }
 .check-attr /deep/ .ivu-form-item-label:before {
     content: '*';
@@ -913,5 +949,14 @@ export default {
   /deep/ .ivu-modal, .ivu-modal{
     top: 22px;
   }
+}
+/deep/ .ivu-tree-title{
+    overflow: hidden;
+    width: 120px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.boxNone{
+  display: none;
 }
 </style>
