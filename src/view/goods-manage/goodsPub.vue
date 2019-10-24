@@ -252,7 +252,7 @@
   </div>
 </template>
 <script>
-import { brandList, procategoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
+import { menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
 import { listBrandsPage, singleUpload, specList } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
 // import editor from '@/components/editor'
@@ -470,18 +470,6 @@ export default {
     })
   },
   methods: {
-    async getBrandList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let res = await brandList(data)
-      if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.brandListArr = res.data.content.rows
-      }
-    },
     async getSupplierList () {
       let data = {
         FLAG: 1,
@@ -503,7 +491,6 @@ export default {
         categoryId: this.cur3
       }
       let res = await specList(data)
-      console.log(res.data.content)
       if (res.data.code === 0) {
         console.log('this.specList', res.data.content)
         // this.dataList = res.data.content.rows
@@ -619,8 +606,8 @@ export default {
         return item.id === id
       })
       this.selObj = selObj[0]
-      console.log('selObj', selObj)
-      console.log(this.cur3)
+      // console.log('selObj', selObj)
+      // console.log(this.cur3)
       this.getSpecList()
     },
     async getcategList (parentId, i, val) {
@@ -790,18 +777,6 @@ export default {
       }
     },
     filezm () {},
-    async procategoryList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let res = await procategoryList(data)
-      if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.dataList = res.data.content.rows
-      }
-    },
     async roleDetail (id) {
       let res = await roleDetail(id)
       if (res.data.code === 0) {
@@ -1115,14 +1090,11 @@ export default {
     }
   },
   created () {
-    this.getcategList(0, '', 1)
-    // this.getPageList()
-    // this.getBrandList()
-    // this.procategoryList()
-    // this.menuTree()
+    // this.getcategList(0, '', 1)
   },
   mounted () {
     let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
+    this.getcategList(0, '', 1)
     this.getSupplierList()
     if (brand && brand.length === 0) {
       this.getlistBrandsPage()

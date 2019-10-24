@@ -17,13 +17,13 @@ import '@/assets/icons/iconfont.css'
 import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
-import util from './libs/util'
+import { ForMat } from './libs/util'
 import VueQuillEditor from 'vue-quill-editor'
 // require styles
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
-Vue.prototype.$util = util
+Vue.prototype.$format = ForMat
 // 实际打包时应该不引入mock
 /* eslint-disable */
 // if (process.env.NODE_ENV !== 'production') require('@/mock')
