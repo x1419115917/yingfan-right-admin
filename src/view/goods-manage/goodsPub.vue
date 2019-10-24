@@ -26,42 +26,68 @@
     </Card>
     <Row class="margin-top-10" style="background:#fff;padding:30px;">
       <div class="nav-top">
-        <span class="nav-top-item" :class="vsShowNav == 0 ? 'nav-top-item-active' : ''">选择供应商</span>
-        <span class="nav-top-item" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">编辑商品共有信息</span>
-        <span class="nav-top-item" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">编辑商品属性信息</span>
+        <span class="nav-top-item" @click="changeNav(0)" :class="vsShowNav == 0 ? 'nav-top-item-active' : ''">选择供应商</span>
+        <span class="nav-top-item" @click="changeNav(1)" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">编辑商品共有信息</span>
+        <span class="nav-top-item" @click="changeNav(2)" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">编辑商品属性信息</span>
       </div>
       <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 0">
         <Row>
           <div class="tb-line">
             <span class="name">供应商：</span>
-            <Select class="w422" v-model="model1" filterable>
-                <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Select class="w422" v-model="supplierId" filterable allow-create @on-change="selClistBrand">
+                  <Option v-for="item in supplierListArr" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
           </div>
         </Row>
         <Row>
           <div class="tb-line btn">
-            <Button type="success">下一步，编辑商品共有信息</Button>
+            <Button type="success" @click="navSave(1)">下一步，编辑商品共有信息</Button>
           </div>
         </Row>
       </div>
       <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 1">
+        <Row style="width: 738px;margin: 40px auto 0;">
+          <Row class="sub-left-item">商品类目：<span class="goto-brand" @click="goPage(1)">有相关类目？去创建类目</span></Row>
+          <Row style="margin-top: 30px;">
+            <Row style="margin-bottom: 35px;">
+              <Col span="7">
+                <Select v-model="cur1" filterable allow-create @on-change="selClist1">
+                  <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                </Select>
+              </Col>
+              <Col span="1" style="width: 15px;height: 10px;">
+              </Col>
+              <Col span="7">
+                <Select v-model="cur2" filterable allow-create @on-change="selClist2">
+                  <Option v-for="item in clist2" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                </Select>
+              </Col>
+              <Col span="1" style="width: 15px;height: 10px;">
+              </Col>
+              <Col span="7">
+                <Select v-model="cur3" filterable allow-create @on-change="selClist3">
+                  <Option v-for="(item, index) in clist3" :value="item.id" :key="index">{{ item.name }}</Option>
+                </Select>
+              </Col>
+            </Row>
+          </Row>
+        </Row>
         <Row class="">
           <div class="tb-title">
             <h5 class="name">商品基本信息</h5>
           </div>
           <div class="tb-line">
             <span class="name"><span>*</span>商品标题：</span>
-            <Input class="w687" v-model="value3" placeholder="请输入商品标题" />
+            <Input class="w687" v-model="goodsTitle" placeholder="请输入商品标题" />
           </div>
           <div class="tb-line">
             <span class="name">商品副标题：</span>
-            <Input class="w687" v-model="value3" placeholder="输入商品副标题"  />
+            <Input class="w687" v-model="subTitle" placeholder="输入商品副标题"  />
           </div>
           <div class="tb-line">
             <span class="name"><span>*</span>品牌：</span>
-            <Select class="w687" v-model="model1" filterable>
-                <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Select class="w687" v-model="brandsId" filterable>
+                <Option v-for="(item, index) in BrandsList" :value="item.id" :key="index">{{ item.name }}</Option>
             </Select>
           </div>
           <div class="tb-line">
@@ -77,68 +103,78 @@
           <div class="tb-line photo-con">
             <span class="name"><span>*</span>商品图片：</span>
             <ul class="photo-list">
-              <li class="photo-item">
+              <!-- <li class="photo-item" v-for="(item,index) in goodsImgList" :key="index">
                 <input type="file" class="img-ipt"
                       ref="filezm"
-                      @change="filezm"
+                      @change="filezmFn(index)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="imgUrl" class="img-box1"
-                    id="ad21" v-show="imgShow1">
+                <img :src="item.imgUrl" class="img-box1"
+                    id="ad21" v-show="item.imgShow">
+              </li> -->
+              <li class="photo-item">
+                <input type="file" class="img-ipt"
+                      ref="filezm1"
+                      @change="filezmFn(1)"
+                      accept="image/*"
+                      capture="camera">
+                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <img :src="goodsImgList[0].imgUrl" class="img-box1"
+                    id="ad21" v-show="goodsImgList[0].imgShow">
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
-                      ref="filezm"
-                      @change="filezm"
+                      ref="filezm2"
+                      @change="filezmFn(2)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="imgUrl" class="img-box1"
-                    id="ad21" v-show="imgShow1">
+                <img :src="goodsImgList[1].imgUrl" class="img-box1"
+                    id="ad21" v-show="goodsImgList[1].imgShow">
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
-                      ref="filezm"
-                      @change="filezm"
+                      ref="filezm3"
+                      @change="filezmFn(3)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="imgUrl" class="img-box1"
-                    id="ad21" v-show="imgShow1">
+                <img :src="goodsImgList[2].imgUrl" class="img-box1"
+                    id="ad21" v-show="goodsImgList[2].imgShow">
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
-                      ref="filezm"
-                      @change="filezm"
+                      ref="filezm4"
+                      @change="filezmFn(4)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="imgUrl" class="img-box1"
-                    id="ad21" v-show="imgShow1">
+                <img :src="goodsImgList[3].imgUrl" class="img-box1"
+                    id="ad21" v-show="goodsImgList[3].imgShow">
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
-                      ref="filezm"
-                      @change="filezm"
+                      ref="filezm5"
+                      @change="filezmFn(5)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="imgUrl" class="img-box1"
-                    id="ad21" v-show="imgShow1">
+                <img :src="goodsImgList[4].imgUrl" class="img-box1"
+                    id="ad21" v-show="goodsImgList[4].imgShow">
               </li>
             </ul>
           </div>
           <div class="tb-line tb-editor">
-            <span class="name"><span>*</span>品牌：</span>
+            <span class="name"><span>*</span>商品详情页：</span>
             <div class="editor">
-              <editor></editor>
+              <v-editor @on-change="_getContext"></v-editor>
             </div>
           </div>
         </Row>
         <Row>
           <div class="tb-line btn btn-goods">
-            <Button type="success">下一步，编辑商品属性信息</Button>
+            <Button type="success" @click="navSave(2)">下一步，编辑商品属性信息</Button>
           </div>
         </Row>
       </div>
@@ -148,11 +184,11 @@
             <h5 class="name">商品属性信息<span class="sub-name">（错误填写商品属性，可能会引起商品描述不正确，影响您的正常销售，请认真准确填写！）</span></h5>
           </div>
           <div class="tb-line tb-line2">
-            <span class="name"><span>*</span>基本属性：：</span>
+            <span class="name"><span>*</span>基本属性：</span>
             <div class="name-left w687">
               <div class="tb-top-item">
                 <span class="top-name">适用人群：</span>
-                <CheckboxGroup v-model="brandListcheck" class="check-box">
+                <CheckboxGroup v-model="crowcd" class="check-box">
                   <Checkbox class="check-item" :label="item.id" v-for="(item, index) in crowcdListArr" :key="index">
                       <span class="brand-name">{{item.name}}</span>
                   </Checkbox>
@@ -186,102 +222,12 @@
         </Row>
         <Row>
           <div class="tb-line btn btn-goods">
-            <Button type="success">下一步，编辑商品属性信息</Button>
+            <Button type="success" @click="navSave(3)">保存</Button>
           </div>
         </Row>
       </div>
     </Row>
     <Modal v-model="modal1" class="smsModel" :title="'新增代理类目/品牌'"  width="840" @on-cancel="cancelModal1">
-      <div class="create-catg">
-        <div class="title">
-          <div class="row">
-              <span>基本信息</span>
-              <span>没有相关类目？去创建类目</span>
-          </div>
-        </div>
-        <Row>
-          <Col span="2" class="sub-left-item">类目：</Col>
-          <Col span="22">
-            <Row>
-              <Col span="7">
-                <p class="ul-title">选择一级分类</p>
-                <ul class="list-group ul-content">
-                    <li class="list-group-item">服装</li>
-                    <li class="list-group-item">餐厨</li>
-                    <li class="list-group-item">配件</li>
-                    <li class="list-group-item">电子产品</li>
-                    <li class="list-group-item">生活用品</li>
-                </ul>
-              </Col>
-              <Col span="1">
-                <Icon type="ios-arrow-dropright-circle" size="30" style="margin-top: 99px;" />
-              </Col>
-              <Col span="7">
-                <p class="ul-title">选择二级分类</p>
-                <ul class="list-group ul-content">
-                    <li class="list-group-item">服装</li>
-                    <li class="list-group-item">餐厨</li>
-                    <li class="list-group-item">配件</li>
-                    <li class="list-group-item">电子产品</li>
-                    <li class="list-group-item">生活用品</li>
-                </ul>
-              </Col>
-              <Col span="1">
-                <Icon type="ios-arrow-dropright-circle" size="30" style="margin-top: 99px;" />
-              </Col>
-              <Col span="7">
-                <p class="ul-title">选择三级分类</p>
-                <ul class="list-group ul-content">
-                    <li class="list-group-item">服装</li>
-                    <li class="list-group-item">餐厨</li>
-                    <li class="list-group-item">配件</li>
-                    <li class="list-group-item">电子产品</li>
-                    <li class="list-group-item">生活用品</li>
-                </ul>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row>
-          <Col span="3" class="sub-left-item">代理品牌：</Col>
-          <Col span="21">
-            <Row>
-              <Col span="7">
-                <Input v-model="value3" placeholder="输入品牌关键字" style="width: 200px" />
-              </Col>
-              <Col span="3">
-                <Button size="large" @click="operationRole" type="primary">确定</Button>
-              </Col>
-              <Col span="6">
-                <span class="goto-brand">没有相关品牌？去创建品牌</span>
-              </Col>
-            </Row>
-            <Row style="margin-top: 15px;">
-              <CheckboxGroup v-model="brandListcheck">
-                  <Checkbox class="check-item" :label="item.id" v-for="(item, index) in crowcdListArr" :key="index">
-                      <span class="brand-name">{{item.brandName}}</span>
-                  </Checkbox>
-                  <Checkbox class="check-item" label="facebook">
-                      <span class="brand-name">品牌名称</span>
-                  </Checkbox>
-                  <Checkbox class="check-item" label="github">
-                      <span class="brand-name">品牌名称</span>
-                  </Checkbox>
-                  <Checkbox class="check-item" label="snapchat">
-                      <span class="brand-name">品牌名称</span>
-                  </Checkbox>
-              </CheckboxGroup>
-              <!-- <Col span="7">
-                <Input v-model="value3" placeholder="输入品牌关键字" style="width: 200px" />
-              </Col>
-              <Col span="3">
-              </Col>
-              <Col span="6">
-              </Col> -->
-            </Row>
-          </Col>
-        </Row>
-      </div>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
@@ -307,13 +253,55 @@
 </template>
 <script>
 import { brandList, procategoryList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
-import editor from '@/components/editor'
+import { listBrandsPage, singleUpload, specList } from '@/api/nature'
+import { supplierList, categList } from '@/api/supplier'
+// import editor from '@/components/editor'
+import editors from '@/components/editors/editor'
 export default {
   name: 'supplier',
   data () {
     return {
-      vsShowNav: 2,
-      crowcd: '',
+      vsShowNav: 0,
+      brandsId: '',
+      brandsIds: '',
+      brandsIdsList: [],
+      supplierListArr: [],
+      supplierId: '',
+      ctx: '',
+      BrandsList: [], // 品牌列表
+      goodsImgList: [
+        {
+          imgUrl: '',
+          imgShow: false
+        },
+        {
+          imgUrl: '',
+          imgShow: false
+        },
+        {
+          imgUrl: '',
+          imgShow: false
+        },
+        {
+          imgUrl: '',
+          imgShow: false
+        },
+        {
+          imgUrl: '',
+          imgShow: false
+        }
+      ], // 商品图片列表
+      clist1: [],
+      clist2: [],
+      clist3: [],
+      cur1: '',
+      cur2: '',
+      cur3: '',
+      checkSelId: '',
+      goodsTitle: '',
+      subTitle: '',
+      selObj: {},
+      crowcd: [],
       crowcdListArr: [],
       isEditCrowcd: false,
       imgUrl: '',
@@ -363,7 +351,7 @@ export default {
       ],
       brandListArr: [],
       title: '新增供应商',
-      type: this.$route.query.tyoe,
+      type: this.$route.query.type,
       value: '',
       value3: '',
       modal1: false,
@@ -437,7 +425,49 @@ export default {
     }
   },
   components: {
-    editor
+    'v-editor': editors
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // 因为当钩子执行前，组件实例还没被创建
+      if (vm.type !== 'edit') {
+        vm.vsShowNav = 0
+        vm.brandsId = ''
+        vm.supplierId = ''
+        vm.goodsTitle = ''
+        vm.clist2 = []
+        vm.clist3 = []
+        vm.cur1 = ''
+        vm.cur2 = ''
+        vm.cur3 = ''
+        vm.cxt = ''
+        vm.newGoods = ''
+        vm.explosiveGoods = ''
+        vm.goodsImgList = [
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          }
+        ]
+        sessionStorage.removeItem('BrandLists')
+      }
+    })
   },
   methods: {
     async getBrandList () {
@@ -452,6 +482,174 @@ export default {
         this.brandListArr = res.data.content.rows
       }
     },
+    async getSupplierList () {
+      let data = {
+        FLAG: 1,
+        pageIndex: 1,
+        pageSize: 100
+      }
+      let res = await supplierList(data)
+      if (res.data.code === 0) {
+        console.log(res.data.content)
+        this.supplierListArr = res.data.content.rows
+      }
+    },
+    async getSpecList () {
+      let data = {
+        FLAG: 1,
+        pageIndex: 1,
+        pageSize: 100,
+        specName: '',
+        categoryId: this.cur3
+      }
+      let res = await specList(data)
+      console.log(res.data.content)
+      if (res.data.code === 0) {
+        console.log('this.specList', res.data.content)
+        // this.dataList = res.data.content.rows
+        // this.dataList.forEach((item) => {
+        //   item.specValsStr = item.specVals.join('，')
+        //   // item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
+        // })
+      }
+    },
+    // 上传图片
+    async filezmFn (val) {
+      let data = {}
+      let files = ''
+      let res = ''
+      // console.log(this.$refs.filezm1.files[0])
+      switch (val) {
+        case 1:
+          files = this.$refs.filezm1.files[0]
+          data = {
+            file: files,
+            tag: 0
+          }
+          res = await singleUpload(data)
+          if (res.data.code === 0) {
+            console.log(res)
+            this.goodsImgList[0].imgShow = true
+            this.goodsImgList[0].imgUrl = res.data.content
+            this.$refs.filezm1.value = ''
+          }
+          break
+        case 2:
+          let files = this.$refs.filezm2.files[0]
+          let data = {
+            file: files,
+            tag: 0
+          }
+          res = await singleUpload(data)
+          if (res.data.code === 0) {
+            console.log(res)
+            this.goodsImgList[1].imgShow = true
+            this.goodsImgList[1].imgUrl = res.data.content
+            this.$refs.filezm2.value = ''
+          }
+          break
+        case 3:
+          files = this.$refs.filezm3.files[0]
+          data = {
+            file: files,
+            tag: 0
+          }
+          res = await singleUpload(data)
+          if (res.data.code === 0) {
+            console.log(res)
+            this.goodsImgList[2].imgShow = true
+            this.goodsImgList[2].imgUrl = res.data.content
+            this.$refs.filezm3.value = ''
+          }
+          break
+        case 4:
+          files = this.$refs.filezm4.files[0]
+          data = {
+            file: files,
+            tag: 0
+          }
+          res = await singleUpload(data)
+          if (res.data.code === 0) {
+            console.log(res)
+            this.goodsImgList[3].imgShow = true
+            this.goodsImgList[3].imgUrl = res.data.content
+            this.$refs.filezm4.value = ''
+          }
+          break
+        case 5:
+          files = this.$refs.filezm5.files[0]
+          data = {
+            file: files,
+            tag: 0
+          }
+          res = await singleUpload(data)
+          if (res.data.code === 0) {
+            console.log(res)
+            this.goodsImgList[4].imgShow = true
+            this.goodsImgList[4].imgUrl = res.data.content
+            this.$refs.filezm5.value = ''
+          }
+          break
+      }
+      console.log(this.goodsImgList)
+    },
+    _getContext (ctx) {
+      // console.log(ctx)
+      this.ctx = ctx
+    },
+    selClist1 (id) {
+      this.getcategList(id, '', 1)
+      this.cur2 = ''
+      this.cur3 = ''
+      this.brandListcheck = []
+      this.brandListArr = []
+    },
+    selClist2 (id) {
+      if (id) {
+        this.getcategList(id, '', 2)
+        this.cur3 = ''
+        this.brandListcheck = []
+        this.brandListArr = []
+      }
+    },
+    selClist3 (id) {
+      this.checkSelId = id
+      // this.listBrands(this.clist3[i].id)
+      let selObj = this.clist3.filter(item => {
+        return item.id === id
+      })
+      this.selObj = selObj[0]
+      console.log('selObj', selObj)
+      console.log(this.cur3)
+      this.getSpecList()
+    },
+    async getcategList (parentId, i, val) {
+      let data = {
+        FLAG: 1,
+        parentId: parentId
+      }
+      let res = await categList(data)
+      if (res.data.code === 0) {
+        let data = res.data.content
+        if (data && data.length > 0) {
+          let levelNo = data[0].level
+          switch (levelNo) {
+            case 1:
+              this.clist1 = data
+              this.clist2 = []
+              this.clist3 = []
+              break
+            case 2:
+              this.clist2 = data
+              this.clist3 = []
+              break
+            case 3:
+              this.clist3 = data
+              break
+          }
+        }
+      }
+    },
     editFn (val) {
       switch (val) {
         case 0:
@@ -459,6 +657,135 @@ export default {
           break
         case 1:
           console.log(1)
+          break
+      }
+    },
+    async getlistBrandsPage () {
+      let data = {
+        FLAG: 1,
+        pageIndex: 1,
+        pageSize: 200
+      }
+      let res = await listBrandsPage(data)
+      if (res.data.code === 0) {
+        sessionStorage.setItem('BrandLists', JSON.stringify(res.data.content.rows))
+        this.BrandsList = JSON.parse(sessionStorage.getItem('BrandLists'))
+      }
+    },
+    selClistBrand (id) {
+      console.log(id)
+    },
+    changeNav (val) {
+      switch (val) {
+        case 0:
+          this.vsShowNav = 0
+          break
+        case 1:
+          if (this.supplierId != '') {
+            this.vsShowNav = 1
+          } else {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请选择供应商'
+            })
+          }
+          break
+        case 2:
+          if (this.cur3 == '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请选择商品分类'
+            })
+            return
+          }
+          if (this.goodsTitle == '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请填写商品标题'
+            })
+            return
+          }
+          if (this.brandsId === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请选择品牌'
+            })
+            return
+          }
+          if (imageUrl && imageUrl.length === 0) {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请上传商品图片'
+            })
+            return
+          }
+          if (this.ctx === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请填写商品详情'
+            })
+            return
+          }
+
+          this.vsShowNav = 2
+          break
+      }
+    },
+    navSave (val) {
+      let imageUrl = this.goodsImgList.filter(item => {
+        return item.imgUrl != ''
+      })
+      switch (val) {
+        case 1:
+          if (this.supplierId != '') {
+            this.vsShowNav = 1
+          } else {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请选择供应商'
+            })
+          }
+          break
+        case 2:
+          if (this.cur3 == '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请选择商品分类'
+            })
+            return
+          }
+          if (this.goodsTitle == '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请填写商品标题'
+            })
+            return
+          }
+          if (this.brandsId === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请选择品牌'
+            })
+            return
+          }
+          if (imageUrl && imageUrl.length === 0) {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请上传商品图片'
+            })
+            return
+          }
+          if (this.ctx === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请填写商品详情'
+            })
+            return
+          }
+          this.vsShowNav = 2
+          break
+        case 3:
+          console.log('保存')
           break
       }
     },
@@ -768,6 +1095,14 @@ export default {
       this.keyword2 = ''
       this.getPageList()
     },
+    goPage (val) {
+      switch (val) {
+        case 1:
+          this.$router.push({ name: 'categoryManger' })
+          this.modal1 = false
+          break
+      }
+    },
     goBack () {
       this.$router.go(-1)
     }, // 分割线
@@ -778,20 +1113,30 @@ export default {
       this.tableData = []
       this.tableTitle = []
     }
-
   },
   created () {
+    this.getcategList(0, '', 1)
     // this.getPageList()
     // this.getBrandList()
     // this.procategoryList()
     // this.menuTree()
   },
   mounted () {
-
+    let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
+    this.getSupplierList()
+    if (brand && brand.length === 0) {
+      this.getlistBrandsPage()
+    } else {
+      this.BrandsList = brand
+    }
   }
 }
 </script>
 <style lang="less" scoped>
+.sub-left-item{
+  display: inline-block;
+  margin-right: 10px;
+}
 .tb-top-item{
   overflow: hidden;
   .top-name{
@@ -874,6 +1219,7 @@ export default {
     color: rgb(102, 153, 204);
     padding: 10px 34px;
     border: 1px solid #e6e6e6;
+    cursor: pointer;
   }
   .nav-top-item-active{
     background: #19be6b;
@@ -1111,6 +1457,13 @@ export default {
   .editor{
     float: left;
     text-align: left;
+    width: 680px;
   }
+}
+.goto-brand{
+  font-size: 14px;
+  color: #6699CC;
+  margin-left: 10px;
+  cursor: pointer;
 }
 </style>

@@ -79,7 +79,7 @@
         <div class="title">
           <div class="row">
               <span>基本信息</span>
-              <span>没有相关类目？去创建类目</span>
+              <span style="cursor: pointer;" @click="goPage(1)">没有相关类目？去创建类目</span>
           </div>
         </div>
         <Row style="margin-top: 40px;">
@@ -122,7 +122,7 @@
                 <Button size="large" @click="searchBrand" type="primary">确定</Button>
               </Col>
               <Col span="6">
-                <span class="goto-brand">没有相关品牌？去创建品牌</span>
+                <span style="cursor: pointer;" class="goto-brand" @click="goPage(2)">没有相关品牌？去创建品牌</span>
               </Col>
             </Row>
             <Row style="margin-top: 30px;">
@@ -614,6 +614,18 @@ export default {
       this.pageSize = 10
       this.keyword2 = ''
       this.getPageList()
+    },
+    goPage (val) {
+      switch (val) {
+        case 1:
+          this.$router.push({ name: 'categoryManger' })
+          this.modal1 = false
+          break
+        case 2:
+          this.$router.push({ name: 'brandList' })
+          this.modal1 = false
+          break
+      }
     },
     goBack () {
       this.$router.go(-1)

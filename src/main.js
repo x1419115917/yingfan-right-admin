@@ -18,6 +18,11 @@ import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
 import util from './libs/util'
+import VueQuillEditor from 'vue-quill-editor'
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 Vue.prototype.$util = util
 // 实际打包时应该不引入mock
 /* eslint-disable */
@@ -28,6 +33,7 @@ Vue.use(iView, {
 })
 Vue.use(TreeTable)
 Vue.use(VOrgTree)
+Vue.use(VueQuillEditor)
 /**
  * @description 注册admin内置插件
  */
