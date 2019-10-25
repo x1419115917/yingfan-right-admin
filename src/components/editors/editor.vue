@@ -129,6 +129,7 @@ export default {
   	this.detailContent = this.initContent
   },
   mounted () {
+    // this.$refs.myQuillEditor.quill.root.innerHTML = this.initContent
   	this.$nextTick(() => {
       this.$on('resetForm', function () {
         this.resetForm()

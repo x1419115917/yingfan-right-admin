@@ -30,7 +30,7 @@
         <span class="nav-top-item" @click="changeNav(1)" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">编辑商品共有信息</span>
         <span class="nav-top-item" @click="changeNav(2)" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">编辑商品属性信息</span>
       </div>
-      <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 0">
+      <div class="bank_table bank_content" style="position: relative;" v-show="vsShowNav == 0">
         <Row>
           <div class="tb-line">
             <span class="name">供应商：</span>
@@ -266,6 +266,7 @@ export default {
       brandsIds: '',
       brandsIdsList: [],
       supplierListArr: [],
+      specListArr: [],
       supplierId: '',
       ctx: '',
       BrandsList: [], // 品牌列表
@@ -431,7 +432,7 @@ export default {
     next(vm => {
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.type !== 'edit') {
-        vm.vsShowNav = 0
+        vm.vsShowNav = 2
         vm.brandsId = ''
         vm.supplierId = ''
         vm.goodsTitle = ''
@@ -440,7 +441,7 @@ export default {
         vm.cur1 = ''
         vm.cur2 = ''
         vm.cur3 = ''
-        vm.cxt = ''
+        vm.ctx = ''
         vm.newGoods = ''
         vm.explosiveGoods = ''
         vm.goodsImgList = [
@@ -493,6 +494,8 @@ export default {
       let res = await specList(data)
       if (res.data.code === 0) {
         console.log('this.specList', res.data.content)
+        this.specListArr = res.data.content.rows
+        sessionStorage.setItem('specListArr', JSON.stringify(this.specListArr))
         // this.dataList = res.data.content.rows
         // this.dataList.forEach((item) => {
         //   item.specValsStr = item.specVals.join('，')
@@ -608,7 +611,12 @@ export default {
       this.selObj = selObj[0]
       // console.log('selObj', selObj)
       // console.log(this.cur3)
-      this.getSpecList()
+      let specListArrs = JSON.parse(sessionStorage.getItem('specListArr'))
+      if (specListArrs && specListArrs.length > 0) {
+        this.specListArr = specListArrs
+      } else {
+        this.getSpecList()
+      }
     },
     async getcategList (parentId, i, val) {
       let data = {
@@ -776,7 +784,6 @@ export default {
           break
       }
     },
-    filezm () {},
     async roleDetail (id) {
       let res = await roleDetail(id)
       if (res.data.code === 0) {
@@ -1096,6 +1103,10 @@ export default {
     let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
     this.getcategList(0, '', 1)
     this.getSupplierList()
+    let specListArrs = JSON.parse(sessionStorage.getItem('specListArr'))
+    if (specListArrs && specListArrs.length > 0) {
+      this.specListArr = specListArrs
+    }
     if (brand && brand.length === 0) {
       this.getlistBrandsPage()
     } else {

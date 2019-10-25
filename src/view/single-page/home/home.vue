@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div>
+    <!-- <div>
       <h3 style="font-size: 24px;">应悦汇管理后台</h3>
       <ul class="ul-list">
         <li>应悦汇成立于2000,专注文化传播</li>
         <li>应悦汇主流电商平台</li>
       </ul>
-    </div>
-    <!-- <Row :gutter="20">
+    </div> -->
+    <Row :gutter="20">
       <i-col :xs="12" :md="8" :lg="4" v-for="(infor, i) in inforCardData" :key="`infor-${i}`" style="height: 120px;padding-bottom: 10px;">
         <infor-card shadow :color="infor.color" :icon="infor.icon" :icon-size="36">
           <count-to :end="infor.count" count-class="count-style"/>
@@ -31,7 +31,7 @@
       <Card shadow>
         <example style="height: 310px;"/>
       </Card>
-    </Row> -->
+    </Row>
   </div>
 </template>
 
