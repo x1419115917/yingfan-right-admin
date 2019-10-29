@@ -14,7 +14,7 @@
         <span class="nav-top-item" @click="changeNav(2)" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">编辑商品属性信息</span>
       </div>
       <div class="bank_table bank_content" style="position: relative;" v-show="vsShowNav == 0">
-        <Row>
+        <Row style="margin-top: 35px;">
           <div class="tb-line">
             <span class="name">供应商：</span>
             <Select class="w422" v-model="supplierId" filterable allow-create @on-change="selClistBrand">
@@ -57,7 +57,7 @@
         </Row>
         <Row class="">
           <div class="tb-title">
-            <h5 class="name">商品基本信息</h5>
+            <h5 class="name title-h5">商品基本信息</h5>
           </div>
           <div class="tb-line">
             <span class="name"><span>*</span>商品标题：</span>
@@ -255,8 +255,8 @@
                       <Option v-for="item in integralList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                   </span>
-                  <Button class="goods-info-ipt" type="warning" ghost @click="navSave(3)">重置</Button>
-                  <Button class="goods-info-ipt" type="primary" ghost @click="navSave(3)">确定</Button>
+                  <Button class="goods-info-ipt" type="warning" ghost @click="clearGoodsObj">重置</Button>
+                  <Button class="goods-info-ipt" type="primary" ghost @click="saveGoodsObj">确定</Button>
                 </Col>
               </Row>
               <Row>
@@ -459,23 +459,23 @@ export default {
       integralList: [
         {
           label: '30%',
-          value: '30%'
+          value: '30'
         },
         {
           label: '60%',
-          value: '60%'
+          value: '60'
         },
         {
           label: '100%',
-          value: '100%'
+          value: '100'
         }
       ],
       columnsList: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
+        // {
+        //   type: 'selection',
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
           title: '图片',
           // key: 'images',
@@ -593,6 +593,23 @@ export default {
           }
         },
         {
+          title: '积分兑换',
+          key: 'exchangePoints',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].exchangePoints
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].exchangePoints = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
           title: '批发价(元)',
           key: 'trade',
           render: (h, params) => {
@@ -650,6 +667,7 @@ export default {
           imageShow: false,
           code: '',
           tcode: '',
+          supply: '',
           stock: '',
           retail: '',
           wholesale: '',
@@ -686,12 +704,15 @@ export default {
     next(vm => {
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.type !== 'edit') {
-        vm.vsShowNav = 2
+        vm.vsShowNav = 0
         vm.brandsId = ''
         vm.supplierId = ''
         vm.goodsTitle = ''
         vm.clist2 = []
         vm.clist3 = []
+        vm.expandSpec = []
+        vm.expandSpec1 = []
+        vm.expandSpec2 = []
         vm.cur1 = ''
         vm.cur2 = ''
         vm.cur3 = ''
@@ -721,6 +742,7 @@ export default {
           }
         ]
         sessionStorage.removeItem('BrandLists')
+        sessionStorage.removeItem('specListArr')
       }
     })
   },
@@ -729,7 +751,7 @@ export default {
       let columnsList = this.columnsList
       let expandSpec = this.expandSpec
       expandSpec.forEach((item, index) => {
-        columnsList.splice(index + 1, 0, {
+        columnsList.splice(index, 0, {
           title: item.specName,
           key: `guige${index}`,
           width: 100
@@ -806,8 +828,6 @@ export default {
       }
     },
     specArrFor (arr) {
-      this.baseSpec = []
-      this.expandSpec = []
       arr.forEach(item => {
         if (item.specType === 0) {
           this.expandSpec.push(item)
@@ -826,14 +846,35 @@ export default {
       }
       this.columnsList = this.columnsListUpdata
     },
-    // 笛卡尔积
-    myDescates () {
+    clearGoodsObj () {
+      this.goodsObj = {
+        supply: '',
+        stock: '',
+        retail: '',
+        wholesale: '',
+        trade: '',
+        brokerage: '',
+        integral: ''
+      }
+    },
+    // 批量填入
+    saveGoodsObj () {
+      this.dataList.forEach(item => {
+        item.stock = this.goodsObj.stock
+        item.supply = this.goodsObj.supply
+        item.retail = this.goodsObj.retail
+        item.wholesale = this.goodsObj.wholesale
+        item.trade = this.goodsObj.trade
+        item.brokerage = this.goodsObj.brokerage
+        item.integral = this.goodsObj.integral
+      })
     },
     // 保存添加商品
     async saveGood () {
       let specTemplate = []
       let attrTemplate = []
       let imgList = []
+      let skus = []
       let cheval = ''
       // 判断基本属性是否选中
       let checkedSpecVal = this.baseSpec.filter((item, index) => {
@@ -852,18 +893,6 @@ export default {
         }
         return cheval
       })
-      if (this.dataList && this.dataList.guige0) {
-        specTemplate.push({
-          specName: this.expandSpec[0].specName,
-          specValues: [ this.dataList.guige0 ]
-        })
-      }
-      if (this.dataList && this.dataList.guige1) {
-        specTemplate.push({
-          specName: this.expandSpec[1].specName,
-          specValues: [ this.dataList.guige1 ]
-        })
-      }
       if (cheval === '') {
         this.$Modal.warning({
           title: '提示',
@@ -909,84 +938,126 @@ export default {
       })
       // 遍历table
       this.dataList.forEach((item, index) => {
+        let skuSpecs = []
         if (item.imageUrl == '') {
           this.$Modal.warning({
             title: '提示',
             content: '请上传图片'
           })
+          return
         }
-        if (item.guige0 && item.guige0 == '') {
-          this.validateStr(item.guige0)
+        // this.validateStr(item.imageUrl)
+        this.validateStr(item.code, '')
+        this.validateStr(item.tcode, '')
+        this.validateStr(item.stock, 'number')
+        this.validateStr(item.retail, 'number')
+        this.validateStr(item.supply, 'number')
+        this.validateStr(item.wholesale, 'number')
+        this.validateStr(item.trade, 'number')
+        this.validateStr(item.brokerage, 'number', 'range')
+        this.validateStr(item.integral, 'number', 'range')
+        if (this.expandSpec && this.expandSpec.length === 1) {
+          skuSpecs = [{
+            specName: this.expandSpec[0].specName,
+            specValue: item.guige0
+          }]
+        } else if (this.expandSpec && this.expandSpec.length === 2) {
+          skuSpecs = [
+            {
+              specName: this.expandSpec[0].specName,
+              specValue: item.guige0
+            },
+            {
+              specName: this.expandSpec[1].specName,
+              specValue: item.guige1
+            }
+          ]
         }
-        if (item.guige1 && item.guige1 == '') {
-          this.validateStr(item.guige1)
-        }
-        this.validateStr(item.imageUrl)
-        this.validateStr(item.code)
-        this.validateStr(item.tcode)
-        this.validateStr(item.stock)
-        this.validateStr(item.retail)
-        this.validateStr(item.wholesale)
-        this.validateStr(item.trade)
-        this.validateStr(item.brokerage)
-        this.validateStr(item.integral)
+        skus.push({
+          barcode: item.tcode,
+          chooseSpec: '',
+          exchangePoints: item.exchangePoints,
+          commissionRate: item.brokerage,
+          imageList: imgList,
+          merchantCode: item.code,
+          minWholesaleVolume: item.wholesale,
+          pointRate: item.integral,
+          retailPrice: item.retail,
+          skuId: '',
+          skuSpecs: skuSpecs,
+          stockNum: item.stock,
+          supplyPrice: item.supply,
+          tradePrice: item.trade
+        })
       })
-      console.log('attrTemplate', attrTemplate)
-      console.log('imgList', imgList)
-      console.log('dataList', this.dataList)
-      return
+      console.log('skus', skus)
+      // console.log('imgList', imgList)
+      // console.log('dataList', this.dataList)
+      // // return
+      // console.log('this.ctx', this.ctx)
+      // return
       let data = {
+        FLAG: 1,
         attrTemplate: attrTemplate,
         brandId: this.brandsId,
         cid1: this.cur1,
         cid2: this.cur2,
         cid3: this.cur3,
-        description: this.ctx,
+        description: this.ctx.html,
         enableWholesale: 0,
         imageList: imgList,
         isNew: this.newGoods,
         isSellWell: this.explosiveGoods,
         minWholesaleVolume: '',
         mixedBatch: '',
-        skus: [{
-          barcode: 'string',
-          chooseSpec: 'string',
-          commissionRate: 0,
-          imageList: [
-            'string'
-          ],
-          marketPrice: 0,
-          merchantCode: 'string',
-          minWholesaleVolume: 0,
-          pointRate: 0,
-          retailPrice: 0,
-          skuId: 0,
-          skuSpecs: [{
-            specName: 'string',
-            specValue: 'string'
-          }],
-          stockNum: 0,
-          supplyPrice: 0,
-          tradePrice: 0
-        }],
-        specTemplate: specTemplate,
+        skus: skus,
+        specTemplate: this.expandSpec,
         spuId: '',
         subTitle: this.subtitle,
         supplierId: this.supplierId,
         title: this.goodsTitle
       }
+
       let res = await saveGoods(data)
       if (res.data.code == 0) {
         console.log(res)
+        if (res.data.code === 0) {
+          this.$Modal.success({
+            title: '提示',
+            content: '发布成功'
+          })
+          this.$router.push({ name: 'goodsList' })
+        }
       }
     },
+    // 去空格
+    strTrim (str) {
+      return parseInt(str.replace(/^\s+/, '').replace(/\s+$/, ''))
+    },
     // 校验
-    validateStr (str) {
+    validateStr (str, type, scope) {
+      let reg = /^[0-9]+$/
       if (str == '') {
         this.$Modal.warning({
           title: '提示',
-          content: '请填写'
+          content: '请填写完整信息'
         })
+      } else if (type === 'number') {
+        if (!reg.test(str)) {
+          this.$Modal.warning({
+            title: '提示',
+            content: '请输入正确的数字格式'
+          })
+          return
+        }
+        if (scope && scope === 'range') {
+          if (!/^([1-9]\d{0,1}|100|NA)$/.test(str)) {
+            this.$Modal.warning({
+              title: '提示',
+              content: '(%)只能输入1-100的正整数'
+            })
+          }
+        }
       }
     },
     // 添加属性
@@ -1009,10 +1080,10 @@ export default {
         specName: '',
         categoryId: this.cur3
       }
+      this.specListArr = []
       let res = await specList(data)
       if (res.data.code === 0) {
         this.specListArr = res.data.content.rows
-        // expandSpec
         this.specListArr.forEach(item => {
           item.showEdit = false
           item.editVal = ''
@@ -1146,21 +1217,10 @@ export default {
         return item.id === id
       })
       this.selObj = selObj[0]
-      // console.log('selObj', selObj)
-      // console.log(this.cur3)
-      let specListArrs = JSON.parse(sessionStorage.getItem('specListArr'))
-      if (specListArrs && specListArrs.length > 0) {
-        this.specListArr = specListArrs
-        this.specListArr.forEach(item => {
-          item.showEdit = false
-          item.editVal = ''
-          item.checkVals = ''
-          item.checkspeVals = []
-        })
-        this.specArrFor(this.specListArr)
-      } else {
-        this.getSpecList()
-      }
+      let specListArrs = []
+      this.baseSpec = []
+      this.expandSpec = []
+      this.getSpecList()
     },
     async getcategList (parentId, i, val) {
       let data = {
@@ -1590,7 +1650,7 @@ export default {
     let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
     this.getcategList(0, '', 1)
     this.getSupplierList()
-    let specListArrs = JSON.parse(sessionStorage.getItem('specListArr'))
+    let specListArrs = JSON.parse(sessionStorage.getItem('specListArr')) || []
     if (specListArrs && specListArrs.length > 0) {
       this.specListArr = specListArrs
       this.specListArr.forEach(item => {
@@ -1606,6 +1666,10 @@ export default {
     } else {
       this.BrandsList = brand
     }
+  },
+  destroyed () {
+    sessionStorage.removeItem('BrandLists')
+    sessionStorage.removeItem('specListArr')
   }
 }
 </script>
@@ -1883,6 +1947,9 @@ export default {
       margin: 0 auto;
       font-size: 14px;
       margin-bottom: 26px;
+    }
+    .title-h5{
+      width: 780px;
     }
   }
   .tb-line.btn{
