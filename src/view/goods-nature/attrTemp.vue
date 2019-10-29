@@ -27,7 +27,7 @@
           <Row class="role-top com_submenu">
             <Row>
               <div class="set-con">
-                <Button class="btn" type="success" :loading="uploadLoading" @click="addFn">添加模板</Button>
+                <Button class="btn" type="success" :loading="uploadLoading" @click="addFn">添加属性</Button>
                 <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
               </div>
               <!-- <div class="role-top-input">
@@ -114,7 +114,7 @@
         </Row>
       </Col>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑用户': '新增用户'"  width="660" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑属性': '新增属性'"  width="660" @on-cancel="cancelModal1">
 			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
         <FormItem label="属性类型:" prop="status">
 					<RadioGroup v-model="formValidate.status" @on-change="radioChange">
@@ -339,6 +339,7 @@ export default {
           status: data.specType.toString(),
           natures: data.operateType.toString()
         }
+        this.attrListArr = []
         data.specVals.forEach(item => {
           this.attrListArr.push({
             attrItem: item
@@ -513,7 +514,7 @@ export default {
       // this.formValidate.dept = data[0].title == '顶级节点' ? '' : data[0].title
       // this.getPageList()
     },
-    //  添加用户
+    //  添加属性
     saveSepcs () {
       let itemVal = []
       this.$refs.formValidate.validate((valid) => {
@@ -684,15 +685,9 @@ export default {
       this.menuIds = []
       this.checkedId = ''
       this.formValidate = {
-        deptId: '',
-        dept: '',
-        email: '',
-        status: '',
-        deptName: '',
-        username: '',
         name: '',
-        roleIds: [],
-        pwd: ''
+        status: '',
+        natures: ''
       }
       this.checkedPrentFn(this.ztreesData)
     },

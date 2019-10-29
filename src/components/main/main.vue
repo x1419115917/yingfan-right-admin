@@ -88,6 +88,7 @@ export default {
     },
     cacheList () {
       const list = ['ParentView', ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []]
+      // const list = ['ParentView', ...this.tagNavList.length ? [] : []]
       return list
     },
     menuList () {

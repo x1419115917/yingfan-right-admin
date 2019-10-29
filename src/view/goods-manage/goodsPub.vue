@@ -6,23 +6,6 @@
     <Card :title="type == 'edit' ? '编辑商品信息' : '发布商品'">
       <Row class="role-top">
       </Row>
-      <Row>
-        <div class="ivu-upload-list-file" v-if="file !== null">
-          <Icon type="ios-stats"></Icon>
-            {{ file.name }}
-          <Icon v-show="showRemoveFile" type="ios-close" class="ivu-upload-list-remove" @click.native="handleRemove()"></Icon>
-        </div>
-      </Row>
-      <Row>
-        <transition name="fade">
-          <Progress v-if="showProgress" :percent="progressPercent" :stroke-width="2">
-            <div v-if="progressPercent == 100">
-              <Icon type="ios-checkmark-circle"></Icon>
-              <span>成功</span>
-            </div>
-          </Progress>
-        </transition>
-      </Row>
     </Card>
     <Row class="margin-top-10" style="background:#fff;padding:30px;">
       <div class="nav-top">
@@ -103,16 +86,6 @@
           <div class="tb-line photo-con">
             <span class="name"><span>*</span>商品图片：</span>
             <ul class="photo-list">
-              <!-- <li class="photo-item" v-for="(item,index) in goodsImgList" :key="index">
-                <input type="file" class="img-ipt"
-                      ref="filezm"
-                      @change="filezmFn(index)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="item.imgUrl" class="img-box1"
-                    id="ad21" v-show="item.imgShow">
-              </li> -->
               <li class="photo-item">
                 <input type="file" class="img-ipt"
                       ref="filezm1"
@@ -185,39 +158,125 @@
           </div>
           <div class="tb-line tb-line2">
             <span class="name"><span>*</span>基本属性：</span>
-            <div class="name-left w687">
-              <div class="tb-top-item">
-                <span class="top-name">适用人群：</span>
-                <CheckboxGroup v-model="crowcd" class="check-box">
-                  <Checkbox class="check-item" :label="item.id" v-for="(item, index) in crowcdListArr" :key="index">
-                      <span class="brand-name">{{item.name}}</span>
-                  </Checkbox>
-                  <Checkbox class="check-item" label="0">
-                      <span class="brand-name">男</span>
-                  </Checkbox>
-                  <Checkbox class="check-item" label="1">
-                      <span class="brand-name">女</span>
-                  </Checkbox>
-              </CheckboxGroup>
-              <div class="edit-item">
-                <Icon v-show="!isEditCrowcd" @click="editFn(0)" type="ios-create-outline" size="22" />
-                <div class="edit-ipt" style="float: left;" v-show="isEditCrowcd">
-                  <Input class="edit-modal-ipt" v-model="value3" placeholder="请输入" style="width: 100px" />
-                  <Button class="edit-btn" type="info">保存</Button>
+            <!-- <Button class="add-attr-btn" type="success" @click="addFn">添加属性</Button> -->
+            <div class="base-attr" v-show="baseSpec && baseSpec.length > 0">
+              <div v-for="(item,index) in baseSpec" :key="index">
+                <div class="name-left w687" v-show="item.operateType == 2">
+                  <div class="tb-top-item">
+                    <span class="top-name">{{item.specName}}：</span>
+                    <div class="spce-right">
+                      <CheckboxGroup v-model="item.checkspeVals" class="check-box">
+                        <Checkbox class="check-item" :label="val" v-for="(val, inx1) in item.specVals" :key="inx1+'item'">
+                            <span class="brand-name">{{val}}</span>
+                        </Checkbox>
+                      </CheckboxGroup>
+                      <div class="edit-item" v-show="false">
+                        <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
+                        <div class="edit-ipt" v-show="item.showEdit">
+                          <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" />
+                          <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="name-left w687" v-show="item.operateType == 1">
+                  <div class="tb-top-item">
+                    <span class="top-name">{{item.specName}}：</span>
+                    <div class="spce-right" style="float:left;">
+                      <Select class="check-box" style="width: 300px;margin-right: 6px;height: 35px; float: left;" v-model="item.checkVals" filterable allow-create @on-change="selClistBrand">
+                        <Option v-for="(vale,ind) in item.specVals" :value="vale" :key="ind">{{ vale }}</Option>
+                      </Select>
+                      <div class="edit-item" v-show="false">
+                        <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
+                        <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
+                          <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" />
+                          <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="name-left w687" v-show="item.operateType == 3">
+                  <div class="tb-top-item">
+                    <span class="top-name">{{item.specName}}：</span>
+                    <div class="spce-right">
+                      <span class="check-box to-ipt-show" v-show="!item.showEdit">{{item.specVals[0]}}</span>
+                      <div class="edit-item"  v-show="false">
+                        <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
+                        <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
+                          <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
+                          <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
+             <div class="base-attr expand-attr" v-show="expandSpec && expandSpec.length > 0">
+              <div v-for="(item,index) in expandSpec" :key="index">
+                <div class="name-left w687" v-show="item.operateType == 3">
+                  <div class="tb-top-item">
+                    <span class="top-name">{{item.specName}}：</span>
+                    <div class="spce-right">
+                      <div class="content-box-vals" v-for="(values,idx) in item.specVals" :value="values" :key="idx">
+                        <span class="check-box to-ipt-show toname-ipt">{{values}}</span>
+                      </div>
+                      <div class="edit-item">
+                        <Icon v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-create-outline" size="22" />
+                        <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
+                          <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" />
+                          <Button class="edit-btn" @click="saveExpandFn(index)" type="info">保存</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="tb-line">
-            <span class="name">商品副标题：</span>
-            <Input class="w687" v-model="value3" placeholder="输入商品副标题"  />
-          </div>
-          <div class="tb-line">
-            <span class="name"><span>*</span>品牌：</span>
-            <Select class="w687" v-model="model1" filterable>
-                <Option v-for="item in goodsType" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
+          <div class="tb-line tb-line3">
+              <h5 class="goods-info-title text-left">商品价格</h5>
+              <Row style="margin-bottom: 30px;">
+                <Col span="2" class="goods-info-left text-right">批量填充：</Col>
+                <Col span="22" class="goods-info-content text-left">
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.supply" placeholder="输入供货价"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.retail" placeholder="输入零售价"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="输入批发价"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="最低批发量"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.stock" placeholder="可售卖库存"  />
+                  <span class="goods-info-ipt">
+                    佣金比例: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
+                  </span>
+                  <span class="goods-info-ipt">
+                    积分返还:
+                    <Select class="w80" v-model="goodsObj.integral" filterable>
+                      <Option v-for="item in integralList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                  </span>
+                  <Button class="goods-info-ipt" type="warning" ghost @click="navSave(3)">重置</Button>
+                  <Button class="goods-info-ipt" type="primary" ghost @click="navSave(3)">确定</Button>
+                </Col>
+              </Row>
+              <Row>
+                  <Table :columns="columnsList" :data="dataList" border>
+                    <template slot-scope="{ row, index }" slot="images">
+                      <div class="uploadbox">
+                        <input type="file" class="upload-img"
+                              ref="filezm6"
+                              @change="tableUploadImg($event, index)"
+                              accept="image/*"
+                              capture="camera">
+                        <span class="bg-glay-add add-image">+图片</span>
+                        <!-- v-show="row.imgShow" -->
+                        <img :src="row.imageUrl" class="img-table"
+                            id="ad21" v-show="row.imageShow">
+                      </div>
+
+                    </template>
+                  </Table>
+              </Row>
           </div>
         </Row>
         <Row>
@@ -227,7 +286,34 @@
         </Row>
       </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="'新增代理类目/品牌'"  width="840" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑属性': '新增属性'"  width="660" @on-cancel="cancelModal1">
+			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
+        <FormItem label="属性类型:" prop="status">
+					<RadioGroup v-model="formValidate.status" @on-change="radioChange">
+            <Radio label="1">基本属性</Radio>
+            <Radio label="0">规格属性</Radio>
+          </RadioGroup>
+				</FormItem>
+        <FormItem label="属性值性质:" prop="natures" :class="formValidate.status==0 ? 'boxNone' : ''">
+          <RadioGroup v-model="formValidate.natures">
+            <Radio label="1">下拉框</Radio>
+            <Radio label="2">复选框</Radio>
+            <Radio label="3">文本框</Radio>
+          </RadioGroup>
+				</FormItem>
+				<FormItem label="属性名称:" prop="name">
+					<Input v-model="formValidate.name" placeholder="请输入属性名称"></Input>
+				</FormItem>
+        <FormItem label="属性值:" class="check-attr">
+          <div class="attr-list">
+            <div class="attr-item" v-for="(item,index) in attrListArr" :key="index">
+              <Input class="attr-ipt" v-model="item.attrItem" placeholder="请输入属性值"></Input>
+              <Icon class="attr-close" size="20" type="md-close-circle" @click="removeAttr(index)" />
+            </div>
+            <span class="add-attr" size="large" type="primary" @click="addAttr">增加属性值</span>
+          </div>
+				</FormItem>
+			</Form>
 			<div slot="footer">
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
@@ -236,32 +322,32 @@
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok="delRole"
+				@on-ok=""
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除？</p>
-		</Modal>
-    <Modal
-				width="20"
-				v-model="delBatchModal"
-				@on-ok="batchRemove"
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除选中的数据？</p>
 		</Modal>
   </div>
 </template>
 <script>
 import { menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
-import { listBrandsPage, singleUpload, specList } from '@/api/nature'
+import { listBrandsPage, singleUpload, specList, saveSpec } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
+import { saveGoods } from '@/api/goods'
 // import editor from '@/components/editor'
 import editors from '@/components/editors/editor'
+import Cookies from 'js-cookie'
+import config from '@/config'
+const baseUrl = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro
 export default {
   name: 'supplier',
   data () {
     return {
       vsShowNav: 0,
+      quillUpdateImg: false,
+      params: { tag: 0 },
+      serverUrl: `${baseUrl}/base/oss/singleUpload`, // 这里写你要上传的图片服务器地址
+      header: { token: Cookies.get('access_token') }, // 有的图片服务器要求请求头需要有token之类的参数，写在这里
       brandsId: '',
       brandsIds: '',
       brandsIdsList: [],
@@ -292,6 +378,25 @@ export default {
           imgShow: false
         }
       ], // 商品图片列表
+      attrListArr: [],
+      treeData1: [],
+      ztreesData: [],
+      formValidate: {
+        status: '',
+        natures: '',
+        name: ''
+      },
+      ruleValidate: {
+        name: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        status: [
+          { required: true, message: '请选择', trigger: 'blur' }
+        ],
+        natures: [
+          { required: true, message: '请选择', trigger: 'blur' }
+        ]
+      },
       clist1: [],
       clist2: [],
       clist3: [],
@@ -308,7 +413,7 @@ export default {
       imgUrl: '',
       img1: '',
       imgShow1: false,
-      brandListcheck: ['facebook', 'github'],
+      brandListcheck: [],
       newGoods: '',
       newGoodsList: [
         {
@@ -331,25 +436,6 @@ export default {
           label: '否'
         }
       ],
-      model1: '商品ID',
-      goodsType: [
-        {
-          value: '商品ID',
-          label: '商品ID'
-        },
-        {
-          value: 'skuID',
-          label: 'skuID'
-        },
-        {
-          value: '商家编码',
-          label: '商家编码'
-        },
-        {
-          value: '商品条形码',
-          label: '商品条形码'
-        }
-      ],
       brandListArr: [],
       title: '新增供应商',
       type: this.$route.query.type,
@@ -357,51 +443,221 @@ export default {
       value3: '',
       modal1: false,
       operationShow: false,
-      delBatchModal: false,
       delModal: false,
       checkedIds: [],
       checkedId: '',
-      menuIdsArr: [],
-      ztreesData: [],
-      formValidate: {
-        name: '',
-        operator: '',
-        phone: ''
-      },
-      ruleValidate: {
-        name: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        operator: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ]
-      },
       roleName: '',
-      columnsList: [
-        // {
-        //   type: 'selection',
-        //   width: 60,
-        //   align: 'center'
-        // },
+      goodsObj: {
+        supply: '',
+        stock: '',
+        retail: '',
+        wholesale: '',
+        trade: '',
+        brokerage: '',
+        integral: ''
+      },
+      integralList: [
         {
-          title: '序号',
-          key: 'id'
+          label: '30%',
+          value: '30%'
         },
         {
-          title: '类目名称',
-          key: 'categoryName'
+          label: '60%',
+          value: '60%'
         },
         {
-          title: '操作',
-          width: 180,
-          slot: 'action',
-          align: 'center'
+          label: '100%',
+          value: '100%'
         }
       ],
-      dataList: [],
+      columnsList: [
+        {
+          type: 'selection',
+          width: 60,
+          align: 'center'
+        },
+        {
+          title: '图片',
+          // key: 'images',
+          width: 80,
+          slot: 'images'
+        },
+        {
+          title: '商家编码',
+          key: 'code',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].code
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].code = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '商品条形码',
+          key: 'tcode',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].tcode
+              },
+              on: {
+                'on-change' (event) {
+                  // 值改变时
+                  // 将渲染后的值重新赋值给单元格值
+                  vm.dataList[params.index].tcode = event.target.value
+                  // console.log(event.target.value)
+                }
+              }
+              // on: {
+              //     input: (val) => {
+              //         params.row.tcode = val;
+              //     }
+              // }
+            })
+          }
+        },
+        {
+          title: '供货价(元)',
+          key: 'supply',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].supply
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].supply = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '可售卖库存',
+          key: 'stock',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].stock
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].stock = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '零售价(元)',
+          key: 'retail',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].retail
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].retail = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '最低批发量',
+          key: 'wholesale',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].wholesale
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].wholesale = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '批发价(元)',
+          key: 'trade',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].trade
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].trade = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '佣金比例(%)',
+          key: 'brokerage',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].brokerage
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].brokerage = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '积分返还(%)',
+          key: 'integral',
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].integral
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].integral = event.target.value
+                }
+              }
+            })
+          }
+        }
+      ],
+      dataList: [
+        {
+          imageUrl: '',
+          imageShow: false,
+          code: '',
+          tcode: '',
+          stock: '',
+          retail: '',
+          wholesale: '',
+          trade: '',
+          brokerage: '',
+          integral: ''
+        }
+      ],
       userIdCreate: '',
       roleSign: '',
       dataDel: [],
@@ -409,6 +665,10 @@ export default {
       sendContractBut: false,
       selectedList: [],
       contractInfo: '',
+      expandSpec: [],
+      expandSpec1: [],
+      expandSpec2: [],
+      baseSpec: [],
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
@@ -416,12 +676,6 @@ export default {
       total: 0,
       loading: false, // 分割线
       uploadLoading: false,
-      progressPercent: 0,
-      showProgress: false,
-      showRemoveFile: false,
-      file: null,
-      tableData: [],
-      tableTitle: [],
       tableLoading: false
     }
   },
@@ -470,6 +724,74 @@ export default {
       }
     })
   },
+  computed: {
+    columnsListUpdata: function () {
+      let columnsList = this.columnsList
+      let expandSpec = this.expandSpec
+      expandSpec.forEach((item, index) => {
+        columnsList.splice(index + 1, 0, {
+          title: item.specName,
+          key: `guige${index}`,
+          width: 100
+        })
+      })
+      return columnsList
+    },
+    Descates: function () {
+      let arr1 = this.expandSpec1
+      let arr2 = this.expandSpec2
+      let result = []
+      let i = 0, j = 0
+      if (arr1.length > 0 && arr2.length > 0) {
+        for (i = 0; i < arr1.length; i++) {
+          let item1 = arr1[i]
+          for (j = 0; j < arr2.length; j++) {
+            let item2 = arr2[j]
+            // result.push([item1, item2]);
+            result.push(
+              {
+                guige0: item1,
+                guige1: item2,
+                imageUrl: '',
+                imageShow: false,
+                code: '',
+                tcode: '',
+                stock: '',
+                retail: '',
+                wholesale: '',
+                trade: '',
+                brokerage: '',
+                integral: ''
+              }
+            )
+          }
+        }
+        return result
+      } else if (arr1.length > 0 && arr2.length === 0) {
+        for (i = 0; i < arr1.length; i++) {
+          let item1 = arr1[i]
+          result.push(
+            {
+              guige0: item1,
+              imageUrl: '',
+              imageShow: false,
+              code: '',
+              tcode: '',
+              stock: '',
+              retail: '',
+              wholesale: '',
+              trade: '',
+              brokerage: '',
+              integral: ''
+            }
+          )
+        }
+        return result
+      } else {
+        return result
+      }
+    }
+  },
   methods: {
     async getSupplierList () {
       let data = {
@@ -479,9 +801,205 @@ export default {
       }
       let res = await supplierList(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
+        // console.log(res.data.content)
         this.supplierListArr = res.data.content.rows
       }
+    },
+    specArrFor (arr) {
+      this.baseSpec = []
+      this.expandSpec = []
+      arr.forEach(item => {
+        if (item.specType === 0) {
+          this.expandSpec.push(item)
+        } else {
+          this.baseSpec.push(item)
+        }
+      })
+      if (this.expandSpec && this.expandSpec.length == 2) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = [...this.expandSpec[1].specVals]
+        this.dataList = this.Descates
+      } else if (this.expandSpec && this.expandSpec.length == 1) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      }
+      this.columnsList = this.columnsListUpdata
+    },
+    // 笛卡尔积
+    myDescates () {
+    },
+    // 保存添加商品
+    async saveGood () {
+      let specTemplate = []
+      let attrTemplate = []
+      let imgList = []
+      let cheval = ''
+      // 判断基本属性是否选中
+      let checkedSpecVal = this.baseSpec.filter((item, index) => {
+        if (item.operateType == 2) {
+          if (item.checkspeVals && item.checkspeVals.length > 0) {
+            cheval = '1'
+          }
+        } else if (item.operateType == 1) {
+          if (item.checkVals && item.checkVals.length > 0) {
+            cheval = '1'
+          }
+        } else if (item.operateType == 3) {
+          if (item.specVals && item.specVals.length > 0) {
+            cheval = '1'
+          }
+        }
+        return cheval
+      })
+      if (this.dataList && this.dataList.guige0) {
+        specTemplate.push({
+          specName: this.expandSpec[0].specName,
+          specValues: [ this.dataList.guige0 ]
+        })
+      }
+      if (this.dataList && this.dataList.guige1) {
+        specTemplate.push({
+          specName: this.expandSpec[1].specName,
+          specValues: [ this.dataList.guige1 ]
+        })
+      }
+      if (cheval === '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择基本属性'
+        })
+        return
+      }
+      this.baseSpec.forEach((item, index) => {
+        if (item.operateType == 2) {
+          if (item.checkspeVals && item.checkspeVals.length > 0) {
+            attrTemplate.push({
+              attrName: item.specName,
+              attrType: item.specType,
+              attrValues: item.specVals,
+              datas: item.checkspeVals
+            })
+          }
+        } else if (item.operateType == 1) {
+          if (item.checkVals && item.checkVals.length > 0) {
+            attrTemplate.push({
+              attrName: item.specName,
+              attrType: item.specType,
+              attrValues: item.specVals,
+              datas: [ item.checkVals ]
+            })
+          }
+        } else if (item.operateType == 3) {
+          if (item.specVals && item.specVals.length > 0) {
+            attrTemplate.push({
+              attrName: item.specName,
+              attrType: item.specType,
+              attrValues: item.specVals,
+              datas: item.specVals
+            })
+          }
+        }
+      })
+      // 循环商品图片
+      this.goodsImgList.forEach(item => {
+        if (item.imgUrl != '') {
+          imgList.push(item.imgUrl)
+        }
+      })
+      // 遍历table
+      this.dataList.forEach((item, index) => {
+        if (item.imageUrl == '') {
+          this.$Modal.warning({
+            title: '提示',
+            content: '请上传图片'
+          })
+        }
+        if (item.guige0 && item.guige0 == '') {
+          this.validateStr(item.guige0)
+        }
+        if (item.guige1 && item.guige1 == '') {
+          this.validateStr(item.guige1)
+        }
+        this.validateStr(item.imageUrl)
+        this.validateStr(item.code)
+        this.validateStr(item.tcode)
+        this.validateStr(item.stock)
+        this.validateStr(item.retail)
+        this.validateStr(item.wholesale)
+        this.validateStr(item.trade)
+        this.validateStr(item.brokerage)
+        this.validateStr(item.integral)
+      })
+      console.log('attrTemplate', attrTemplate)
+      console.log('imgList', imgList)
+      console.log('dataList', this.dataList)
+      return
+      let data = {
+        attrTemplate: attrTemplate,
+        brandId: this.brandsId,
+        cid1: this.cur1,
+        cid2: this.cur2,
+        cid3: this.cur3,
+        description: this.ctx,
+        enableWholesale: 0,
+        imageList: imgList,
+        isNew: this.newGoods,
+        isSellWell: this.explosiveGoods,
+        minWholesaleVolume: '',
+        mixedBatch: '',
+        skus: [{
+          barcode: 'string',
+          chooseSpec: 'string',
+          commissionRate: 0,
+          imageList: [
+            'string'
+          ],
+          marketPrice: 0,
+          merchantCode: 'string',
+          minWholesaleVolume: 0,
+          pointRate: 0,
+          retailPrice: 0,
+          skuId: 0,
+          skuSpecs: [{
+            specName: 'string',
+            specValue: 'string'
+          }],
+          stockNum: 0,
+          supplyPrice: 0,
+          tradePrice: 0
+        }],
+        specTemplate: specTemplate,
+        spuId: '',
+        subTitle: this.subtitle,
+        supplierId: this.supplierId,
+        title: this.goodsTitle
+      }
+      let res = await saveGoods(data)
+      if (res.data.code == 0) {
+        console.log(res)
+      }
+    },
+    // 校验
+    validateStr (str) {
+      if (str == '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请填写'
+        })
+      }
+    },
+    // 添加属性
+    radioChange () {
+      if (this.formValidate.status == 0) {
+        this.formValidate.natures = '3'
+      }
+    },
+    removeAttr (index) {
+      this.attrListArr.splice(index, 1)
+    },
+    addAttr () {
+      this.attrListArr.push({ attrItem: '' })
     },
     async getSpecList () {
       let data = {
@@ -493,14 +1011,33 @@ export default {
       }
       let res = await specList(data)
       if (res.data.code === 0) {
-        console.log('this.specList', res.data.content)
         this.specListArr = res.data.content.rows
+        // expandSpec
+        this.specListArr.forEach(item => {
+          item.showEdit = false
+          item.editVal = ''
+          item.checkVals = ''
+          item.checkspeVals = []
+        })
+        this.specListArr = [...this.specListArr]
+        this.specArrFor(this.specListArr)
         sessionStorage.setItem('specListArr', JSON.stringify(this.specListArr))
-        // this.dataList = res.data.content.rows
-        // this.dataList.forEach((item) => {
-        //   item.specValsStr = item.specVals.join('，')
-        //   // item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
-        // })
+      }
+    },
+    // 表格上传图片
+    async tableUploadImg (e, index) {
+      console.log(e)
+      let files = e.target.files[0]
+      let data = {
+        file: files,
+        tag: 0
+      }
+      let res = await singleUpload(data)
+      if (res.data.code === 0) {
+        // console.log(res)
+        this.dataList[index].imageShow = true
+        this.dataList[index].imageUrl = res.data.content
+        e.target.value = ''
       }
     },
     // 上传图片
@@ -614,6 +1151,13 @@ export default {
       let specListArrs = JSON.parse(sessionStorage.getItem('specListArr'))
       if (specListArrs && specListArrs.length > 0) {
         this.specListArr = specListArrs
+        this.specListArr.forEach(item => {
+          item.showEdit = false
+          item.editVal = ''
+          item.checkVals = ''
+          item.checkspeVals = []
+        })
+        this.specArrFor(this.specListArr)
       } else {
         this.getSpecList()
       }
@@ -645,13 +1189,48 @@ export default {
         }
       }
     },
-    editFn (val) {
-      switch (val) {
-        case 0:
-          this.isEditCrowcd = true
-          break
+    editExpandFn (index) {
+      let obj = this.expandSpec[index]
+      obj.showEdit = !obj.showEdit
+      this.$set(this.expandSpec, index, obj)
+    },
+    saveExpandFn (i) {
+      let val = this.expandSpec[i].editVal.replace(/(^\s*)|(\s*$)/g, '')
+      if (val === '') {
+        this.expandSpec[i].showEdit = false
+        this.expandSpec[i].editVal = ''
+        return
+      }
+      this.expandSpec[i].showEdit = false
+      this.expandSpec[i].specVals.push(this.expandSpec[i].editVal)
+      this.expandSpec[i].editVal = ''
+    },
+    editFn (index) {
+      let obj = this.baseSpec[index]
+      obj.showEdit = !obj.showEdit
+      this.$set(this.baseSpec, index, obj)
+      // console.log('this.baseSpec[index].showEdit',this.baseSpec[index].showEdit);
+    },
+    saveFn (i, type) {
+      let val = this.baseSpec[i].editVal.replace(/(^\s*)|(\s*$)/g, '')
+      if (val === '') {
+        this.baseSpec[i].showEdit = false
+        this.baseSpec[i].editVal = ''
+        return
+      }
+      switch (type) {
         case 1:
-          console.log(1)
+          this.baseSpec[i].specVals.push(this.baseSpec[i].editVal)
+          this.baseSpec[i].showEdit = false
+          this.baseSpec[i].editVal = ''
+          break
+        case 2:
+          this.baseSpec[i].specVals.push(this.baseSpec[i].editVal)
+          this.baseSpec[i].showEdit = false
+          this.baseSpec[i].editVal = ''
+          break
+        case 3:
+          this.baseSpec[i].showEdit = false
           break
       }
     },
@@ -780,6 +1359,7 @@ export default {
           this.vsShowNav = 2
           break
         case 3:
+          this.saveGood()
           console.log('保存')
           break
       }
@@ -853,112 +1433,6 @@ export default {
         this.getPageList()
       }
     },
-    forArr1 (arr, num) { // 循环部门树形数据
-      let data = []
-      arr.forEach((value, index, array) => {
-        let datav
-        if (value.children) {
-          datav = {
-            id: value.id,
-            parentId: value.parentId,
-            title: value.text,
-            checked: value.selected === 'true',
-            expand: num < 1,
-            children: this.forArr1(value.children, num + 1),
-            hasParent: value.hasParent,
-            hasChildren: value.hasChildren
-          }
-        } else {
-          datav = {
-            id: value.id,
-            parentId: value.parentId,
-            title: value.text,
-            expand: true,
-            hasParent: value.hasParent,
-            hasChildren: value.hasChildren
-          }
-        }
-        data.push(datav)
-      })
-      return data
-    },
-    // 循环树形结构，得到选中id
-    forTreesIds (arr) {
-      arr.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          this.forTreesIds(item.children)
-        }
-      })
-    },
-    // 循环树形结构，得到选中id
-    forTrees () {
-      this.ztreesData.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          item.children.forEach((value, index) => {
-            if (value.checked == true) {
-              this.checkedIds.push(value.id)
-              // this.checkedIds.push(item.id)
-              // value.children.forEach
-            }
-            if (value.children) {}
-          })
-        }
-      })
-      this.checkedIds = [...new Set(this.checkedIds)]
-      this.formValidate.power = this.checkedIds.join(',')
-    },
-    //  菜单树结构
-    async menuTree () {
-      let res = await menuTree({})
-      console.log(res.data)
-      if (res.data.code === 0) {
-        let data = [{ ...res.data.content }]
-        console.log(data)
-        this.ztreesData = this.forArr1(data, 0)
-      }
-    },
-    // saveRole 添加角色
-    saveRole () {
-      this.$refs.formValidate.validate((valid) => {
-        if (valid) {
-          this.addRole()
-        }
-      })
-    },
-    async addRole () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择菜单权限'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        menuIds: menuIds,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
-      }
-      let res = await saveRole(data)
-      if (res.data.code === 0) {
-        console.log(res)
-        this.modal1 = false
-        this.$Modal.success({
-          title: '提示',
-          content: '添加成功'
-        })
-        this.checkedIds = []
-        this.getPageList()
-      }
-    },
     addFn () {
       this.modal1 = true
       this.operationShow = false
@@ -969,47 +1443,80 @@ export default {
         power: ''
       }
     },
-    bactchDel () {
-      this.delBatchModal = true
-    },
-    async batchRemove () {
-      let ids = []
-      this.selectedList.forEach(item => {
-        ids.push(item.roleId)
-      })
-      if (ids && ids.length == 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择数据进行删除'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        ids: ids
-      }
-      let res = await batchRemove(data)
-      if (res.data.code === 0) {
-        this.delBatchModal = false
-        this.$Modal.success({
-          title: '提示',
-          content: '删除成功'
-        })
-        this.selectedList = []
-        this.getPageList()
-      }
-    },
-    searchFn () {
-      this.getPageList()
-    },
     operationRole () {
       if (this.operationShow) {
-        this.forTreesIds(this.ztreesData)
-        this.roleUpdate()
+        // this.roleUpdate()
       } else {
-        this.forTreesIds(this.ztreesData)
-        this.saveRole()
+        this.saveSepcs()
       }
+    },
+    //  添加属性
+    saveSepcs () {
+      let itemVal = []
+      this.$refs.formValidate.validate((valid) => {
+        if (valid) {
+          itemVal = this.attrListArr.filter((item, index) => {
+            return item.attrItem != ''
+          })
+          if (itemVal && itemVal.length === 0) {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请添加属性值'
+            })
+            return
+          }
+          this.addSpec()
+        }
+      })
+    },
+    async addSpec () {
+      let specVals = []
+      // console.log('this.selObj',this.selObj)
+      this.attrListArr.forEach((item, index) => {
+        if (item.attrItem != '') {
+          specVals.push(item.attrItem)
+        }
+      })
+      if (this.formValidate.status == 0) {
+        let obj = {
+          checkVals: '',
+          checkspeVals: [],
+          editVal: '',
+          operateType: this.formValidate.natures,
+          showEdit: false,
+          sort: 1,
+          specName: this.formValidate.name,
+          specType: this.formValidate.status,
+          specVals: specVals
+        }
+        this.expandSpec.push(obj)
+      } else {
+        let obj = {
+          checkVals: '',
+          checkspeVals: [],
+          editVal: '',
+          operateType: this.formValidate.natures,
+          showEdit: false,
+          sort: 1,
+          specName: this.formValidate.name,
+          specType: this.formValidate.status,
+          specVals: specVals
+        }
+        this.baseSpec.push(obj)
+      }
+      this.modal1 = false
+      this.formValidate = {
+        natures: '',
+        status: '',
+        name: ''
+      }
+      this.attrListArr = []
+      // let data = {
+      //   specName: this.formValidate.name,
+      //   specType: this.formValidate.status,
+      //   operateType: this.formValidate.natures,
+      //   specVals: specVals
+      // }
     },
     edit (i) {
       this.modal1 = true
@@ -1022,36 +1529,16 @@ export default {
       this.delIndex = i
       console.log(this.delIndex)
     },
-    async delRole () {
-      let data = {
-        id: parseInt(this.dataList[this.delIndex].roleId)
-      }
-      let res = await roleremove(data)
-      if (res.data.code === 0) {
-        this.$Modal.success({
-          title: '提示',
-          content: '删除成功'
-        })
-        this.checkedIds = []
-        this.delIndex = ''
-        this.getPageList()
-      }
-    },
-    checkedPrentFn (arr) {
-      arr.forEach((item, index) => {
-        this.$set(item, 'checked', false)
-        if (item.children) {
-          this.checkedPrentFn(item.children)
-        }
-      })
-    },
     // 取消
     cancelModal1 () {
-      // this.formValidate = { companyId: '', appId: '', appName: '' }
-      // this.parentDataId = ''
       this.modal1 = false
       this.menuIds = []
-      this.checkedPrentFn(this.ztreesData)
+      this.attrListArr = []
+      this.formValidate = {
+        name: '',
+        status: '',
+        natures: ''
+      }
     },
     selected (res) {
       this.selectedList = res
@@ -1106,6 +1593,13 @@ export default {
     let specListArrs = JSON.parse(sessionStorage.getItem('specListArr'))
     if (specListArrs && specListArrs.length > 0) {
       this.specListArr = specListArrs
+      this.specListArr.forEach(item => {
+        item.showEdit = false
+        item.editVal = ''
+        item.checkVals = ''
+        item.checkspeVals = []
+      })
+      this.specArrFor(this.specListArr)
     }
     if (brand && brand.length === 0) {
       this.getlistBrandsPage()
@@ -1127,8 +1621,11 @@ export default {
     line-height: 32px;
   }
   .check-box{
-    float: left;
+    max-width: 560px;
     margin-left: 10px;
+    .check-item{
+      float: left;
+    }
     .brand-name{
       font-size: 12px;
     }
@@ -1136,6 +1633,17 @@ export default {
       margin-left: 0;
     }
   }
+}
+.spce-right{
+  float: left;
+  width: 600px;
+}
+.check-box[data-v-5c127369] {
+    max-width: 560px;
+    margin-left: 10px;
+}
+.check-item{
+  float: left;
 }
 .photo-con{
   width: 800px;
@@ -1192,7 +1700,6 @@ export default {
       z-index: 3;
     }
   }
-
 }
 .nav-top{
   text-align: center;
@@ -1281,7 +1788,7 @@ export default {
 }
 .bank_content{
   min-height: 350px;
-  margin-top: 30px;
+  margin-top: 16px;
   padding-bottom: 30px;
   .tb-line{
     text-align: center;
@@ -1305,23 +1812,59 @@ export default {
     }
   }
   .tb-line2{
+    position: relative;
     ::before{
       clear: both;
     }
-    width: 800px;
+    .add-attr-btn{
+      position: absolute;
+      left: 15px;
+      top: 17px;
+    }
+    width: 100%;
     margin: 0 auto 25px;
     text-align: center;
     overflow: hidden;
     .name{
       float: left;
     }
-    .name-left{
+    .base-attr{
       float: left;
       text-align: left;
       padding: 10px;
       min-height: 50px;
       line-height: 30px;
       background-color: #f9f9f9;
+      width: 86%;
+    }
+    .expand-attr{
+      margin-left: 110px;
+      margin-top: 10px;
+    }
+    .name-left{
+      margin-bottom: 10px;
+      width: 95%;
+      .content-box-vals{
+        float: left;
+      }
+      .to-ipt-show{
+        height: 32px;
+        float: left;
+        line-height: 1.8;
+        padding: 4px 7px 4px 0;
+        font-size: 12px;
+        border: 1px solid #f9f9f9;
+        border-radius: 4px;
+        color: #515a6e;
+        //
+        background-image: none;
+        position: relative;
+        cursor: text;
+      }
+      .toname-ipt{
+        background-color: #fff;
+        padding: 4px 10px;
+      }
       .edit-ipt{
         float: left;
         .edit-btn{
@@ -1336,7 +1879,7 @@ export default {
   }
   .tb-title{
     h5{
-      width: 738px;
+      width: 100%;
       margin: 0 auto;
       font-size: 14px;
       margin-bottom: 26px;
@@ -1347,6 +1890,59 @@ export default {
   }
   .btn.btn-goods{
     margin-top: 50px;
+  }
+}
+.add-attr{
+  // display: inline-block;
+  float: left;
+  background-color: #78b5f6;
+  border-radius: 4px;
+  width: 90px;
+  height: 34px;
+  line-height: 34px;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+}
+.check-attr{
+  ::before{
+    clear: both;
+    overflow: hidden;
+  }
+  .attr-list{
+    float: left;
+  }
+}
+.check-attr /deep/ .ivu-form-item-label:before {
+    content: '*';
+    display: inline-block;
+    margin-right: 4px;
+    line-height: 1;
+    font-family: SimSun;
+    font-size: 12px;
+    color: #ed4014;
+}
+.attr-list{
+  list-style: none;
+  margin-right: 6px;
+  &::before{
+    clear: both;
+  }
+  .attr-item{
+    position: relative;
+    margin-right: 4px;
+    float: left;
+    margin-bottom: 6px;
+    .attr-close{
+      position: absolute;
+      right: -6px;
+      top: -10px;
+      cursor: pointer;
+    }
+    .attr-ipt{
+      width: 100px;
+      height: 34px;
+    }
   }
 }
 .no-data {
@@ -1443,10 +2039,87 @@ export default {
     width: 680px;
   }
 }
+.uploader{
+  opacity: 0;
+  position: absolute;
+}
 .goto-brand{
   font-size: 14px;
   color: #6699CC;
   margin-left: 10px;
   cursor: pointer;
+}
+.boxNone{
+  display: none;
+}
+.edit-item{
+  float: left;
+  margin-left: 10px;
+}
+.goods-info-title{
+  font-weight: 700;
+  font-style: normal;
+  font-size: 16px;
+  color: #666666;
+  margin: 6px 10px 20px 10px;
+  padding-left: 12px;
+}
+.goods-info-content{
+  .goods-info-ipt{
+    display: inline-block;
+    margin-right: 10px;
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+}
+.uploadbox{
+  position: relative;
+  width: 44px;
+  height: 44px;
+  .add-image{
+    color: #2d8cf0;
+    cursor: pointer;
+    line-height: 44px;
+  }
+  .upload-img{
+    opacity: 0;
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+  }
+  .img-table{
+    width: 30px;
+    height: 30px;
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 5px;
+  }
+}
+.goods-info-left{
+  font-size: 14px;
+  color: #666666;
+  line-height: 32px;
+  height: 32px;
+}
+.text-left{
+  text-align: left;
+}
+.text-right{
+  text-align: right;
+}
+.text-center{
+  text-align:  center;
+}
+.w80{
+  width: 80px;
+}
+.w100{
+  width: 100px;
 }
 </style>
