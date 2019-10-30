@@ -31,13 +31,13 @@
             <div class="td-line">
               <span class="name">品牌</span>
               <Select class="w162" v-model="brandId" filterable>
-                  <Option v-for="item in brandArr" :value="item.id" :key="item.id">{{ item.label }}</Option>
+                  <Option v-for="item in brandArr" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
             <div class="td-line">
               <span class="name">供应商</span>
               <Select class="w162" v-model="supplierID" filterable>
-                  <Option v-for="item in supplierList" :value="item.id" :key="item.id">{{ item.label }}</Option>
+                  <Option v-for="item in supplierList" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
             <div class="td-line" v-show="isExpand == 1">
@@ -82,14 +82,14 @@
             </div>
             <div class="td-line" v-show="isExpand == 1">
               <span class="name">类目分类</span>
-              <Select class="w132" v-model="cid1" filterable style="margin-right:6px">
-                  <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.label }}</Option>
+              <Select class="w132" v-model="cid1" filterable style="margin-right:6px" @on-change="selClist1">
+                  <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
-              <Select class="w132" v-model="cid2" filterable style="margin-right:6px">
-                  <Option v-for="item in clist2" :value="item.id" :key="item.id">{{ item.label }}</Option>
+              <Select class="w132" v-model="cid2" filterable style="margin-right:6px" @on-change="selClist2">
+                  <Option v-for="item in clist2" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
-              <Select class="w132" v-model="cid3" filterable>
-                  <Option v-for="item in clist3" :value="item.id" :key="item.id">{{ item.label }}</Option>
+              <Select class="w132" v-model="cid3" filterable @on-change="selClist3">
+                  <Option v-for="item in clist3" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
             <!-- <div class="td-line" v-show="isExpand == 1">
@@ -104,7 +104,7 @@
             <div class="expand-box" @click="expandFn(0)" v-show="isExpand == 1">收起 <Icon type="ios-arrow-up" /></div>
             <div class="td-line btn">
               <Button type="primary" @click="searchFn">查询</Button>
-              <Button @click="clearInputs">重置</Button>
+              <Button @click="clearInputs" class="btn-clear">重置</Button>
             </div>
             <!-- <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button> -->
           </div>
@@ -124,23 +124,6 @@
           <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
           <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
         </div> -->
-      </Row>
-      <Row>
-        <div class="ivu-upload-list-file" v-if="file !== null">
-          <Icon type="ios-stats"></Icon>
-            {{ file.name }}
-          <Icon v-show="showRemoveFile" type="ios-close" class="ivu-upload-list-remove" @click.native="handleRemove()"></Icon>
-        </div>
-      </Row>
-      <Row>
-        <transition name="fade">
-          <Progress v-if="showProgress" :percent="progressPercent" :stroke-width="2">
-            <div v-if="progressPercent == 100">
-              <Icon type="ios-checkmark-circle"></Icon>
-              <span>成功</span>
-            </div>
-          </Progress>
-        </transition>
       </Row>
     </Card>
     <Row class="margin-top-10">
@@ -165,13 +148,9 @@
             @on-selection-change="selected"
           >
             <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="look(index)">
+              <Button class="btn-item preview-btn" type="text" size="small" @click="editGoods(index)">
                 <i></i>
-                <span>基本信息</span>
-              </Button>
-              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
-                <i></i>
-                <span>编辑</span>
+                <span>编辑商品</span>
               </Button>
               <Button class="btn-item del-btn" type="text" size="small" @click="grounding(row)" v-show="row.saleable == 0">
                 <i></i>
@@ -180,6 +159,10 @@
               <Button class="btn-item del-btn" type="text" size="small" @click="undercarriage(row)" v-show="row.saleable == 1">
                 <i></i>
                 <span>下架</span>
+              </Button>
+              <Button class="btn-item preview-btn" type="text" size="small" @click="editSkus(index)">
+                <i></i>
+                <span>编辑SKU</span>
               </Button>
             </template>
           </Table>
@@ -201,19 +184,36 @@
           />
         </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" title="基本信息"  width="640" @on-cancel="cancelModal1">
-     <div>
-        <Table :columns="columns1" :data="data1" border></Table>
+    <Modal v-model="modal1" class="smsModel" title="基本信息"  width="940" @on-cancel="cancelModal1">
+     <div class="edit-skubox">
+        <Row class="edit-sku-search">
+          <Input placeholder="可售卖库存" class="sku-ipt" type="number" v-model="buyStock" />
+          <Button type="warning" ghost class="sku-btn" @click="saveSkusBatch">批量填充</Button>
+        </Row>
+        <Table class="table-height" @on-selection-change="selectedSku" :columns="columns1" :data="data1" border>
+          <template slot-scope="{ row, index }" slot="stockNum">
+            <div class="stock-box">
+              <div class="stock-save" v-show="row.editShow">
+                <Input style="width: 80px;" placeholder="可售卖库存" class="sku-ipt" type="number" v-model="row.stockNum" @on-change="changStockNum($event, index)" />
+                <Button type="warning" ghost class="sku-btn" @click="saveSkusFn(index)">保存</Button>
+              </div>
+              <div class="stock-show" v-show="!row.editShow">
+                <span class="txt">{{row.stockNum}}</span>
+                <Icon @click="editSkusFn(index)" type="ios-create-outline" size="21" />
+              </div>
+            </div>
+          </template>
+        </Table>
      </div>
 			<div slot="footer">
-				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
-				<Button size="large" @click="operationRole" type="primary">确定</Button>
+				<Button size="large" @click="skuLower(1)" type="warning" class="cancel" style="margin-right: 10px">上架</Button>
+				<Button size="large" @click="skuUpper(0)" type="primary">下架</Button>
 			</div>
 		</Modal>
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok="delRole"
+				@on-ok=""
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定下架？</p>
@@ -221,7 +221,7 @@
     <Modal
 				width="20"
 				v-model="delBatchModal"
-				@on-ok="batchRemove"
+				@on-ok=""
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除选中的数据？</p>
@@ -229,60 +229,77 @@
   </div>
 </template>
 <script>
-import { roleList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
-import { listGoodsPage, saleableFn } from '@/api/goods'
+import { listGoodsPage, saleableFn, skuSpecList, saveSkuStock } from '@/api/goods'
+import { listBrandsPage } from '@/api/nature'
+import { supplierList, categList } from '@/api/supplier'
 export default {
   name: 'role-name',
   data () {
     return {
       value: '',
       modal1: false,
-      columns1: [
+      buyStock: '', // 可售卖库存
+      spuSkuEnums: 'SPU',
+      skuList: [],
+      specTemplates: [],
+      columnsOriginal1: [
+        {
+          type: 'selection',
+          width: 60,
+          align: 'center'
+        },
+        {
+          title: '图片',
+          key: 'imageUrl',
+          render: (h, params) => {
+            return h('div', [
+              h('img', {
+                domProps: {
+                  'src': params.row.imageList[0]
+                },
+                style: {
+                  display: 'block',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '3px'
+                }
+              })
+            ])
+          }
+        },
         {
           title: '供货价',
-          key: 'name'
+          key: 'supplyPrice'
         },
         {
           title: '零售价',
-          key: 'age'
+          key: 'retailPrice'
         },
         {
           title: '批发价',
-          key: 'address'
+          key: 'tradePrice'
         },
         {
           title: '可售卖库存',
-          key: 'sku'
+          key: 'stockNum',
+          slot: 'stockNum',
+          width: 200
         },
         {
           title: '已售',
-          key: 'buynum'
+          key: 'soldNum'
         }
       ],
+      columns1: [],
       data1: [
         {
-          name: 'John Brown',
+          imageList: ['https://img14.360buyimg.com/n0/jfs/t1/68717/29/5994/405044/5d42a15aEc4d4f026/7eca4ea5b2308842.jpg'],
+          supplyPrice: '20',
           age: 18,
-          address: 'New York No. 1 Lake Park',
-          date: '2016-10-03',
-          sku: 320,
-          buynum: '10'
-        },
-        {
-          name: 'Jim Green',
-          age: 24,
-          address: 'London No. 1 Lake Park',
-          date: '2016-10-01',
-          sku: 320,
-          buynum: '10'
-        },
-        {
-          name: 'Joe Black',
-          age: 30,
-          address: 'Sydney No. 1 Lake Park',
-          date: '2016-10-02',
-          sku: 320,
-          buynum: '10'
+          retailPrice: '10',
+          tradePrice: '20',
+          stockNum: '12',
+          soldNum: '10'
         }
       ],
       model1: '商品ID',
@@ -326,26 +343,6 @@ export default {
       delModal: false,
       checkedIds: [],
       checkedId: '',
-      menuIdsArr: [],
-      ztreesData: [],
-      formValidate: {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
-      },
-      ruleValidate: {
-        roleName: [
-          { required: true, message: '角色名称不能为空', trigger: 'blur' }
-        ],
-        roleSign: [
-          { required: true, message: '角色标识不能为空', trigger: 'blur' }
-        ],
-        roleDesc: [
-          { required: true, message: '备注不能为空', trigger: 'blur' }
-        ]
-      },
-      roleName: '',
       columnsList: [
         {
           type: 'selection',
@@ -396,7 +393,7 @@ export default {
         },
         {
           title: '操作',
-          width: 200,
+          width: 230,
           slot: 'action',
           align: 'center'
         }
@@ -408,6 +405,7 @@ export default {
       addShow: false,
       sendContractBut: false,
       selectedList: [],
+      selectedListSku: [],
       contractInfo: '',
       delIndex: '',
       pageNum: 1,
@@ -421,10 +419,37 @@ export default {
       progressPercent: 0,
       showProgress: false,
       showRemoveFile: false,
-      file: null,
-      tableData: [],
-      tableTitle: [],
       tableLoading: false
+    }
+  },
+  computed: {
+    columnsListUpdata: function () {
+      let columns1 = [...this.columnsOriginal1]
+      let specTemplates = this.specTemplates
+      specTemplates.forEach((item, index) => {
+        item.editShow = false
+        columns1.splice(index + 1, 0, {
+          title: item.specName,
+          key: `guige${index}`,
+          width: 100
+        })
+      })
+      return columns1
+    },
+    skuListUpdata: function () {
+      // let data1 = this.data1
+      let skuList = this.skuList
+      skuList.forEach((item, index) => {
+        if (item.skuSpecs) {
+          if (item.skuSpecs.length === 1) {
+            item.guige0 = item.skuSpecs[0].specValue
+          } else if (item.skuSpecs.length === 2) {
+            item.guige0 = item.skuSpecs[0].specValue
+            item.guige1 = item.skuSpecs[1].specValue
+          }
+        }
+      })
+      return skuList
     }
   },
   methods: {
@@ -458,6 +483,78 @@ export default {
         })
       }
     },
+    // 品牌数据
+    async getlistBrandsPage () {
+      let data = {
+        FLAG: 1,
+        pageIndex: 1,
+        pageSize: 200
+      }
+      let res = await listBrandsPage(data)
+      if (res.data.code === 0) {
+        this.brandArr = res.data.content.rows
+      }
+    },
+    // 供应商数据
+    async getSupplierList () {
+      let data = {
+        FLAG: 1,
+        pageIndex: 1,
+        pageSize: 100
+      }
+      let res = await supplierList(data)
+      if (res.data.code === 0) {
+        // console.log(res.data.content)
+        this.supplierList = res.data.content.rows
+      }
+    },
+    // 获取分类
+    async getcategList (parentId, i, val) {
+      let data = {
+        FLAG: 1,
+        parentId: parentId
+      }
+      let res = await categList(data)
+      if (res.data.code === 0) {
+        let data = res.data.content
+        if (data && data.length > 0) {
+          let levelNo = data[0].level
+          switch (levelNo) {
+            case 1:
+              this.clist1 = data
+              this.clist2 = []
+              this.clist3 = []
+              break
+            case 2:
+              this.clist2 = data
+              this.clist3 = []
+              break
+            case 3:
+              this.clist3 = data
+              break
+          }
+        }
+      }
+    },
+    selClist1 (id) {
+      this.getcategList(id, '', 1)
+      this.cid2 = ''
+      this.cid3 = ''
+    },
+    selClist2 (id) {
+      if (id) {
+        this.getcategList(id, '', 2)
+        this.cid3 = ''
+      }
+    },
+    selClist3 (id) {
+      this.cid3 = id
+      // this.listBrands(this.clist3[i].id)
+      let selObj = this.clist3.filter(item => {
+        return item.id === id
+      })
+      this.selObj = selObj[0]
+    },
     numberDoubled (n) {
       n = n + ''
       return n.length == 1 ? '0' + n : n
@@ -475,15 +572,43 @@ export default {
     async look (i) {
 
     },
-    async saleableFn (ids, saleableStatus) {
+    // 更新库存
+    async saveSkuStock (skuStockDtos) {
+      let data = {
+        FLAG: 1,
+        skuStockDtos: skuStockDtos
+      }
+      let res = await saveSkuStock(data)
+      if (res.data.code === 0) {
+        this.$Modal.success({
+          title: '提示',
+          content: '更新库存成功'
+        })
+      }
+    },
+    // 编辑商品
+    editGoods (index) {
+      this.$router.push({
+        path: 'goodsPub',
+        query: {
+          id: this.dataList[index].id,
+          type: 'edit'
+        }
+      })
+    },
+    // 上下架
+    async saleableFn (ids, saleableStatus, type) {
+      this.spuSkuEnums = type
       let data = {
         FLAG: 1,
         ids: ids,
-        saleable: saleableStatus
+        saleable: saleableStatus,
+        spuSkuEnums: this.spuSkuEnums
       }
       let res = await saleableFn(data)
       if (res.data.code === 0) {
         // console.log(res)
+        this.modal1 = false
         this.$Modal.success({
           title: '提示',
           content: '更新成功'
@@ -491,27 +616,43 @@ export default {
         this.getPageList()
       }
     },
+    skuLower (i) {
+      let ids = []
+      let saleableStatus = i
+      this.selectedListSku.forEach(item => {
+        ids.push(item.skuId)
+      })
+      this.saleableFn(ids, saleableStatus, 'SKU')
+    },
+    skuUpper (i) {
+      let ids = []
+      let saleableStatus = i
+      this.selectedListSku.forEach(item => {
+        ids.push(item.skuId)
+      })
+      this.saleableFn(ids, saleableStatus, 'SKU')
+    },
     gunderFn (i) {
       let ids = []
       let saleableStatus = i
       this.selectedList.forEach(item => {
         ids.push(item.id)
       })
-      this.saleableFn(ids, saleableStatus)
+      this.saleableFn(ids, saleableStatus, 'SPU')
     },
     grounding (row) {
       let ids = []
       let saleableStatus = ''
       ids.push(row.id)
       saleableStatus = row.saleable == 1 ? 0 : 1
-      this.saleableFn(ids, saleableStatus)
+      this.saleableFn(ids, saleableStatus, 'SPU')
     },
     undercarriage (row) {
       let ids = []
       let saleableStatus = ''
       ids.push(row.id)
       saleableStatus = row.saleable == 1 ? 0 : 1
-      this.saleableFn(ids, saleableStatus)
+      this.saleableFn(ids, saleableStatus, 'SPU')
     },
     expandFn (val) {
       this.isExpand = val
@@ -520,258 +661,79 @@ export default {
       this.isupperShelf = +val
       this.getPageList()
     },
-    async roleDetail (id) {
-      let res = await roleDetail(id)
-      if (res.data.code === 0) {
-        this.formValidate = {
-          roleName: res.data.content.roleName,
-          roleDesc: res.data.content.remark,
-          roleSign: res.data.content.roleSign,
-          power: ''
-        }
-        this.menuIds = res.data.content.menuIds
-        if (this.menuIds && this.menuIds.length > 0) {
-          this.forIds(this.menuIds)
-        }
-      }
-    },
-    forIds (arr) {
-      let zTreeData = [...this.ztreesData]
-      for (let i = 0; i < arr.length; i++) {
-        this.parentFn(zTreeData, arr[i])
-      }
-      this.ztreesData = [...zTreeData]
-    },
-    parentFn (arr, roleId) {
-      arr.forEach((item, index) => {
-        if (item.id == roleId) {
-          this.$set(item, 'checked', true)
-        } else {
-          if (item.children) {
-            this.parentFn(item.children, roleId)
-          }
-        }
-      })
-    },
-    async roleUpdate () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择菜单权限'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        menuIds: menuIds,
-        roleId: this.checkedId,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
-      }
-      let res = await roleUpdate(data)
-      if (res.data.code === 0) {
-        console.log(res)
-        this.modal1 = false
-        this.$Modal.success({
-          title: '提示',
-          content: '编辑成功'
-        })
-        this.checkedId = ''
-        this.checkedIds = []
-        this.formValidate = {
-          roleName: '',
-          roleDesc: '',
-          roleSign: '',
-          power: ''
-        }
-        this.getPageList()
-      }
-    },
-    forArr1 (arr, num) { // 循环部门树形数据
-      let data = []
-      arr.forEach((value, index, array) => {
-        let datav
-        if (value.children) {
-          datav = {
-            id: value.id,
-            parentId: value.parentId,
-            title: value.text,
-            checked: value.selected === 'true',
-            expand: num < 1,
-            children: this.forArr1(value.children, num + 1),
-            hasParent: value.hasParent,
-            hasChildren: value.hasChildren
-          }
-        } else {
-          datav = {
-            id: value.id,
-            parentId: value.parentId,
-            title: value.text,
-            expand: true,
-            hasParent: value.hasParent,
-            hasChildren: value.hasChildren
-          }
-        }
-        data.push(datav)
-      })
-      return data
-    },
-    // 循环树形结构，得到选中id
-    forTreesIds (arr) {
-      arr.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          this.forTreesIds(item.children)
-        }
-      })
-    },
-    // 循环树形结构，得到选中id
-    forTrees () {
-      this.ztreesData.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          item.children.forEach((value, index) => {
-            if (value.checked == true) {
-              this.checkedIds.push(value.id)
-              // this.checkedIds.push(item.id)
-              // value.children.forEach
-            }
-            if (value.children) {}
-          })
-        }
-      })
-      this.checkedIds = [...new Set(this.checkedIds)]
-      this.formValidate.power = this.checkedIds.join(',')
-    },
-    //  菜单树结构
-    async menuTree () {
-      let res = await menuTree({})
-      console.log(res.data)
-      if (res.data.code === 0) {
-        let data = [{ ...res.data.content }]
-        console.log(data)
-        this.ztreesData = this.forArr1(data, 0)
-      }
-    },
-    // saveRole 添加角色
-    saveRole () {
-      this.$refs.formValidate.validate((valid) => {
-        if (valid) {
-          this.addRole()
-        }
-      })
-    },
-    async addRole () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择菜单权限'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        menuIds: menuIds,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
-      }
-      let res = await saveRole(data)
-      if (res.data.code === 0) {
-        console.log(res)
-        this.modal1 = false
-        this.$Modal.success({
-          title: '提示',
-          content: '添加成功'
-        })
-        this.checkedIds = []
-        this.getPageList()
-      }
-    },
-    addFn () {
-      this.modal1 = true
-      this.operationShow = false
-      this.formValidate = {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
-      }
-    },
     bactchDel () {
       this.delBatchModal = true
-    },
-    async batchRemove () {
-      let ids = []
-      this.selectedList.forEach(item => {
-        ids.push(item.roleId)
-      })
-      if (ids && ids.length == 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择数据进行删除'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        ids: ids
-      }
-      let res = await batchRemove(data)
-      if (res.data.code === 0) {
-        this.delBatchModal = false
-        this.$Modal.success({
-          title: '提示',
-          content: '删除成功'
-        })
-        this.selectedList = []
-        this.getPageList()
-      }
     },
     searchFn () {
       this.getPageList()
     },
     operationRole () {
       if (this.operationShow) {
-        this.forTreesIds(this.ztreesData)
-        this.roleUpdate()
+        //
       } else {
-        this.forTreesIds(this.ztreesData)
-        this.saveRole()
+        //
       }
     },
-    edit (i) {
+    // cku信息
+    async skuSpecList (id) {
+      let res = await skuSpecList(id)
+      if (res.data.code === 0) {
+        console.log(res)
+        this.skuList = res.data.content.skus
+        this.specTemplates = res.data.content.specTemplate
+        this.columns1 = this.columnsListUpdata
+        this.data1 = this.skuListUpdata
+      }
+    },
+    editSkus (i) {
       this.modal1 = true
       this.operationShow = true
-      this.checkedId = this.dataList[i].roleId
-      this.roleDetail(this.dataList[i].roleId)
+      this.checkedId = this.dataList[i].id
+      this.skuSpecList(this.dataList[i].id)
+    },
+    // 编辑库存
+    editSkusFn (index) {
+      let obj = this.data1[index]
+      obj.editShow = !obj.editShow
+      this.$set(this.data1, index, obj)
+      // this.data1[i].editShow = !this.data1[i].editShow
+    },
+    changStockNum (e, index) {
+      this.data1[index].stockNum = e.target.value
+      console.log(e)
+    },
+    // 保存库存
+    saveSkusFn (index) {
+      let skuStockDtos = []
+      console.log(this.data1[index].stockNum)
+      skuStockDtos = [
+        {
+          num: parseInt(this.data1[index].stockNum),
+          skuId: this.data1[index].skuId
+        }
+      ]
+      let obj = this.data1[index]
+      obj.editShow = !obj.editShow
+      this.$set(this.data1, index, obj)
+      this.saveSkuStock(skuStockDtos)
+    },
+    // 批量操作
+    saveSkusBatch () {
+      console.log(this.buyStock)
+      let skuStockDtos = []
+      this.data1.forEach(item => {
+        item.stockNum = this.buyStock
+        skuStockDtos.push({
+          num: this.buyStock,
+          skuId: item.skuId
+        })
+      })
+      this.saveSkuStock(skuStockDtos)
     },
     remove (i) {
       this.delModal = true
       this.delIndex = i
       console.log(this.delIndex)
-    },
-    async delRole () {
-      let data = {
-        id: parseInt(this.dataList[this.delIndex].roleId)
-      }
-      let res = await roleremove(data)
-      if (res.data.code === 0) {
-        this.$Modal.success({
-          title: '提示',
-          content: '删除成功'
-        })
-        this.checkedIds = []
-        this.delIndex = ''
-        this.getPageList()
-      }
     },
     checkedPrentFn (arr) {
       arr.forEach((item, index) => {
@@ -783,14 +745,16 @@ export default {
     },
     // 取消
     cancelModal1 () {
-      // this.formValidate = { companyId: '', appId: '', appName: '' }
-      // this.parentDataId = ''
       this.modal1 = false
       this.menuIds = []
       this.checkedPrentFn(this.ztreesData)
     },
     selected (res) {
       this.selectedList = res
+      console.log(res)
+    },
+    selectedSku (res) {
+      this.selectedListSku = res
       console.log(res)
     },
     changePageSize (value) {
@@ -816,7 +780,13 @@ export default {
       this.beginTime = ''
       this.maxStockNum = ''
       this.minStockNum = ''
+      this.supplierID = ''
       this.isupperShelf = 1
+      this.cid1 = ''
+      this.cid2 = ''
+      this.cid3 = ''
+      this.clist2 = []
+      this.clist3 = []
       this.getPageList()
     },
     goBack () {
@@ -833,6 +803,9 @@ export default {
   },
   created () {
     this.getPageList()
+    this.getlistBrandsPage()
+    this.getSupplierList()
+    this.getcategList(0, '', 1)
     // this.menuTree()
   },
   mounted () {
@@ -893,6 +866,9 @@ export default {
   }
   .btn{
     margin-right: 10px;
+    .btn-clear{
+      margin-left: 8px;
+    }
   }
   .ipt{
     margin-right: 10px;
@@ -926,7 +902,35 @@ export default {
     left: 0px;
   }
 }
+.edit-sku-search{
+  margin-bottom: 10px;
+  .sku-ipt{
+    width: 150px;
+    margin-right: 10px;
+  }
+}
+/deep/ .ivu-select-dropdown,.ivu-select-dropdown{
+  max-height: 142px;
+}
+.stock-box{
+  .stock-save{
+    .sku-btn{
+      margin-left: 6px;
+    }
+  }
+  .stock-show{
+    .txt{
+      display: inline-block;
+      margin-right: 6px;
+    }
+  }
+}
+
 .btn-item{
   margin-left: 6px;
+}
+.table-height{
+  max-height: 500px;
+  overflow: auto;
 }
 </style>

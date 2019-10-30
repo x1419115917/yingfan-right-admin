@@ -62,9 +62,9 @@ export default {
   name: 'editor',
   data () {
     return {
-      	tips: '',
-      	err: false,
-      	isInit: true,
+      tips: '',
+      err: false,
+      isInit: true,
       quillUpdateImg: false, // 根据图片上传状态来确定是否显示loading动画，刚开始是false,不显示
       serverUrl: `${baseUrl}/base/oss/singleUpload`, // 这里写你要上传的图片服务器地址
       header: { token: Cookies.get('access_token') }, // 有的图片服务器要求请求头需要有token之类的参数，写在这里
@@ -118,6 +118,11 @@ export default {
   	}
   },
   watch: {
+    initContent: function (val, oval) {
+  		if (val) {
+  			this.detailContent = val
+  		}
+  	},
   	isInit: function (val, oval) {
   		if (val) {
   			this.tips = ''
@@ -129,7 +134,7 @@ export default {
   	this.detailContent = this.initContent
   },
   mounted () {
-    // this.$refs.myQuillEditor.quill.root.innerHTML = this.initContent
+    this.detailContent = this.initContent
   	this.$nextTick(() => {
       this.$on('resetForm', function () {
         this.resetForm()
@@ -173,7 +178,9 @@ export default {
     },
     /* 设置编辑器的内容 */
     resetForm () {
-    	this.detailContent = ''
+      // this.detailContent = ''
+      // this.$refs.myQuillEditor.quill.root.innerHTML = this.initContent
+      this.detailContent = this.initContent
     	this.isInit = true
     },
     /* 设置报错 */
@@ -201,7 +208,7 @@ export default {
 <style  lang="less">
 	.editor{
 		position: relative;
-		padding-bottom: 20px;
+		padding-bottom: 6px;
 		.ql-container.ql-snow{
 			.ql-editor{
 				min-height: 300px;

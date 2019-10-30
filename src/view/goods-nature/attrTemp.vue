@@ -138,7 +138,8 @@
               <Input class="attr-ipt" v-model="item.attrItem" placeholder="请输入属性值"></Input>
               <Icon class="attr-close" size="20" type="md-close-circle" @click="removeAttr(index)" />
             </div>
-            <span class="add-attr" size="large" type="primary" @click="addAttr">增加属性值</span>
+            <span class="add-attr" size="large" type="primary" @click="addAttr" v-show="formValidate.natures !=3 || formValidate.status == 0">增加属性值</span>
+            <span class="add-attr" size="large" type="primary" @click="addAttr" v-show="formValidate.status == 1 && formValidate.natures ==3 && attrListArr && attrListArr.length === 0">增加属性值</span>
           </div>
 				</FormItem>
 			</Form>

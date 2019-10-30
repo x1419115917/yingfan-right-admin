@@ -24,15 +24,15 @@
         </Row>
         <Row>
           <div class="tb-line btn">
-            <Button type="success" @click="navSave(1)">下一步，编辑商品共有信息</Button>
+            <Button class="save-goods-info-btn" type="success" @click="navSave(1)">下一步，编辑商品共有信息</Button>
           </div>
         </Row>
       </div>
       <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 1">
         <Row style="width: 738px;margin: 40px auto 0;">
-          <Row class="sub-left-item">商品类目：<span class="goto-brand" @click="goPage(1)">有相关类目？去创建类目</span></Row>
+          <Row class="sub-left-item name"><span>*</span>商品类目：<span v-show="type !== 'edit'" class="goto-brand" @click="goPage(1)">没有相关类目？去创建类目</span></Row>
           <Row style="margin-top: 30px;">
-            <Row style="margin-bottom: 35px;">
+            <Row style="margin-bottom: 35px;" v-show="type !== 'edit'">
               <Col span="7">
                 <Select v-model="cur1" filterable allow-create @on-change="selClist1">
                   <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.name }}</Option>
@@ -51,6 +51,21 @@
                 <Select v-model="cur3" filterable allow-create @on-change="selClist3">
                   <Option v-for="(item, index) in clist3" :value="item.id" :key="index">{{ item.name }}</Option>
                 </Select>
+              </Col>
+            </Row>
+            <Row style="margin-bottom: 35px;" v-show="type === 'edit'">
+              <Col span="7">
+                <span class="selname">{{cname1}}</span>
+              </Col>
+              <Col span="1" style="width: 15px;height: 10px;">
+              </Col>
+              <Col span="7">
+                <span class="selname">{{cname2}}</span>
+              </Col>
+              <Col span="1" style="width: 15px;height: 10px;">
+              </Col>
+              <Col span="7">
+                <span class="selname">{{cname3}}</span>
               </Col>
             </Row>
           </Row>
@@ -83,7 +98,7 @@
                 <Option v-for="item in explosiveGoodsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </div>
-          <div class="tb-line photo-con">
+          <div class="tb-line photo-con photo-tips-box">
             <span class="name"><span>*</span>商品图片：</span>
             <ul class="photo-list">
               <li class="photo-item">
@@ -137,17 +152,19 @@
                     id="ad21" v-show="goodsImgList[4].imgShow">
               </li>
             </ul>
+            <span class="photo-tips">【建议：图片上传尺寸为：800*800&nbsp;&nbsp; 宽高比例：1:1 &nbsp;&nbsp; 小于500K】</span>
           </div>
-          <div class="tb-line tb-editor">
+          <div class="tb-line tb-editor photo-tips-box">
             <span class="name"><span>*</span>商品详情页：</span>
             <div class="editor">
-              <v-editor @on-change="_getContext"></v-editor>
+              <v-editor @on-change="_getContext" :initContent='ctx'></v-editor>
             </div>
+            <span class="photo-tips">【建议：图片上传尺寸为：宽度800以下，高度1200以下 &nbsp;&nbsp; 单张图片小于500K】</span>
           </div>
         </Row>
         <Row>
           <div class="tb-line btn btn-goods">
-            <Button type="success" @click="navSave(2)">下一步，编辑商品属性信息</Button>
+            <Button class="save-goods-info-btn" type="success" @click="navSave(2)">下一步，编辑商品属性信息</Button>
           </div>
         </Row>
       </div>
@@ -227,7 +244,7 @@
                         <Icon v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" />
-                          <Button class="edit-btn" @click="saveExpandFn(index)" type="info">保存</Button>
+                          <Button class="edit-btn" @click="saveExpandFn(index, item.editVal)" type="info">保存</Button>
                         </div>
                       </div>
                     </div>
@@ -237,7 +254,7 @@
             </div>
           </div>
           <div class="tb-line tb-line3">
-              <h5 class="goods-info-title text-left">商品价格</h5>
+              <h5 class="goods-info-title text-left">商品价格 <span class="title-span-tips">&nbsp;&nbsp;&nbsp;【sku图片尺寸：180*180，宽高比例：1：1，小于200k】</span></h5>
               <Row style="margin-bottom: 30px;">
                 <Col span="2" class="goods-info-left text-right">批量填充：</Col>
                 <Col span="22" class="goods-info-content text-left">
@@ -281,7 +298,7 @@
         </Row>
         <Row>
           <div class="tb-line btn btn-goods">
-            <Button type="success" @click="navSave(3)">保存</Button>
+            <Button class="save-goods-info-btn" type="success" @click="navSave(3)">保&nbsp;&nbsp;存</Button>
           </div>
         </Row>
       </div>
@@ -333,12 +350,10 @@
 import { menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
 import { listBrandsPage, singleUpload, specList, saveSpec } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
-import { saveGoods } from '@/api/goods'
+import { saveGoods, goodsDetail, updateGoods } from '@/api/goods'
 // import editor from '@/components/editor'
 import editors from '@/components/editors/editor'
 import Cookies from 'js-cookie'
-import config from '@/config'
-const baseUrl = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro
 export default {
   name: 'supplier',
   data () {
@@ -346,8 +361,6 @@ export default {
       vsShowNav: 0,
       quillUpdateImg: false,
       params: { tag: 0 },
-      serverUrl: `${baseUrl}/base/oss/singleUpload`, // 这里写你要上传的图片服务器地址
-      header: { token: Cookies.get('access_token') }, // 有的图片服务器要求请求头需要有token之类的参数，写在这里
       brandsId: '',
       brandsIds: '',
       brandsIdsList: [],
@@ -403,6 +416,9 @@ export default {
       cur1: '',
       cur2: '',
       cur3: '',
+      cname1: '',
+      cname2: '',
+      cname3: '',
       checkSelId: '',
       goodsTitle: '',
       subTitle: '',
@@ -438,7 +454,8 @@ export default {
       ],
       brandListArr: [],
       title: '新增供应商',
-      type: this.$route.query.type,
+      type: '',
+      goodsId: '',
       value: '',
       value3: '',
       modal1: false,
@@ -470,12 +487,7 @@ export default {
           value: '100'
         }
       ],
-      columnsList: [
-        // {
-        //   type: 'selection',
-        //   width: 60,
-        //   align: 'center'
-        // },
+      columnsListOriginal: [
         {
           title: '图片',
           // key: 'images',
@@ -661,6 +673,7 @@ export default {
           }
         }
       ],
+      columnsList: [],
       dataList: [
         {
           imageUrl: '',
@@ -677,6 +690,7 @@ export default {
         }
       ],
       userIdCreate: '',
+      skusList: [],
       roleSign: '',
       dataDel: [],
       addShow: false,
@@ -703,13 +717,22 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       // 因为当钩子执行前，组件实例还没被创建
-      if (vm.type !== 'edit') {
+      if (vm.$route.query.type === 'edit') {
+        vm.type = vm.$route.query.type,
+        vm.goodsId = vm.$route.query.id,
+        console.log('vm.$route', vm.$route)
+        vm.goodsDetail(vm.$route.query.id)
+      }
+      if (vm.$route.query.type !== 'edit') {
         vm.vsShowNav = 0
+        vm.type = ''
+        vm.goodsId = ''
         vm.brandsId = ''
         vm.supplierId = ''
         vm.goodsTitle = ''
         vm.clist2 = []
         vm.clist3 = []
+        // vm.columnsList = [...vm.columnsListOriginal]
         vm.expandSpec = []
         vm.expandSpec1 = []
         vm.expandSpec2 = []
@@ -748,7 +771,8 @@ export default {
   },
   computed: {
     columnsListUpdata: function () {
-      let columnsList = this.columnsList
+      let columnsList = [...this.columnsListOriginal]
+      console.log('cloumb654', this.columnsListOriginal)
       let expandSpec = this.expandSpec
       expandSpec.forEach((item, index) => {
         columnsList.splice(index, 0, {
@@ -757,6 +781,7 @@ export default {
           width: 100
         })
       })
+      console.log('columnsList-edit', columnsList)
       return columnsList
     },
     Descates: function () {
@@ -827,7 +852,36 @@ export default {
         this.supplierListArr = res.data.content.rows
       }
     },
+    expandSpecFor (arr, skusList) {
+      if (arr && arr.length == 2) {
+        this.expandSpec1 = [...arr[0].specVals]
+        this.expandSpec2 = [...arr[1].specVals]
+        this.dataList = this.Descates
+      } else if (arr && arr.length == 1) {
+        this.expandSpec1 = [...arr[0].specVals]
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      }
+      skusList.forEach((item, index) => {
+        this.dataList[index].skuId = skusList[index].skuId
+        this.dataList[index].imageUrl = skusList[index].imageList[0]
+        this.dataList[index].imageShow = true
+        this.dataList[index].code = skusList[index].merchantCode
+        this.dataList[index].tcode = skusList[index].barcode
+        this.dataList[index].supply = skusList[index].supplyPrice
+        this.dataList[index].stock = skusList[index].stockNum
+        this.dataList[index].retail = skusList[index].retailPrice
+        this.dataList[index].wholesale = skusList[index].minWholesaleVolume
+        this.dataList[index].trade = skusList[index].tradePrice
+        this.dataList[index].brokerage = skusList[index].commissionRate
+        this.dataList[index].integral = skusList[index].pointRate
+        this.dataList[index].exchangePoints = skusList[index].exchangePoints
+      })
+      this.columnsList = [...this.columnsListUpdata]
+    },
     specArrFor (arr) {
+      this.baseSpec = []
+      this.expandSpec = []
       arr.forEach(item => {
         if (item.specType === 0) {
           this.expandSpec.push(item)
@@ -844,7 +898,7 @@ export default {
         this.expandSpec2 = []
         this.dataList = this.Descates
       }
-      this.columnsList = this.columnsListUpdata
+      this.columnsList = [...this.columnsListUpdata]
     },
     clearGoodsObj () {
       this.goodsObj = {
@@ -905,7 +959,7 @@ export default {
           if (item.checkspeVals && item.checkspeVals.length > 0) {
             attrTemplate.push({
               attrName: item.specName,
-              attrType: item.specType,
+              attrType: item.operateType,
               attrValues: item.specVals,
               datas: item.checkspeVals
             })
@@ -914,7 +968,7 @@ export default {
           if (item.checkVals && item.checkVals.length > 0) {
             attrTemplate.push({
               attrName: item.specName,
-              attrType: item.specType,
+              attrType: item.operateType,
               attrValues: item.specVals,
               datas: [ item.checkVals ]
             })
@@ -1003,7 +1057,7 @@ export default {
         cid1: this.cur1,
         cid2: this.cur2,
         cid3: this.cur3,
-        description: this.ctx.html,
+        description: this.ctx,
         enableWholesale: 0,
         imageList: imgList,
         isNew: this.newGoods,
@@ -1030,13 +1084,168 @@ export default {
         }
       }
     },
+    // 更新商品
+    async updateGoods () {
+      let specTemplate = []
+      let attrTemplate = []
+      let imgList = []
+      let skus = []
+      let cheval = ''
+      // 判断基本属性是否选中
+      let checkedSpecVal = this.baseSpec.filter((item, index) => {
+        if (item.operateType == 2) {
+          if (item.checkspeVals && item.checkspeVals.length > 0) {
+            cheval = '1'
+          }
+        } else if (item.operateType == 1) {
+          if (item.checkVals && item.checkVals.length > 0) {
+            cheval = '1'
+          }
+        } else if (item.operateType == 3) {
+          if (item.specVals && item.specVals.length > 0) {
+            cheval = '1'
+          }
+        }
+        return cheval
+      })
+      if (cheval === '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择基本属性'
+        })
+        return
+      }
+      this.baseSpec.forEach((item, index) => {
+        if (item.operateType == 2) {
+          if (item.checkspeVals && item.checkspeVals.length > 0) {
+            attrTemplate.push({
+              attrName: item.specName,
+              attrType: item.operateType,
+              attrValues: item.specVals,
+              datas: item.checkspeVals
+            })
+          }
+        } else if (item.operateType == 1) {
+          if (item.checkVals && item.checkVals.length > 0) {
+            attrTemplate.push({
+              attrName: item.specName,
+              attrType: item.operateType,
+              attrValues: item.specVals,
+              datas: [ item.checkVals ]
+            })
+          }
+        } else if (item.operateType == 3) {
+          if (item.specVals && item.specVals.length > 0) {
+            attrTemplate.push({
+              attrName: item.specName,
+              attrType: item.specType,
+              attrValues: item.specVals,
+              datas: item.specVals
+            })
+          }
+        }
+      })
+      // 循环商品图片
+      this.goodsImgList.forEach(item => {
+        if (item.imgUrl != '') {
+          imgList.push(item.imgUrl)
+        }
+      })
+      // 遍历table
+      this.dataList.forEach((item, index) => {
+        let skuSpecs = []
+        if (item.imageUrl == '') {
+          this.$Modal.warning({
+            title: '提示',
+            content: '请上传图片'
+          })
+          return
+        }
+        // this.validateStr(item.imageUrl)
+        this.validateStr(item.code, '')
+        this.validateStr(item.tcode, '')
+        this.validateStr(item.stock, 'number')
+        this.validateStr(item.retail, 'number')
+        this.validateStr(item.supply, 'number')
+        this.validateStr(item.wholesale, 'number')
+        this.validateStr(item.trade, 'number')
+        this.validateStr(item.brokerage, 'number', 'range')
+        this.validateStr(item.integral, 'number', 'range')
+        if (this.expandSpec && this.expandSpec.length === 1) {
+          skuSpecs = [{
+            specName: this.expandSpec[0].specName,
+            specValue: item.guige0
+          }]
+        } else if (this.expandSpec && this.expandSpec.length === 2) {
+          skuSpecs = [
+            {
+              specName: this.expandSpec[0].specName,
+              specValue: item.guige0
+            },
+            {
+              specName: this.expandSpec[1].specName,
+              specValue: item.guige1
+            }
+          ]
+        }
+        skus.push({
+          skuId: item.skuId || '',
+          barcode: item.tcode,
+          chooseSpec: '',
+          exchangePoints: item.exchangePoints,
+          commissionRate: item.brokerage,
+          imageList: imgList,
+          merchantCode: item.code,
+          minWholesaleVolume: item.wholesale,
+          pointRate: item.integral,
+          retailPrice: item.retail,
+          skuSpecs: skuSpecs,
+          stockNum: item.stock,
+          supplyPrice: item.supply,
+          tradePrice: item.trade
+        })
+      })
+      console.log('skus', skus)
+      let data = {
+        FLAG: 1,
+        attrTemplate: attrTemplate,
+        brandId: this.brandsId,
+        cid1: this.cur1,
+        cid2: this.cur2,
+        cid3: this.cur3,
+        description: this.ctx,
+        enableWholesale: 0,
+        imageList: imgList,
+        isNew: this.newGoods,
+        isSellWell: this.explosiveGoods,
+        minWholesaleVolume: '',
+        mixedBatch: '',
+        skus: skus,
+        specTemplate: this.expandSpec,
+        spuId: this.goodsId,
+        subTitle: this.subtitle,
+        supplierId: this.supplierId,
+        title: this.goodsTitle
+      }
+      let res = await updateGoods(data)
+      if (res.data.code == 0) {
+        console.log(res)
+        if (res.data.code === 0) {
+          this.$Modal.success({
+            title: '提示',
+            content: '更新商品信息成功'
+          })
+          this.$router.push({ name: 'goodsList' })
+        }
+      }
+    },
     // 去空格
     strTrim (str) {
       return parseInt(str.replace(/^\s+/, '').replace(/\s+$/, ''))
     },
     // 校验
     validateStr (str, type, scope) {
-      let reg = /^[0-9]+$/
+      let reg = /^\d+(\.\d{2})?$/
       if (str == '') {
         this.$Modal.warning({
           title: '提示',
@@ -1090,9 +1299,8 @@ export default {
           item.checkVals = ''
           item.checkspeVals = []
         })
-        this.specListArr = [...this.specListArr]
+        this.specListArr = this.specListArr
         this.specArrFor(this.specListArr)
-        sessionStorage.setItem('specListArr', JSON.stringify(this.specListArr))
       }
     },
     // 表格上传图片
@@ -1193,7 +1401,7 @@ export default {
     },
     _getContext (ctx) {
       // console.log(ctx)
-      this.ctx = ctx
+      this.ctx = ctx.html
     },
     selClist1 (id) {
       this.getcategList(id, '', 1)
@@ -1218,9 +1426,61 @@ export default {
       })
       this.selObj = selObj[0]
       let specListArrs = []
-      this.baseSpec = []
-      this.expandSpec = []
       this.getSpecList()
+    },
+    async goodsDetail (id) {
+      let res = await goodsDetail(id)
+      if (res.data.code === 0) {
+        let spuInfo = res.data.content.spu
+        let skuInfo = res.data.content.sku
+        this.skusList = skuInfo.skus
+        console.log('res.data12', res.data)
+        this.supplierId = spuInfo.supplierId
+        let imageList = JSON.parse(spuInfo.images)
+        this.goodsTitle = spuInfo.title
+        this.subTitle = spuInfo.subTitle
+        this.brandsId = spuInfo.brandId
+        this.ctx = spuInfo.description
+        imageList.forEach((item, index) => {
+          this.goodsImgList[index].imgUrl = imageList[index]
+          this.goodsImgList[index].imgShow = true
+        })
+        this.cur1 = spuInfo.cid1
+        this.cur2 = spuInfo.cid2
+        this.cur3 = spuInfo.cid3
+        this.cname1 = spuInfo.cname1
+        this.cname2 = spuInfo.cname2
+        this.cname3 = spuInfo.cname3
+        this.newGoods = spuInfo.isNew.toString()
+        this.explosiveGoods = spuInfo.isSellWell.toString()
+        skuInfo.attrTemplate.forEach(item => {
+          if (item.attrType == 2) {
+            item.checkspeVals = item.datas
+            item.editVal = ''
+          } else if (item.attrType == 1) {
+            item.checkVals = item.datas[0]
+            item.editVal = ''
+          } else if (item.attrType == 3) {
+            item.checkVals = item.attrValues
+            item.editVal = ''
+          }
+          item.specName = item.attrName
+          item.specVals = item.attrValues
+          item.operateType = item.attrType
+          item.showEdit = false
+        })
+        skuInfo.specTemplate.forEach(item => {
+          item.operateType = 3
+          item.showEdit = false
+          item.editVal = ''
+        })
+        // return;
+        this.baseSpec = skuInfo.attrTemplate
+        this.expandSpec = skuInfo.specTemplate
+        this.expandSpecFor(this.expandSpec, this.skusList)
+        console.log('this.expandSpec-edit', this.expandSpec)
+        // console.log('ctx-edit',this.ctx)
+      }
     },
     async getcategList (parentId, i, val) {
       let data = {
@@ -1254,16 +1514,27 @@ export default {
       obj.showEdit = !obj.showEdit
       this.$set(this.expandSpec, index, obj)
     },
-    saveExpandFn (i) {
-      let val = this.expandSpec[i].editVal.replace(/(^\s*)|(\s*$)/g, '')
+    saveExpandFn (index, value) {
+      console.log('this.expandSpec-edit-edit1', this.expandSpec)
+      let val = value.replace(/(^\s*)|(\s*$)/g, '')
       if (val === '') {
-        this.expandSpec[i].showEdit = false
-        this.expandSpec[i].editVal = ''
+        this.expandSpec[index].showEdit = false
+        this.expandSpec[index].editVal = ''
         return
       }
-      this.expandSpec[i].showEdit = false
-      this.expandSpec[i].specVals.push(this.expandSpec[i].editVal)
-      this.expandSpec[i].editVal = ''
+      let obj = this.expandSpec[index]
+      obj.showEdit = false
+      obj.specVals.push(val)
+      this.$set(this.expandSpec, index, obj)
+      console.log('index3210', index)
+      console.log('this.expandSpec-edit-edit2', this.expandSpec)
+      if (this.type !== 'edit') {
+        this.specArrFor(this.expandSpec)
+        alert(123)
+      } else {
+        this.expandSpecFor(this.expandSpec, this.skusList)
+        alert(456)
+      }
     },
     editFn (index) {
       let obj = this.baseSpec[index]
@@ -1419,8 +1690,12 @@ export default {
           this.vsShowNav = 2
           break
         case 3:
-          this.saveGood()
-          console.log('保存')
+          if (this.type !== 'edit') {
+            this.saveGood()
+            console.log('保存')
+          } else {
+            this.updateGoods()
+          }
           break
       }
     },
@@ -1650,17 +1925,6 @@ export default {
     let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
     this.getcategList(0, '', 1)
     this.getSupplierList()
-    let specListArrs = JSON.parse(sessionStorage.getItem('specListArr')) || []
-    if (specListArrs && specListArrs.length > 0) {
-      this.specListArr = specListArrs
-      this.specListArr.forEach(item => {
-        item.showEdit = false
-        item.editVal = ''
-        item.checkVals = ''
-        item.checkspeVals = []
-      })
-      this.specArrFor(this.specListArr)
-    }
     if (brand && brand.length === 0) {
       this.getlistBrandsPage()
     } else {
@@ -1722,8 +1986,10 @@ export default {
   .photo-item{
     display: inline-block;
     position: relative;
-    width: 120px;
-    height: 140px;
+    width: 122px;
+    height: 142px;
+    box-sizing: border-box;
+    border: 1px solid #e6e6e6;
     cursor: pointer;
     margin-right: 15px;
     &:last-child{
@@ -2167,6 +2433,40 @@ export default {
     left: 0;
     top: 5px;
   }
+}
+.sub-left-item span{
+  display: inline-block;
+  margin-right: 4px;
+  line-height: 1;
+  font-family: SimSun;
+  font-size: 12px;
+    color: #ed4014;
+}
+.save-goods-info-btn{
+  width: 360px;
+  font-size: 14px;
+}
+.photo-tips-box{
+  .photo-tips{
+    font-size: 12px;
+    color: #999;
+  }
+}
+.title-span-tips{
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+}
+.selname{
+  display: inline-block;
+  width: 212px;
+  height: 32px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 32px;
+  text-align: center;
+  border: 1px solid #e6e6e6;
 }
 .goods-info-left{
   font-size: 14px;

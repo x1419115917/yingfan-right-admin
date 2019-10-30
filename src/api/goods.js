@@ -50,3 +50,29 @@ export const catgDetail = spuId => {
     method: 'post'
   })
 }
+// 根据spuid查询sku信息/product/spu/skuSpec/{spuId}
+export const skuSpecList = spuId => {
+  let data = {}
+  return axios.request({
+    url: `/product/spu/skuSpec/${spuId}`,
+    data,
+    method: 'post'
+  })
+}
+// 更新库存/product/spu/saveSkuStock
+export const saveSkuStock = data => {
+  return axios.request({
+    url: '/product/spu/saveSkuStock',
+    data,
+    method: 'post'
+  })
+}
+// 获取商品详情
+export const goodsDetail = spuId => {
+  let data = {}
+  return axios.request({
+    url: `/product/spu/${spuId}`,
+    data,
+    method: 'post'
+  })
+}
