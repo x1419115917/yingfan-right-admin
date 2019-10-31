@@ -333,6 +333,60 @@ export const appRouter = [
     ]
   },
   {
+    path: '/orderManage',
+    name: 'orderManage',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-stats',
+      title: '订单管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'orderList',
+        name: 'orderList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '商城订单'
+        },
+        component: () => import('@/view/order-manage/orderList.vue')
+      },
+      {
+        path: 'afterSaleOrder',
+        name: 'afterSaleOrder',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '售后订单'
+        },
+        component: () => import('@/view/order-manage/afterSaleOrder.vue')
+      }
+    ]
+  },
+  {
+    path: '/financeManage',
+    name: 'financeManage',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-stats',
+      title: '财务管理'
+    },
+    component: Main,
+    children: [
+      {
+        name: 'payList',
+        path: 'payList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '交易流水'
+        },
+        component: () => import('@/view/finance-manage/payList.vue')
+      }
+    ]
+  },
+  {
     path: '/supplierManager',
     name: 'supplierManager',
     meta: {
