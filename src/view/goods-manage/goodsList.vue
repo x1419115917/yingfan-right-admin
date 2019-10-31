@@ -735,19 +735,10 @@ export default {
       this.delIndex = i
       console.log(this.delIndex)
     },
-    checkedPrentFn (arr) {
-      arr.forEach((item, index) => {
-        this.$set(item, 'checked', false)
-        if (item.children) {
-          this.checkedPrentFn(item.children)
-        }
-      })
-    },
     // 取消
     cancelModal1 () {
       this.modal1 = false
       this.menuIds = []
-      this.checkedPrentFn(this.ztreesData)
     },
     selected (res) {
       this.selectedList = res
