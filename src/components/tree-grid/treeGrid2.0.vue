@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item,index) in initItems" :key="item.id" v-show="show(item)" :class="{'child-tr':item.parent}">
+                <tr v-for="(item,index) in initItems" :key="item.id" v-show="show(item)" :class="{'child-tr':item.parent, 'padding-left1': index == 1, 'padding-left2': index == 2, }">
                     <td v-for="(column,snum) in columns" :key="column.key" :style=tdStyle(column)>
                         <label v-if="column.type === 'selection'">
                             <input type="checkbox" :value="item.id" v-model="checkGroup" @click="handleCheckClick(item,$event,index)">
@@ -505,8 +505,17 @@ table {
 }
 
 #hl-tree-table>tbody>.child-tr {
-    background-color: #fffcfc;
+    background-color: #f8f8f8;
+    &>td:first-child{
+      padding-left: 20px;
+    }
 }
+// .padding-left1{
+//   padding-left: 10px;
+// }
+// .padding-left2{
+//   padding-left: 20px;
+// }
 
 label {
     margin: 0 8px;
