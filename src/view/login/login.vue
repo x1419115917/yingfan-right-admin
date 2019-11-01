@@ -42,7 +42,7 @@
 
 <script>
 import LoginForm from '_c/login-form'
-import { login, userMemu } from '@/api/login'
+import { login, userMemu, doAllBtn } from '@/api/login'
 import Cookies from 'js-cookie'
 import { mapActions } from 'vuex'
 import router from '@/router'
@@ -95,6 +95,14 @@ export default {
         this.$router.push({
           name: this.$config.homeName
         })
+      }
+      this.getAllBtn()
+    },
+    // 获取按钮权限
+    async getAllBtn () {
+      let res = await doAllBtn()
+      if (res.data.code === 0) {
+        sessionStorage.setItem('buttenpremissions', JSON.stringify(res.data.content))
       }
     },
     routerFor (arr1, arr) {

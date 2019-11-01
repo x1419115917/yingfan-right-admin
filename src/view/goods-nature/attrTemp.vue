@@ -27,7 +27,7 @@
           <Row class="role-top com_submenu">
             <Row>
               <div class="set-con">
-                <Button class="btn" type="success" :loading="uploadLoading" @click="addFn">添加属性</Button>
+                <Button class="btn" type="success" :loading="uploadLoading" @click="addFn" v-has="'sys:spec:add'">添加属性</Button>
                 <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
               </div>
               <!-- <div class="role-top-input">
@@ -80,7 +80,7 @@
                 @on-selection-change="selected"
               >
                 <template slot-scope="{ row, index }" slot="action">
-                  <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+                  <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)" v-has="'sys:spec:edit'">
                     <i></i>
                     <span>编辑</span>
                   </Button>
@@ -88,7 +88,7 @@
                     <i></i>
                     <span>取消关联类目</span>
                   </Button> -->
-                  <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
+                  <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)" v-has="'sys:spec:remove'">
                     <i></i>
                     <span>删除</span>
                   </Button>
@@ -174,6 +174,7 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { sysDeptTree, userList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
 import { categoryTreeList, specList, saveSpec, editSpec, updateSpec, batchRemoveSpec } from '@/api/nature'
 export default {

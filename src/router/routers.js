@@ -333,6 +333,38 @@ export const appRouter = [
     ]
   },
   {
+    path: '/homeManage',
+    name: 'homeManage',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-stats',
+      title: '首页'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'bannerList',
+        name: 'bannerList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '首页banner'
+        },
+        component: () => import('@/view/home-manage/bannerList.vue')
+      },
+      {
+        path: 'addBanner',
+        name: 'addBanner',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '新增首页banner'
+        },
+        component: () => import('@/view/home-manage/addBanner.vue')
+      }
+    ]
+  },
+  {
     path: '/orderManage',
     name: 'orderManage',
     meta: {

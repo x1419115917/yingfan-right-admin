@@ -16,7 +16,7 @@
         <Card title="类目管理">
           <Row class="role-top">
             <div class="role-top-left">
-              <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
+              <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn" v-has="'sys:category:add'">添加</Button>
               <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
             </div>
             <div class="role-top-right">
@@ -133,6 +133,7 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
 import { categoryTreeList, catgSave, singleUpload, catgDetail, catgUpdate, catgRemove } from '@/api/nature'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'

@@ -6,8 +6,8 @@
     <Card title="角色管理">
       <Row class="role-top">
         <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
+          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn" v-has="'sys:role:add'">添加</Button>
+          <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" v-has="'sys:role:batchRemove'" @click="bactchDel">批量删除</Button>
         </div>
         <div class="role-top-right">
           <Input class="ipt" v-model="value" placeholder="请输入角色名" style="width: 200px"></Input>
@@ -47,11 +47,11 @@
             @on-selection-change="selected"
           >
             <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+              <Button class="btn-item preview-btn" type="text" size="small" v-has="'sys:role:edit'" @click="edit(index)">
                 <i></i>
                 <span>编辑</span>
               </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
+              <Button class="btn-item del-btn" type="text" size="small" v-has="'sys:role:remove'" @click="remove(index)">
                 <i></i>
                 <span>删除</span>
               </Button>
@@ -114,6 +114,7 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { roleList, menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
 export default {
   name: 'role-name',

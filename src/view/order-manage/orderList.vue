@@ -38,22 +38,22 @@
     </Card>
     <div class="wrap">
       <div class="state">
-        <span @click="selectState(item.value)" v-for="item in orderStatusOpts" :value="item.value" :key="item.value" class="stateBtn">{{ item.label }}</span>
+        <span
+          @click="selectState(item.value,index)"
+          :class="activeIndex === index ? 'btnActive' : ''"
+          v-for="(item,index) in orderStatusOpts"
+          :value="item.value" :key="item.value" class="stateBtn">{{ item.label }}</span>
       </div>
       <Table :columns="columns" border :data="dataList" stripe>
         <template slot-scope="{ row, index }" slot="payAmt"><span>¥{{ row.payAmt }}</span></template>
         <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="action">
+          <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
           <!--待发货-->
           <template v-if="row.orderStatus === 1">
-            <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
             <Button type="primary" size="small" style="margin-right: 5px" @click="deliverGood">发货</Button>
-            <Button type="primary" size="small" @click="mark(index)">客服备注</Button>
           </template>
-          <template v-else-if="row.orderStatus !== 1">
-            <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
-            <Button type="primary" size="small" @click="mark(index)">客服备注</Button>
-          </template>
+          <Button type="primary" size="small" @click="mark(index)">客服备注</Button>
         </template>
       </Table>
       <Page
@@ -83,6 +83,7 @@ export default {
   data () {
     return {
       modal: false,
+      activeIndex: 0,
       inpWidth: '162px',
       dataList: [], // 订单列表
       date: [], // 选择日期
@@ -145,7 +146,8 @@ export default {
       this.getOrderList()
     },
     // 选择订单状态
-    selectState (value) {
+    selectState (value, index) {
+      this.activeIndex = index
       this.form.orderStatus = value
       this.getOrderList()
     },

@@ -27,3 +27,12 @@ export const userMemu = () => {
     method: 'get'
   })
 }
+// 根据用户id获取按钮权限
+export const doAllBtn = () => {
+  let data = {}
+  return axios.request({
+    url: '/getUserPerms',
+    data,
+    method: 'post'
+  })
+}

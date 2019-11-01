@@ -6,7 +6,7 @@
     <Card title="系统菜单">
       <Row class="role-top">
         <div class="role-top-left">
-          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
+          <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" v-has="'sys:menu:add'" @click="addFn">添加</Button>
           <!-- <Icon type="ios-checkmark" /> -->
           <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
         </div>
@@ -109,6 +109,7 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { treeList, menuTree, saveMenu, detailMenu, updateMenu, removeMenu } from '@/api/sys'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
