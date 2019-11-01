@@ -10,11 +10,11 @@
           <Col :span="10">订单状态</Col>
           <Col :span="14">{{ returnOrderStatus(orderDetail.orderStatus)}}</Col>
           <Col :span="10">供应商</Col>
-          <Col :span="14">爱奇艺</Col>
+          <Col :span="14">-</Col>
           <Col :span="10">下单时间</Col>
           <Col :span="14">{{ orderDetail.createTime }}</Col>
           <Col :span="10">付款时间</Col>
-          <Col :span="14">2019-09-29 17:03:33</Col>
+          <Col :span="14">-</Col>
         </Row>
       </Col>
       <Col :span="12">
@@ -24,7 +24,7 @@
           <Col :span="10">运费</Col>
           <Col :span="14">¥{{ orderDetail.logisticAmt }}</Col>
           <Col :span="10">税费</Col>
-          <Col :span="14">¥111.00</Col>
+          <Col :span="14">-</Col>
         </Row>
       </Col>
     </Row>
@@ -33,15 +33,15 @@
       <Col :span="12">
         <Row>
           <Col :span="10">下单人</Col>
-          <Col :span="14">18915555555</Col>
+          <Col :span="14">-</Col>
           <Col :span="10">收货地址</Col>
-          <Col :span="14">广东省 广州市 天河区 10区三楼820</Col>
+          <Col :span="14">-</Col>
         </Row>
       </Col>
       <Col :span="12">
         <Row>
           <Col :span="10">收货人</Col>
-          <Col :span="14">13255558988</Col>
+          <Col :span="14">-</Col>
         </Row>
       </Col>
     </Row>

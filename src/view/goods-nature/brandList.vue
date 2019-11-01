@@ -7,7 +7,7 @@
       <Row class="role-top com_submenu">
         <Row>
           <div class="set-con">
-            <Button class="btn" type="success" :loading="uploadLoading" @click="addFn">添加品牌</Button>
+            <Button class="btn" type="success" :loading="uploadLoading" @click="addFn" v-has="'sys:brand:add'">添加品牌</Button>
             <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
           </div>
           <div class="role-top-input">
@@ -59,11 +59,11 @@
             @on-selection-change="selected"
           >
             <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)" v-has="'sys:brand:edit'">
                 <i></i>
                 <span>编辑</span>
               </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
+              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)" v-has="'sys:brand:remove'">
                 <i></i>
                 <span>删除</span>
               </Button>
@@ -138,6 +138,7 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { listBrandsPage, categoryTreeList, singleUpload, brandSave, brandDetail, brandUpdate, brandRemove } from '@/api/nature'
 export default {
   name: 'role-name',

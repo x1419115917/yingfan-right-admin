@@ -16,8 +16,8 @@
         <Card title="用户管理">
           <Row class="role-top">
             <div class="role-top-left">
-              <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-              <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button>
+              <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn" v-has="'sys:user:add'">添加</Button>
+              <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel" v-has="'sys:user:batchRemove'">批量删除</Button>
             </div>
             <div class="role-top-right">
               <Input class="ipt" v-model="value" placeholder="请输入姓名" style="width: 200px"></Input>
@@ -57,15 +57,15 @@
                 @on-selection-change="selected"
               >
                 <template slot-scope="{ row, index }" slot="action">
-                  <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+                  <Button class="btn-item preview-btn" type="text" size="small" v-has="'sys:user:edit'" @click="edit(index)">
                     <i></i>
                     <span>编辑</span>
                   </Button>
-                  <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
+                  <Button class="btn-item del-btn" type="text" size="small" v-has="'sys:user:remove'" @click="remove(index)">
                     <i></i>
                     <span>删除</span>
                   </Button>
-                  <Button class="btn-item del-btn" type="text" size="small" @click="replacePwd(index)">
+                  <Button class="btn-item del-btn" type="text" size="small" v-has="'sys:user:resetPwd'" @click="replacePwd(index)">
                     <i></i>
                     <span>重置密码</span>
                   </Button>
@@ -163,6 +163,7 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
 export default {
   name: 'role-name',
