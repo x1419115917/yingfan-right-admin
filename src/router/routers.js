@@ -419,6 +419,38 @@ export const appRouter = [
     ]
   },
   {
+    path: '/thematicManager',
+    name: 'thematicManager',
+    meta: {
+      icon: 'ios-stats',
+      title: '专题管理',
+      hideInMenu: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'thematicList',
+        name: 'thematicList',
+        meta: {
+          icon: '',
+          title: '专题活动列表',
+          hideInMenu: true
+        },
+        component: () => import('@/view/thematic-activities/thematicList.vue')
+      },
+      {
+        path: 'thematicPub',
+        name: 'thematicPub',
+        meta: {
+          icon: '',
+          title: '专题活动发布',
+          hideInMenu: true
+        },
+        component: () => import('@/view/thematic-activities/thematicPub.vue')
+      }
+    ]
+  },
+  {
     path: '/multilevel',
     name: 'multilevel',
     meta: {

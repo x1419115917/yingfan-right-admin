@@ -260,8 +260,8 @@
                 <Col span="22" class="goods-info-content text-left">
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.supply" placeholder="输入供货价"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.retail" placeholder="输入零售价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="输入批发价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="最低批发量"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="最低批发量"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.stock" placeholder="可售卖库存"  />
                   <span class="goods-info-ipt">
                     佣金比例: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
@@ -1255,7 +1255,7 @@ export default {
         if (!reg.test(str)) {
           this.$Modal.warning({
             title: '提示',
-            content: '请输入正确的数字格式'
+            content: '请输入数字格式'
           })
           return
         }
@@ -1307,6 +1307,11 @@ export default {
     async tableUploadImg (e, index) {
       console.log(e)
       let files = e.target.files[0]
+      if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+        this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+        e.target.value = ''
+        return
+      }
       let data = {
         file: files,
         tag: 0
@@ -1328,6 +1333,11 @@ export default {
       switch (val) {
         case 1:
           files = this.$refs.filezm1.files[0]
+          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+            this.$refs.filezm1.value = ''
+            return
+          }
           data = {
             file: files,
             tag: 0
@@ -1341,7 +1351,12 @@ export default {
           }
           break
         case 2:
-          let files = this.$refs.filezm2.files[0]
+          files = this.$refs.filezm2.files[0]
+          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+            this.$refs.filezm2.value = ''
+            return
+          }
           let data = {
             file: files,
             tag: 0
@@ -1356,6 +1371,11 @@ export default {
           break
         case 3:
           files = this.$refs.filezm3.files[0]
+          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+            this.$refs.filezm3.value = ''
+            return
+          }
           data = {
             file: files,
             tag: 0
@@ -1370,6 +1390,11 @@ export default {
           break
         case 4:
           files = this.$refs.filezm4.files[0]
+          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+            this.$refs.filezm4.value = ''
+            return
+          }
           data = {
             file: files,
             tag: 0
@@ -1384,6 +1409,11 @@ export default {
           break
         case 5:
           files = this.$refs.filezm5.files[0]
+          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+            this.$refs.filezm5.value = ''
+            return
+          }
           data = {
             file: files,
             tag: 0

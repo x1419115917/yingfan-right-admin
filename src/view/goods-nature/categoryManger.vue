@@ -266,6 +266,12 @@ export default {
     },
     async filezm () {
       // console.log(this.$refs.filezm.files[0])
+      let file = this.$refs.filezm.files[0]
+      if (!/\/(?:jpg|jpeg|png|gif)/i.test(file.type)) {
+        this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+        this.$refs.filezm.value = ''
+        return
+      }
       let data = {
         file: this.$refs.filezm.files[0],
         tag: 1

@@ -393,6 +393,44 @@ export const doCustomTimes = (times, callback) => {
 }
 
 /**
+ * @param {a, b} Array 传入两个数字
+ * return 过滤重复项，返回过滤后的数组
+ */
+export const arrayTiff = (a, b) => {
+  for (var i = 0; i < b.length; i++) {
+    for (var j = 0; j < a.length; j++) {
+      if (a[j].id === b[i].id) {
+        a.splice(j, 1)
+        j = j - 1
+      }
+    }
+  }
+  return a
+}
+
+/**
+ * @param {a, b} Array 传入两个数字
+ * return a 重复项选中状态且不可选
+ */
+export const arrayChecked = (a, b) => {
+  let arr = []
+  arr = a.map((item) => {
+    item.state = 0
+    item._checked = false
+    item._disabled = false
+    b.map((item1) => {
+      if (item.id === item1.id) {
+        item.state = 1
+        item._checked = true
+        item._disabled = true
+      }
+    })
+    return item
+  })
+  return arr
+}
+
+/**
  * @param {Object} file 从上传组件得到的文件对象
  * @returns {Promise} resolve参数是解析后的二维数组
  * @description 从Csv文件中解析出表格，解析成二维数组
