@@ -1,24 +1,10 @@
 <template>
   <div>
-    <Card title="专题活动列表">
+    <Card title="首页图标配置">
       <Row class="role-top com_submenu">
         <Row>
           <div class="set-con">
-            <Button class="btn" type="success" :loading="addLoading" @click="addFn">新增专题活动</Button>
-          </div>
-          <div class="role-top-input">
-            <div class="td-line">
-              <span class="name">专题名称</span>
-              <Input
-                placeholder="请输入专题名称"
-                class="w162"
-                v-model="value"
-              />
-            </div>
-            <div class="td-line btn">
-              <Button @click="clearInputs" style="margin-right: 6px;">重置</Button>
-              <Button type="primary" @click="searchFn">查询</Button>
-            </div>
+            <Button class="btn" type="success" :loading="addLoading" @click="addFn">新增图标</Button>
           </div>
         </Row>
       </Row>
@@ -71,31 +57,21 @@
 				@on-ok="activityRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
-			<p>确定删除？</p>
-		</Modal>
-    <Modal
-				width="20"
-				v-model="delBatchModal"
-				@on-ok=""
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除选中的数据？</p>
+			<p>删除后无法恢复，确定删除？</p>
 		</Modal>
   </div>
 </template>
 <script>
-import { activityList, activityRemove } from '@/api/thematic'
+import { iconsList, saveIcons, updateIcons, iconsDetail } from '@/api/base'
 export default {
   name: 'role-name',
   data () {
     return {
-      value: '',
       imgShow1: '',
       imgUrl: '',
       modal1: false,
       addLoading: false,
       operationShow: false,
-      delBatchModal: false,
       delModal: false,
       checkedIds: [],
       checkedId: '',
@@ -112,7 +88,7 @@ export default {
         },
         {
           title: '专题名称',
-          key: 'activityName'
+          key: 'iconName'
         },
         {
           title: '图片预览',
@@ -133,6 +109,14 @@ export default {
               })
             ])
           }
+        },
+        {
+          title: '跳转链接',
+          key: 'pictureUrl'
+        },
+        {
+          title: '权限',
+          key: 'sortOrder'
         },
         {
           title: '操作',
@@ -160,10 +144,9 @@ export default {
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
-        pageSize: this.pageSize,
-        activityName: this.value
+        pageSize: this.pageSize
       }
-      let res = await activityList(data)
+      let res = await iconsList(data)
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
@@ -174,9 +157,6 @@ export default {
     },
     addFn () {
       this.$router.push({ name: 'thematicPub' })
-    },
-    bactchDel () {
-      this.delBatchModal = true
     },
     async brandRemove () {
       let ids = []
@@ -273,11 +253,7 @@ export default {
     clearInputs () {
       this.pageNum = 1
       this.pageSize = 10
-      this.value = ''
       this.getPageList()
-    },
-    goBack () {
-      this.$router.go(-1)
     }
   },
   created () {

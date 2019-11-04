@@ -1,6 +1,3 @@
-<style lang="less">
-  // @import "./common.less";
-</style>
 <template>
   <div>
     <Card :title="type == 'edit' ? '专题活动编辑' : '专题活动发布'">
@@ -69,7 +66,7 @@
             <Row class="title-sub">添加活动商品</Row>
             <Row class="nav-box">
               <Col class="nav-left" span="20">
-                <ul class="nav-list">
+                <ul class="nav-list" v-if="actNavs && actNavs.length > 0">
                   <li class="nav-item" v-for="(item, index) in actNavs" :class="navIndex === index ? 'nav-active-item' : ''" :key="index" @click="changgeNav(index)">类目{{index+1}}</li>
                 </ul>
               </Col>
@@ -77,7 +74,7 @@
                 <Button class="nav-right-btn" type="warning" ghost @click="addCatgModal">添加类目模块</Button>
               </Col>
             </Row>
-            <div class="content-box" v-for="(item, index) in actNavs" :key="index" v-show="navIndex === index">
+            <div class="content-box" v-for="(item, index) in actNavs" :key="index" v-show="navIndex === index" >
               <Row class="content-item content-item1">
                 <Col class="table-left lh35" span="4">类目名称</Col>
                 <Col class="table-right" span="20">
@@ -108,11 +105,11 @@
                   <Row>
                     <Button type="success" ghost @click="addGoodsModal">添加商品</Button>
                   </Row>
-                  <Row v-show="item.navDets && item.navDets.length > 0">
+                  <Row v-if="item.navDets && item.navDets.length > 0">
                     <ul class="agoods-list">
                       <li class="agoods-item" v-for="(val,indx) in item.navDets" :key="indx">
                         <Icon class="close-btn" type="ios-close-circle" size="22" @click="removeGoods(indx)" />
-                        <div class="goods-img"><img :src="val.images[0]" alt=""></div>
+                        <div class="goods-img"><img :src="val.images != null ? val.images[0] : ''" alt=""></div>
                         <div class="goods-title" :title="val.title">{{val.title}}</div>
                         <div class="goods-price">￥{{val.retailPrice}}</div>
                       </li>
@@ -131,10 +128,10 @@
         </Row>
       </div>
       <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 2 && false">
-        <Row style="margin-top: 35px;">
+        <Row style="margin-top: 35px;" >
           <div class="tb-line">
             <Row class="title-sub">添加模板</Row>
-            <div class="content-box" v-for="(item, index) in actNavs" :key="index" v-show="navIndex === index">
+            <div class="content-box">
               <Row class="content-item2">
                 <Col class="table-left" span="4">模板图片</Col>
                 <Col class="table-right" span="20">
@@ -382,14 +379,7 @@ export default {
         { id: 1, value: '模板B' },
         { id: 2, value: '模板C' }
       ],
-      actNavs: [
-        {
-          isShow: false,
-          navDets: [],
-          navigationName: '',
-          sortOrder: ''
-        }
-      ],
+      actNavs: null,
       navIndex: 0,
       selectedListSpu: [],
       type: this.$route.query.type,
@@ -435,8 +425,8 @@ export default {
       if (vm.$route.query.type === 'edit') {
         vm.type = vm.$route.query.type,
         vm.activeId = vm.$route.query.id,
-        console.log('vm.$route', vm.$route)
-        // vm.goodsDetail(vm.$route.query.id)
+        // console.log('vm.$route', vm.$route)
+        vm.activityDetail(vm.$route.query.id)
       }
       if (vm.$route.query.type !== 'edit') {
         vm.vsShowNav = 0
@@ -446,9 +436,11 @@ export default {
         vm.activityName = ''
         vm.imgShow = false
         vm.pictureUrl = ''
+        vm.beginTime = ''
+        vm.endTime = ''
         vm.actNavs = [{
           isShow: false,
-          navDets: [],
+          navDets: null,
           navigationName: '',
           sortOrder: ''
         }]
@@ -479,7 +471,59 @@ export default {
         this.dataList.forEach((item) => {
           item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
-        this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
+        if (this.actNavs && this.actNavs.length) {
+          this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
+        }
+      }
+    },
+    // 查看详情
+    async activityDetail (id) {
+      let data = {
+        FLAG: 1,
+        id: id
+      }
+      let res = await activityDetail(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        let data = res.data.content
+        this.activityName = data.activityName
+        this.imgShow = true
+        this.pictureUrl = data.pictureUrl
+        this.beginTime = data.beginTime
+        this.endTime = data.endTime
+        data.actNavs.forEach(item => {
+          item.isShow = item.isShow !== 0
+          item.navDets.forEach(val => {
+            item.navDets.push(val)
+          })
+        })
+        console.log('data.actNavs', data.actNavs)
+        this.actNavs = data.actNavs
+      }
+    },
+    async updateActivity () {
+      let actNavs = [...this.actNavs]
+      actNavs.forEach(item => {
+        item.isShow = item.isShow ? 1 : 0
+      })
+      let data = {
+        FLAG: 1,
+        id: this.activeId,
+        activityName: this.activityName,
+        pictureUrl: this.pictureUrl,
+        beginTime: this.beginTime != '' ? date2string(this.beginTime) : '',
+        endTime: this.endTime != '' ? date2string(this.endTime) : '',
+        actNavs: actNavs
+      }
+      let res = await updateActivity(data)
+      if (res.data.code === 0) {
+        this.$Modal.success({
+          title: '提示',
+          content: '修改成功'
+        })
+        this.$router.push('thematicList')
+      } else {
+        console.log('失败处理')
       }
     },
     clearInputList () {
@@ -583,6 +627,8 @@ export default {
 
       if (this.type !== 'edit') {
         this.saveActivity()
+      } else {
+        this.updateActivity()
       }
     },
     fileUploadGoods (e) {

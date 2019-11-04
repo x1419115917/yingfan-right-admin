@@ -331,7 +331,7 @@ export const appRouter = [
         component: () => import('@/view/goods-nature/brandList.vue')
       }
     ]
-  },
+  }, // iconList
   {
     path: '/homeManage',
     name: 'homeManage',
@@ -361,6 +361,16 @@ export const appRouter = [
           title: '新增首页banner'
         },
         component: () => import('@/view/home-manage/addBanner.vue')
+      },
+      {
+        path: 'iconList',
+        name: 'iconList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '首页图标配置'
+        },
+        component: () => import('@/view/home-manage/iconList.vue')
       }
     ]
   },

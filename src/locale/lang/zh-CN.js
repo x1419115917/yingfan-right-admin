@@ -30,6 +30,7 @@ export default {
   thematicManager: '专题管理',
   thematicList: '专题活动列表',
   thematicPub: '专题活动发布',
+  iconList: '首页图标配置',
   testexcel: '测试页',
   components: '组件',
   count_to_page: '数字渐变',
