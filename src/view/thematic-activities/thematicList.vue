@@ -71,7 +71,7 @@
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok=""
+				@on-ok="activityRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>确定删除？</p>
@@ -87,7 +87,7 @@
   </div>
 </template>
 <script>
-import { activityList } from '@/api/thematic'
+import { activityList, activityRemove } from '@/api/thematic'
 export default {
   name: 'role-name',
   data () {
@@ -176,14 +176,7 @@ export default {
       }
     },
     addFn () {
-      this.modal1 = true
-      this.operationShow = false
-      this.formValidate = {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
-      }
+      this.$router.push({ name: 'thematicPub' })
     },
     bactchDel () {
       this.delBatchModal = true
@@ -232,6 +225,23 @@ export default {
       this.delModal = true
       this.delIndex = i
       console.log(this.delIndex)
+    },
+    async activityRemove () {
+      let ids = []
+      ids.push(this.dataList[this.delIndex].id)
+      let data = {
+        FLAG: 1,
+        ids: ids
+      }
+      let res = await activityRemove(data)
+      if (res.data.code === 0) {
+        this.$Modal.success({
+          title: '提示',
+          content: '删除成功'
+        })
+        this.delIndex = ''
+        this.getPageList()
+      }
     },
     // 取消
     cancelModal1 () {

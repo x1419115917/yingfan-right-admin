@@ -30,13 +30,13 @@
             </div> -->
             <div class="td-line">
               <span class="name">品牌</span>
-              <Select class="w162" v-model="brandId" filterable>
+              <Select class="w162 max-height" v-model="brandId" filterable>
                   <Option v-for="item in brandArr" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
             <div class="td-line">
               <span class="name">供应商</span>
-              <Select class="w162" v-model="supplierID" filterable>
+              <Select class="w162 max-height" v-model="supplierID" filterable>
                   <Option v-for="item in supplierList" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
@@ -224,6 +224,7 @@
 import { listGoodsPage, saleableFn, skuSpecList, saveSkuStock } from '@/api/goods'
 import { listBrandsPage } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
+import { date2string } from '@/libs/util'
 export default {
   name: 'role-name',
   data () {
@@ -450,10 +451,9 @@ export default {
       // return;
       let data = {
         FLAG: 1,
-        beginTime: this.beginTime != '' ? this.date2string(this.beginTime) : '',
+        beginTime: this.beginTime != '' ? date2string(this.beginTime) : '',
         brandId: this.brandId,
-        endTime: this.beginTime != '' ? this.date2string(
-          this.endTime) : '',
+        endTime: this.endTime != '' ? date2string(this.endTime) : '',
         // maxRetailPrice: this.maxRetailPrice,
         maxStockNum: this.maxStockNum ? parseInt(this.maxStockNum) : '',
         // maxSupplyPrice: this.maxSupplyPrice,
@@ -546,20 +546,6 @@ export default {
         return item.id === id
       })
       this.selObj = selObj[0]
-    },
-    numberDoubled (n) {
-      n = n + ''
-      return n.length == 1 ? '0' + n : n
-    },
-    date2string (d, sp) {
-      sp = sp || '-'
-      let year = d.getFullYear()
-      let month = d.getMonth() + 1
-      let date = d.getDate()
-      let hour = d.getHours()
-      let min = d.getMinutes()
-      let sec = d.getSeconds()
-      return year + sp + this.numberDoubled(month) + sp + date + ' ' + this.numberDoubled(hour) + ':' + this.numberDoubled(min) + ':' + this.numberDoubled(sec)
     },
     async look (i) {
 
@@ -889,7 +875,7 @@ export default {
     margin-right: 10px;
   }
 }
-/deep/ .ivu-select-dropdown,.ivu-select-dropdown{
+.max-height /deep/ .ivu-select-dropdown,.max-height .ivu-select-dropdown{
   max-height: 142px;
 }
 .stock-box{

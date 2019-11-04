@@ -14,42 +14,15 @@
       </Col>
       <Col class="user-right" span="19">
         <Card title="该类目属性列表">
-          <!-- <Row class="role-top">
-            <div class="role-top-left">
-              <Button class="btn" icon="ios-add" type="success" :loading="uploadLoading" @click="addFn">添加</Button>
-              <!-- <Button class="btn" icon="ios-trash" type="warning" :loading="uploadLoading" @click="bactchDel">批量删除</Button> -->
-            <!-- </div>
-            <div class="role-top-right">
-              <Input class="ipt" v-model="value" placeholder="请输入属性模板名称" style="width: 200px"></Input>
-              <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button>
-            </div>
-          </Row> -->
           <Row class="role-top com_submenu">
             <Row>
               <div class="set-con">
                 <Button class="btn" type="success" @click="addFn" v-has="'sys:spec:add'">添加属性</Button>
-                <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
               </div>
-              <!-- <div class="role-top-input">
-                <div class="td-line">
-                  <span class="name">关键词</span>
-                  <!-- @on-enter="updateDataList" -->
-                  <!--<Input
-                    placeholder="请输入属性模板名称"
-                    class="w162"
-                    v-model="value"
-                  />
-                </div>
-                <div class="td-line btn">
-                  <Button @click="clearInputs" style="margin-right: 6px;">重置</Button>
-                  <Button type="primary" @click="searchFn">查询</Button>
-                </div>
-              </div> -->
             </Row>
           </Row>
         </Card>
         <Row class="margin-top-10">
-          <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
           <div class="bank_table" style="position:relative;">
               <Table
                 :columns="columnsList"
@@ -67,10 +40,6 @@
                     <i></i>
                     <span>编辑</span>
                   </Button>
-                  <!-- <Button class="btn-item del-btn" type="text" size="small" @click="replacePwd(index)">
-                    <i></i>
-                    <span>取消关联类目</span>
-                  </Button> -->
                   <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)" v-has="'sys:spec:remove'">
                     <i></i>
                     <span>删除</span>
@@ -78,7 +47,6 @@
                 </template>
               </Table>
               <div class="no-data" v-if="dataList.length < 1">
-                <!-- <div class="no-data-img"></div> -->
                 <div class="no-tit">暂无数据</div>
               </div>
             </div>

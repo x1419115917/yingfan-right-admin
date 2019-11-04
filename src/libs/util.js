@@ -391,6 +391,21 @@ export const doCustomTimes = (times, callback) => {
     callback(i)
   }
 }
+function numberDoubled (n) {
+  n = n + ''
+  return n.length === 1 ? '0' + n : n
+}
+
+export const date2string = (d, sp) => {
+  sp = sp || '-'
+  let year = d.getFullYear()
+  let month = d.getMonth() + 1
+  let date = d.getDate()
+  let hour = d.getHours()
+  let min = d.getMinutes()
+  let sec = d.getSeconds()
+  return year + sp + numberDoubled(month) + sp + date + ' ' + numberDoubled(hour) + ':' + numberDoubled(min) + ':' + numberDoubled(sec)
+}
 
 /**
  * @param {a, b} Array 传入两个数字
@@ -399,7 +414,7 @@ export const doCustomTimes = (times, callback) => {
 export const arrayTiff = (a, b) => {
   for (var i = 0; i < b.length; i++) {
     for (var j = 0; j < a.length; j++) {
-      if (a[j].id === b[i].id) {
+      if (a[j].id === b[i].productId) {
         a.splice(j, 1)
         j = j - 1
       }
@@ -419,7 +434,7 @@ export const arrayChecked = (a, b) => {
     item._checked = false
     item._disabled = false
     b.map((item1) => {
-      if (item.id === item1.id) {
+      if (item.id === item1.productId) {
         item.state = 1
         item._checked = true
         item._disabled = true

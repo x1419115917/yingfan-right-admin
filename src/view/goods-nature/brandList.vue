@@ -7,7 +7,7 @@
       <Row class="role-top com_submenu">
         <Row>
           <div class="set-con">
-            <Button class="btn" type="success" :loading="uploadLoading" @click="addFn" v-has="'sys:brand:add'">添加品牌</Button>
+            <Button class="btn" type="success" @click="addFn" v-has="'sys:brand:add'">添加品牌</Button>
             <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">导入品牌</Button> -->
           </div>
           <div class="role-top-input">
@@ -26,23 +26,6 @@
             </div>
           </div>
         </Row>
-      </Row>
-      <Row>
-        <div class="ivu-upload-list-file" v-if="file !== null">
-          <Icon type="ios-stats"></Icon>
-            {{ file.name }}
-          <Icon v-show="showRemoveFile" type="ios-close" class="ivu-upload-list-remove" @click.native="handleRemove()"></Icon>
-        </div>
-      </Row>
-      <Row>
-        <transition name="fade">
-          <Progress v-if="showProgress" :percent="progressPercent" :stroke-width="2">
-            <div v-if="progressPercent == 100">
-              <Icon type="ios-checkmark-circle"></Icon>
-              <span>成功</span>
-            </div>
-          </Progress>
-        </transition>
       </Row>
     </Card>
     <Row class="margin-top-10">
@@ -250,13 +233,6 @@ export default {
       delIndex: '',
       total: 0,
       loading: false, // 分割线
-      uploadLoading: false,
-      progressPercent: 0,
-      showProgress: false,
-      showRemoveFile: false,
-      file: null,
-      tableData: [],
-      tableTitle: [],
       tableLoading: false
     }
   },
@@ -367,14 +343,6 @@ export default {
         nameEn: this.formValidate.nameEn,
         pictureUrl: this.imgUrl
       }
-      // let data = {
-      //   FLAG: 1,
-      //   menuIds: menuIds,
-      //   roleId: this.checkedId,
-      //   remark: this.formValidate.roleDesc,
-      //   roleName: this.formValidate.roleName,
-      //   roleSign: this.formValidate.roleSign
-      // }
       let res = await brandUpdate(data)
       if (res.data.code === 0) {
         console.log(res)

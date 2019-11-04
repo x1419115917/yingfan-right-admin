@@ -9,11 +9,11 @@
     </Card>
     <Row class="margin-top-10" style="background:#fff;padding:30px;">
       <div class="nav-top">
-        <span class="nav-top-item" @click="changeNav(0)" :class="vsShowNav == 0 ? 'nav-top-item-active' : ''">活动基本信息</span>
-        <span class="nav-top-item" @click="changeNav(1)" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">添加活动商品</span>
-        <span class="nav-top-item" @click="changeNav(2)" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">添加模板</span>
+        <span class="nav-top-item" @click="navSave(0)" :class="vsShowNav == 0 ? 'nav-top-item-active' : ''">活动基本信息</span>
+        <span class="nav-top-item" @click="navSave(1)" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">添加活动商品</span>
+        <span class="nav-top-item" v-show="false" @click="navSave(2)" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">添加模板</span>
       </div>
-      <div class="bank_table bank_content" style="position: relative;" v-show="vsShowNav == 0">
+      <div class="bank_table bank_content" style="position: relative" v-show="vsShowNav == 0">
         <Row style="margin-top: 35px;">
           <div class="tb-line">
             <Row class="title-sub">基本信息</Row>
@@ -21,7 +21,7 @@
               <Row class="content-item">
                 <Col class="table-left lh70" span="4">活动名称</Col>
                 <Col class="table-right lh70" span="20">
-                  <Input class="w362" v-model="activeTitle" :maxlength="5" placeholder="请输入活动名称" />
+                  <Input class="w362" v-model="activityName" :maxlength="5" placeholder="请输入活动名称" />
                   <span class="title-span-tips">(名称请勿超过五个字)</span>
                 </Col>
               </Row>
@@ -30,15 +30,14 @@
                 <Col class="table-right" span="20">
                   <Row>
                     <Col span="6" class="active-imgbox">
-                      <img class="active-imgurl" src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191031/fd9b8888-a8c1-4ed4-80c5-166a4d45ea97/20191031183109.png" alt="">
-                      <img v-show="false" class="active-imgurl" src="https://img14.360buyimg.com/n0/jfs/t1/68717/29/5994/405044/5d42a15aEc4d4f026/7eca4ea5b2308842.jpg" />
+                      <img v-show="!imgShow" class="active-imgurl" src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191031/fd9b8888-a8c1-4ed4-80c5-166a4d45ea97/20191031183109.png" alt="">
+                      <img v-show="imgShow" class="active-imgurl" :src="pictureUrl" />
                     </Col>
                     <Col span="18">
                       <div class="upload-img-box">
                         <Button class="upload-btn" type="success" ghost>上传图片</Button>
                         <input type="file" class="img-ipt"
-                          ref="filezm5"
-                          @change="filezmFn(5)"
+                          @change="fileUplaod($event)"
                           accept="image/*"
                           capture="camera">
                       </div>
@@ -50,9 +49,9 @@
               <Row class="content-item">
                 <Col class="table-left lh70" span="4">起止时间</Col>
                 <Col class="table-right lh70" span="20">
-                  <DatePicker v-model="beginTime" type="datetime" placeholder="开始日期" style="width: 248px"></DatePicker>
+                  <DatePicker v-model="beginTime" type="datetime" @on-change="changeStartTime" placeholder="开始日期" style="width: 208px"></DatePicker>
                   <span style="margin:0 5px;" class="span-table">——</span>
-                  <DatePicker v-model="endTime" type="datetime" placeholder="结束日期" placement="bottom-end" style="width: 248px"></DatePicker>
+                  <DatePicker v-model="endTime" type="datetime" @on-change="endDate" placeholder="结束日期" placement="bottom-end" style="width: 208px"></DatePicker>
                 </Col>
               </Row>
             </div>
@@ -126,12 +125,12 @@
         </Row>
         <Row>
           <div class="tb-line btn btn-goods">
-            <Button class="save-goods-info-btn save-btns" type="warning" @click="navSave(2)">下一步</Button>
+            <Button class="save-goods-info-btn save-btns" v-show="false" type="warning" @click="navSave(2)">下一步</Button>
             <Button class="save-goods-info-btn save-btns" style="margin-left: 16px;" type="success" @click="submitPub">提交发布</Button>
           </div>
         </Row>
       </div>
-      <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 2">
+      <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 2 && false">
         <Row style="margin-top: 35px;">
           <div class="tb-line">
             <Row class="title-sub">添加模板</Row>
@@ -141,16 +140,16 @@
                 <Col class="table-right" span="20">
                   <Row>
                     <Select v-model="modalsel" style="width:200px">
-                        <Option v-for="(item,index) in modalList" :value="item.value" :key="index">{{ item.value }}</Option>
+                        <Option v-for="(item,index) in modalList" :value="item.id" :key="index">{{ item.value }}</Option>
                     </Select>
                     <Button type="success" ghost style="margin-left:6px;" @click="addModal">添加模板</Button>
                   </Row>
                   <Row>
                     <span class="title-span-tips">(图片规格：模板A宽度为1126，模板B宽度563，模板C宽度为375，高度自适应JPG，JPEG，GIF，小于500k)</span>
                   </Row>
-                  <Row>
-                    <div class="modal-item">
-                      <div class="modal-left">
+                  <Row style="margin-bottom: 15px">
+                    <Row class="modal-item">
+                      <Col span="10" class="modal-left">
                         <div class="modal-text">
                           <span class="num">1</span>
                           <span class="txt">模板A</span>
@@ -159,20 +158,134 @@
                         </div>
                         <input type="file" class="img-ipt"
                           ref="filezm1"
-                          @change="filezmFn(1)"
+                          @change="fileUploadGoods($event,1)"
                           accept="image/*"
                           capture="camera">
                         <img v-show="false" src="" alt="">
-                      </div>
-                      <div class="modal-right">
+                      </Col>
+                      <Col span="14" class="modal-right">
                         <div class="content">
                           <div class="con-left">图1内容：</div>
                           <div class="con-right">
                             <span class="add-goods">添加商品</span>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                      </Col>
+                    </Row>
+                    <Row class="modal-item modal-item1">
+                      <Col span="10" class="modal-left">
+                        <Row class="modal-aitem">
+                          <Col span="12">
+                            <div class="modal-text">
+                              <span class="num">1</span>
+                              <span class="txt">模板B</span>
+                              <span class="btn">上传图片</span>
+                            </div>
+                            <input type="file" class="img-ipt"
+                              ref="filezm1"
+                              @change="fileUploadGoods($event)"
+                              accept="image/*"
+                              capture="camera">
+                            <img v-show="false" src="" alt="">
+                          </Col>
+                          <Col span="12">
+                            <div class="modal-text">
+                              <span class="num">2</span>
+                              <span class="btn">上传图片</span>
+                              <span class="del">删除</span>
+                            </div>
+                            <input type="file" class="img-ipt"
+                              ref="filezm1"
+                              @change="fileUploadGoods($event)"
+                              accept="image/*"
+                              capture="camera">
+                            <img v-show="false" src="" alt="">
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span="14" class="modal-right">
+                        <div class="content">
+                          <Row style="padding-top: 10px">
+                            <div class="con-left">图1内容：</div>
+                            <div class="con-right">
+                              <span class="add-goods">添加商品</span>
+                            </div>
+                          </Row>
+                          <Row style="margin-top: 15px">
+                            <div class="con-left">图2内容：</div>
+                            <div class="con-right">
+                              <span class="add-goods">添加商品</span>
+                            </div>
+                          </Row>
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row class="modal-item modal-item1">
+                      <Col span="10" class="modal-left">
+                        <Row class="modal-aitem">
+                          <Col span="8">
+                            <div class="modal-text">
+                              <span class="num">1</span>
+                              <span class="txt">模板B</span>
+                              <span class="btn">上传图片</span>
+                            </div>
+                            <input type="file" class="img-ipt"
+                              ref="filezm1"
+                              @change="fileUploadGoods($event)"
+                              accept="image/*"
+                              capture="camera">
+                            <img v-show="false" src="" alt="">
+                          </Col>
+                          <Col span="8">
+                            <div class="modal-text">
+                              <span class="num">2</span>
+                              <span class="btn">上传图片</span>
+                            </div>
+                            <input type="file" class="img-ipt"
+                              ref="filezm1"
+                              @change="fileUploadGoods($event)"
+                              accept="image/*"
+                              capture="camera">
+                            <img v-show="false" src="" alt="">
+                          </Col>
+                          <Col span="8">
+                            <div class="modal-text">
+                              <span class="num">3</span>
+                              <span class="btn">上传图片</span>
+                              <span class="del">删除</span>
+                            </div>
+                            <input type="file" class="img-ipt"
+                              ref="filezm1"
+                              @change="fileUploadGoods($event)"
+                              accept="image/*"
+                              capture="camera">
+                            <img v-show="false" src="" alt="">
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span="14" class="modal-right">
+                        <div class="content">
+                          <Row>
+                            <div class="con-left">图1内容：</div>
+                            <div class="con-right">
+                              <span class="add-goods">添加商品</span>
+                            </div>
+                          </Row>
+                          <Row style="margin-top: 15px">
+                            <div class="con-left">图2内容：</div>
+                            <div class="con-right">
+                              <span class="add-goods">添加商品</span>
+                            </div>
+                          </Row>
+                          <Row style="margin-top: 15px">
+                            <div class="con-left">图3内容：</div>
+                            <div class="con-right">
+                              <span class="add-goods">添加商品</span>
+                            </div>
+                          </Row>
+                        </div>
+                      </Col>
+                    </Row>
                   </Row>
                 </Col>
               </Row>
@@ -236,21 +349,15 @@
 				<Button size="large" @click="saveGoods" type="primary">保存</Button>
 			</div>
 		</Modal>
-    <Modal
-				width="20"
-				v-model="delModal"
-				@on-ok=""
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除？</p>
-		</Modal>
   </div>
 </template>
 <script>
 import { listGoodsPage } from '@/api/goods'
 import { supplierList, categList } from '@/api/supplier'
 import { listBrandsPage } from '@/api/nature'
-import { arrayTiff, arrayChecked } from '@/libs/util'
+import { arrayTiff, arrayChecked, date2string } from '@/libs/util'
+import { singleUpload } from '@/api/base'
+import { activityDetail, saveActivity, updateActivity } from '@/api/thematic'
 export default {
   name: 'thematicPub',
   data () {
@@ -264,27 +371,21 @@ export default {
       clist1: [],
       clist2: [],
       clist3: [],
-      delModal: false,
       modal1: false,
       goodsTitle: '',
-      activeTitle: '',
+      activityName: '',
+      imgShow: false,
+      pictureUrl: '',
       modalsel: '',
       modalList: [
-        { value: '模板A' },
-        { value: '模板B' },
-        { value: '模板C' }
+        { id: 0, value: '模板A' },
+        { id: 1, value: '模板B' },
+        { id: 2, value: '模板C' }
       ],
       actNavs: [
         {
           isShow: false,
-          navDets: [
-            {
-              id: 28,
-              images: ['https://img14.360buyimg.com/n0/jfs/t1/68717/29/5994/405044/5d42a15aEc4d4f026/7eca4ea5b2308842.jpg'],
-              title: '【新品上市】Huawei/华为Mate 30 Pro超级快充徕卡电影四摄麒麟990 4G智能手机mate30pro华为官方旗舰店',
-              retailPrice: '100.00'
-            }
-          ],
+          navDets: [],
           navigationName: '',
           sortOrder: ''
         }
@@ -296,28 +397,6 @@ export default {
       beginTime: '',
       endTime: '',
       isShowCatg: false,
-      goodsImgList: [
-        {
-          imgUrl: '',
-          imgShow: false
-        },
-        {
-          imgUrl: '',
-          imgShow: false
-        },
-        {
-          imgUrl: '',
-          imgShow: false
-        },
-        {
-          imgUrl: '',
-          imgShow: false
-        },
-        {
-          imgUrl: '',
-          imgShow: false
-        }
-      ], // 商品图片列表
       columnsList: [
         {
           type: 'selection',
@@ -338,12 +417,6 @@ export default {
           key: 'brandName',
           width: 240
         }
-        // {
-        //   title: '操作',
-        //   width: 230,
-        //   slot: 'action',
-        //   align: 'center'
-        // }
       ],
       dataList: [
       ],
@@ -369,29 +442,27 @@ export default {
         vm.vsShowNav = 0
         vm.type = ''
         vm.activeId = ''
+        vm.goodsTitle = ''
+        vm.activityName = ''
+        vm.imgShow = false
+        vm.pictureUrl = ''
+        vm.actNavs = [{
+          isShow: false,
+          navDets: [],
+          navigationName: '',
+          sortOrder: ''
+        }]
       }
     })
   },
   computed: {
     columnsListUpdata: function () {
       let columnsList = [...this.columnsListOriginal]
-      console.log('cloumb654', this.columnsListOriginal)
-      let expandSpec = this.expandSpec
-      expandSpec.forEach((item, index) => {
-        columnsList.splice(index, 0, {
-          title: item.specName,
-          key: `guige${index}`,
-          width: 100
-        })
-      })
-      console.log('columnsList-edit', columnsList)
       return columnsList
     }
   },
   methods: {
     async getPageList () {
-      // console.log(new Date(this.beginTime))
-      // return;
       let data = {
         FLAG: 1,
         brandId: this.brandId,
@@ -432,17 +503,90 @@ export default {
       }
       let res = await supplierList(data)
       if (res.data.code === 0) {
-        // console.log(res.data.content)
         this.supplierListArr = res.data.content.rows
+      }
+    },
+    // 上传图片
+    async fileUplaod (e) {
+      let file = e.target.files[0]
+      if (!/\/(?:jpg|jpeg|png|gif)/i.test(file.type)) {
+        this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+        this.$refs.filezm.value = ''
+        return
+      }
+      let data = {
+        file: file,
+        tag: 2
+      }
+      let res = await singleUpload(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        this.imgShow = true
+        e.target.value = ''
+        this.pictureUrl = res.data.content
       }
     },
     // 添加模板
     addModal () {
 
     },
+    async saveActivity () {
+      let actNavs = [...this.actNavs]
+      actNavs.forEach(item => {
+        item.isShow = item.isShow ? 1 : 0
+      })
+      let data = {
+        FLAG: 1,
+        activityName: this.activityName,
+        pictureUrl: this.pictureUrl,
+        beginTime: this.beginTime != '' ? date2string(this.beginTime) : '',
+        endTime: this.endTime != '' ? date2string(this.endTime) : '',
+        actNavs: actNavs
+      }
+      let res = await saveActivity(data)
+      if (res.data.code === 0) {
+        this.$Modal.success({
+          title: '提示',
+          content: '发布成功'
+        })
+        this.$router.push('thematicList')
+      } else {
+        console.log('失败处理')
+      }
+    },
     // 提交发布
     submitPub () {
+      // console.log(date2string(this.beginTime))
+      let isAllWrite = false
+      this.actNavs.filter(item => {
+        if (item.navigationName === '') {
+          isAllWrite = true
+          return item
+        }
+        if (item.sortOrder === '') {
+          isAllWrite = true
+          return item
+        }
+        if (item.navDets && item.navDets.length === 0) {
+          isAllWrite = true
+          return item
+        }
+        return item
+      })
+      if (isAllWrite) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请填写完整'
+        })
+        return
+      }
 
+      if (this.type !== 'edit') {
+        this.saveActivity()
+      }
+    },
+    fileUploadGoods (e) {
+      console.log(e)
     },
     // 品牌数据
     async getlistBrandsPage () {
@@ -541,6 +685,9 @@ export default {
     // 保存选中商品
     saveGoods () {
       console.log(this.selectedListSpu)
+      this.selectedListSpu.forEach(item => {
+        item.productId = item.id
+      })
       let slectList = []
       slectList = arrayTiff(this.selectedListSpu, this.actNavs[this.navIndex].navDets)
       this.actNavs[this.navIndex].navDets = [...this.actNavs[this.navIndex].navDets, ...slectList]
@@ -566,25 +713,40 @@ export default {
       this.pageNum = value
       this.getPageList()
     },
-    changeNav (val) {
+    navSave (val) {
       switch (val) {
         case 0:
           this.vsShowNav = 0
           break
         case 1:
-          this.vsShowNav = 1
-          break
-        case 2:
-          this.vsShowNav = 2
-          break
-      }
-    },
-    navSave (val) {
-      let imageUrl = this.goodsImgList.filter(item => {
-        return item.imgUrl != ''
-      })
-      switch (val) {
-        case 1:
+          if (this.activityName === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请填写活动名称'
+            })
+            return
+          }
+          if (this.pictureUrl === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请上传图片'
+            })
+            return
+          }
+          if (this.beginTime === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请填写开始时间'
+            })
+            return
+          }
+          if (this.endTime === '') {
+            this.$Modal.warning({
+              title: '提示',
+              content: '请填写结束时间'
+            })
+            return
+          }
           this.vsShowNav = 1
           break
         case 2:
@@ -592,6 +754,21 @@ export default {
           break
         case 3:
           break
+      }
+    },
+    endDate (val) {
+      // 時間关联判断(判断开始时间)
+      if (new Date(val) < new Date(this.beginTime)) {
+        this.$Message.warning('结束时间不能在开始时间之前')
+        this.endTime = ''
+      }
+    },
+    changeStartTime (val) {
+      // 時間关联判断(判断结束时间)
+      if (new Date(val) > new Date(this.endTime)) {
+        this.$Message.warning('开始时间不能在结束时间之后')
+        this.beginTime = ''
+        this.endTime = ''
       }
     },
     edit (i) {
@@ -639,13 +816,11 @@ export default {
   width: 100%;
   height: 125px;
   .modal-left{
-    width: 355px;
     height: 125px;
     line-height: 20px;
     background-color: #f9f9f9;
     border: 1px solid #bababa;
     position: relative;
-    float: left;
     .modal-text{
       .num{
         display: inline-block;
@@ -694,9 +869,8 @@ export default {
     }
   }
   .modal-right{
-    width: 361px;
+    position: relative;
     height: 125px;
-    float: left;
     .content{
       margin: 50px 0 0 30px;
       line-height: 30px;
@@ -718,6 +892,28 @@ export default {
         }
       }
     }
+  }
+}
+.modal-item1{
+  height: 200px;
+  .modal-left{
+    height: 200px;
+  }
+  .modal-aitem{
+    .img-ipt{
+      height: 200px;
+    }
+    .modal-text{
+      height: 200px;
+      border-right: 1px solid #bababa;
+      box-sizing: border-box;
+      &:last-child{
+        border-right: 0;
+      }
+    }
+  }
+  .modal-right{
+    height: 200px;
   }
 }
 .nav-box{
@@ -748,6 +944,7 @@ export default {
 }
 .content-box{
   border-bottom: 1px solid #b9b8b8;
+  margin-bottom: 20px;
   .content-item{
     height: 70px;
     border: 1px solid #b9b8b8;
