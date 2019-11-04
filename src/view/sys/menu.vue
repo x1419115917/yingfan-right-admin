@@ -651,4 +651,7 @@ export default {
 .btn-item{
   margin-left: 6px;
 }
+/deep/ .ivu-card-body,.ivu-card-body{
+  padding: 0;
+}
 </style>

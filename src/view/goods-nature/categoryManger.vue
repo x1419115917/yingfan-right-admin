@@ -969,4 +969,7 @@ export default {
     border: 1px solid #e6e6e6;
   }
 }
+/deep/ .ivu-card-body,.ivu-card-body{
+  padding: 0;
+}
 </style>

@@ -218,14 +218,6 @@
 				class-name="vertical-center-modal">
 			<p>确定下架？</p>
 		</Modal>
-    <Modal
-				width="20"
-				v-model="delBatchModal"
-				@on-ok=""
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除选中的数据？</p>
-		</Modal>
   </div>
 </template>
 <script>
@@ -660,9 +652,6 @@ export default {
     upperShelfFn (val) {
       this.isupperShelf = +val
       this.getPageList()
-    },
-    bactchDel () {
-      this.delBatchModal = true
     },
     searchFn () {
       this.getPageList()
