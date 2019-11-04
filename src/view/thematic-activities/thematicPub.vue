@@ -379,7 +379,12 @@ export default {
         { id: 1, value: '模板B' },
         { id: 2, value: '模板C' }
       ],
-      actNavs: null,
+      actNavs: [{
+        isShow: false,
+        navDets: null,
+        navigationName: '',
+        sortOrder: ''
+      }],
       navIndex: 0,
       selectedListSpu: [],
       type: this.$route.query.type,
@@ -471,9 +476,9 @@ export default {
         this.dataList.forEach((item) => {
           item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
-        if (this.actNavs && this.actNavs.length) {
-          this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
-        }
+        // if (this.actNavs && this.actNavs.length) {
+        //   this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
+        // }
       }
     },
     // 查看详情
