@@ -18,12 +18,6 @@ const BASE_URL = process.env.NODE_ENV === 'production'
 
 module.exports = {
   // Project deployment base
-  // By default we assume your app will be deployed at the root of a domain,
-  // e.g. https://www.my-app.com/
-  // If your app is deployed at a sub-path, you will need to specify that
-  // sub-path here. For example, if your app is deployed at
-  // https://www.foobar.com/my-app/
-  // then change this to '/my-app/'
   baseUrl: BASE_URL,
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
@@ -33,6 +27,12 @@ module.exports = {
     config.resolve.alias
       .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
       .set('_c', resolve('src/components'))
+  },
+  configureWebpack: config => {
+    // 线上环境去掉打印信息
+    if (process.env.NODE_ENV === 'production') {
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+    }
   },
   // 设为false打包时不生成.map文件
   productionSourceMap: false

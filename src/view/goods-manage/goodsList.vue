@@ -210,14 +210,6 @@
 				<Button size="large" @click="skuUpper(0)" type="primary">下架</Button>
 			</div>
 		</Modal>
-    <Modal
-				width="20"
-				v-model="delModal"
-				@on-ok=""
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定下架？</p>
-		</Modal>
   </div>
 </template>
 <script>
@@ -333,7 +325,6 @@ export default {
       clist3: [],
       operationShow: false,
       delBatchModal: false,
-      delModal: false,
       checkedIds: [],
       checkedId: '',
       columnsList: [
@@ -705,11 +696,6 @@ export default {
       })
       this.saveSkuStock(skuStockDtos)
     },
-    remove (i) {
-      this.delModal = true
-      this.delIndex = i
-      console.log(this.delIndex)
-    },
     // 取消
     cancelModal1 () {
       this.modal1 = false
@@ -757,22 +743,13 @@ export default {
     },
     goBack () {
       this.$router.go(-1)
-    }, // 分割线
-    initUpload () {
-      this.file = null
-      this.showProgress = false
-      this.loadingProgress = 0
-      this.tableData = []
-      this.tableTitle = []
-    }
-
+    } // 分割线
   },
   created () {
     this.getPageList()
     this.getlistBrandsPage()
     this.getSupplierList()
     this.getcategList(0, '', 1)
-    // this.menuTree()
   },
   mounted () {
 
