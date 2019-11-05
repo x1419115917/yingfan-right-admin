@@ -219,7 +219,7 @@
                     <span class="top-name">{{item.specName}}：</span>
                     <div class="spce-right">
                       <span class="check-box to-ipt-show" v-show="!item.showEdit">{{item.specVals[0]}}</span>
-                      <div class="edit-item"  v-show="false">
+                      <div class="edit-item">
                         <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
@@ -238,7 +238,8 @@
                     <span class="top-name">{{item.specName}}：</span>
                     <div class="spce-right">
                       <div class="content-box-vals" v-for="(values,idx) in item.specVals" :value="values" :key="idx">
-                        <span class="check-box to-ipt-show toname-ipt">{{values}}</span>
+                        <!-- <span class="check-box to-ipt-show toname-ipt">{{values}}</span> @on-change="iptChange($event,index,idx)" -->
+                        <Input class="check-box to-ipt-show toname-ipt" type="text" :value="values" @on-focus="iptFocus($event,index,idx)" @on-blur="iptChange($event,index,idx)"></Input>
                       </div>
                       <div class="edit-item">
                         <Icon v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-create-outline" size="22" />
@@ -363,6 +364,7 @@ export default {
       params: { tag: 0 },
       brandsId: '',
       brandsIds: '',
+      speaval: '',
       brandsIdsList: [],
       supplierListArr: [],
       specListArr: [],
@@ -1205,7 +1207,6 @@ export default {
           tradePrice: item.trade
         })
       })
-      console.log('skus', skus)
       let data = {
         FLAG: 1,
         attrTemplate: attrTemplate,
@@ -1251,13 +1252,14 @@ export default {
           title: '提示',
           content: '请填写完整信息'
         })
+        return false
       } else if (type === 'number') {
         if (!reg.test(str)) {
           this.$Modal.warning({
             title: '提示',
             content: '请输入数字格式'
           })
-          return
+          return false
         }
         if (scope && scope === 'range') {
           if (!/^([1-9]\d{0,1}|100|NA)$/.test(str)) {
@@ -1265,6 +1267,7 @@ export default {
               title: '提示',
               content: '(%)只能输入1-100的正整数'
             })
+            return false
           }
         }
       }
@@ -1464,7 +1467,7 @@ export default {
         let spuInfo = res.data.content.spu
         let skuInfo = res.data.content.sku
         this.skusList = skuInfo.skus
-        console.log('res.data12', res.data)
+        // console.log('res.data12', res.data)
         this.supplierId = spuInfo.supplierId
         let imageList = JSON.parse(spuInfo.images)
         this.goodsTitle = spuInfo.title
@@ -1560,10 +1563,30 @@ export default {
       console.log('this.expandSpec-edit-edit2', this.expandSpec)
       if (this.type !== 'edit') {
         this.specArrFor(this.expandSpec)
-        alert(123)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)
-        alert(456)
+      }
+    },
+    iptFocus (e, index, idx) {
+      let obj = this.expandSpec[index]
+      this.speaval = obj.specVals[idx]
+    },
+    iptChange (e, index, idx) {
+      let obj = this.expandSpec[index]
+      let spval = obj.specVals[idx]
+      obj.showEdit = false
+      if (e.target.value === '') {
+        obj.specVals[idx] = this.speaval
+        e.target.value = this.speaval
+      } else {
+        obj.specVals[idx] = e.target.value
+      }
+      this.$set(this.expandSpec, index, obj)
+      this.speaval = ''
+      if (this.type !== 'edit') {
+        this.specArrFor(this.expandSpec)
+      } else {
+        this.expandSpecFor(this.expandSpec, this.skusList)
       }
     },
     editFn (index) {
@@ -1661,7 +1684,6 @@ export default {
             })
             return
           }
-
           this.vsShowNav = 2
           break
       }
@@ -2223,7 +2245,13 @@ export default {
       }
       .toname-ipt{
         background-color: #fff;
-        padding: 4px 10px;
+        width: 80px;
+        text-align: center;
+        height: auto;
+        padding: 0;
+        /deep/ .ivu-input{
+          text-align: center;
+        }
       }
       .edit-ipt{
         float: left;
