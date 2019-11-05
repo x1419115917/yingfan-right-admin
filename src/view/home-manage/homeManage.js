@@ -31,3 +31,20 @@ export function type () {
     }
   ]
 }
+/* 展示位置 */
+export function showDot () {
+  return [
+    {
+      value: '0',
+      label: '首页banner'
+    },
+    {
+      value: '1',
+      label: '首页活动版块'
+    },
+    {
+      value: '2',
+      label: '首页主题精选'
+    }
+  ]
+}

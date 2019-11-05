@@ -8,7 +8,14 @@ export const doBannerList = data => {
     method: 'post'
   })
 }
-
+// 专题活动列表
+export const doActiveList = data => {
+  return axios.request({
+    url: '/homePge/operation/activity/list',
+    data,
+    method: 'post'
+  })
+}
 // 查询首页banner详细信息
 export const doBannerDetail = data => {
   return axios.request({
