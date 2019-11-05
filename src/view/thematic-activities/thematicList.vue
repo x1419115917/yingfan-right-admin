@@ -73,14 +73,6 @@
 				class-name="vertical-center-modal">
 			<p>确定删除？</p>
 		</Modal>
-    <Modal
-				width="20"
-				v-model="delBatchModal"
-				@on-ok=""
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除选中的数据？</p>
-		</Modal>
   </div>
 </template>
 <script>
@@ -95,7 +87,6 @@ export default {
       modal1: false,
       addLoading: false,
       operationShow: false,
-      delBatchModal: false,
       delModal: false,
       checkedIds: [],
       checkedId: '',
@@ -175,9 +166,6 @@ export default {
     addFn () {
       this.$router.push({ name: 'thematicPub' })
     },
-    bactchDel () {
-      this.delBatchModal = true
-    },
     async brandRemove () {
       let ids = []
       ids.push(this.dataList[this.delIndex].id)
@@ -250,7 +238,6 @@ export default {
     cancelModal1 () {
       this.modal1 = false
       this.menuIds = []
-      this.checkedPrentFn(this.ztreesData)
     },
     selected (res) {
       this.selectedList = res

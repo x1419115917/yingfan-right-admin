@@ -41,3 +41,11 @@ export const iconsDetail = data => {
     method: 'post'
   })
 }
+// 删除图标 /homePge/operation/icons/remove
+export const iconsRemove = data => {
+  return axios.request({
+    url: '/homePge/operation/icons/remove',
+    data,
+    method: 'post'
+  })
+}

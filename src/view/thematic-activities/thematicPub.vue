@@ -381,7 +381,7 @@ export default {
       ],
       actNavs: [{
         isShow: false,
-        navDets: null,
+        navDets: [],
         navigationName: '',
         sortOrder: ''
       }],
@@ -428,6 +428,7 @@ export default {
     next(vm => {
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.$route.query.type === 'edit') {
+        vm.vsShowNav = 0
         vm.type = vm.$route.query.type,
         vm.activeId = vm.$route.query.id,
         // console.log('vm.$route', vm.$route)
@@ -445,7 +446,7 @@ export default {
         vm.endTime = ''
         vm.actNavs = [{
           isShow: false,
-          navDets: null,
+          navDets: [],
           navigationName: '',
           sortOrder: ''
         }]
@@ -735,7 +736,7 @@ export default {
     },
     // 保存选中商品
     saveGoods () {
-      console.log(this.selectedListSpu)
+      // console.log(this.selectedListSpu)
       this.selectedListSpu.forEach(item => {
         item.productId = item.id
       })

@@ -358,10 +358,10 @@ export default {
       }
     },
     rowClick (data, index, event, text) {
-      console.log('当前行数据:' + data)
-      console.log('点击行号:' + index)
-      console.log('点击事件:' + event)
-      console.log('text', text)
+      // console.log('当前行数据:' + data)
+      // console.log('点击行号:' + index)
+      // console.log('点击事件:' + event)
+      // console.log('text', text)
       switch (text) {
         case '添加':
           // this.formValidate.superiorMenu = data.text

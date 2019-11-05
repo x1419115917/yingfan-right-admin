@@ -397,13 +397,14 @@ function numberDoubled (n) {
 }
 
 export const date2string = (d, sp) => {
+  let dates = new Date(d)
   sp = sp || '-'
-  let year = d.getFullYear()
-  let month = d.getMonth() + 1
-  let date = d.getDate()
-  let hour = d.getHours()
-  let min = d.getMinutes()
-  let sec = d.getSeconds()
+  let year = dates.getFullYear()
+  let month = dates.getMonth() + 1
+  let date = dates.getDate()
+  let hour = dates.getHours()
+  let min = dates.getMinutes()
+  let sec = dates.getSeconds()
   return year + sp + numberDoubled(month) + sp + date + ' ' + numberDoubled(hour) + ':' + numberDoubled(min) + ':' + numberDoubled(sec)
 }
 

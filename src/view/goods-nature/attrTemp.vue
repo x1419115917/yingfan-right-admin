@@ -900,7 +900,4 @@ export default {
 .boxNone{
   display: none;
 }
-/deep/ .ivu-card-body,.ivu-card-body{
-  padding: 0;
-}
 </style>

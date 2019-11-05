@@ -10,7 +10,7 @@
       </Row>
     </Card>
     <Row class="margin-top-10">
-      <div class="bank_table" style="position:relative;">
+      <div class="bank_table" style="position:relative">
           <Table
             :columns="columnsList"
             :data="dataList"
@@ -51,10 +51,13 @@
           />
         </div>
     </Row>
+    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑图标': '新增图标'"  width="660" @on-cancel="cancelModal1">
+      <add-icons :activityList="activityList" :imageShow="imageShow" :iconsItem="iconsItem" :operationShow="operationShow" @submitModal="submitModal" @hideModal="hideModal"></add-icons>
+		</Modal>
     <Modal
 				width="20"
 				v-model="delModal"
-				@on-ok="activityRemove"
+				@on-ok="iconsRemove"
 				:closable="false"
 				class-name="vertical-center-modal">
 			<p>删除后无法恢复，确定删除？</p>
@@ -62,18 +65,23 @@
   </div>
 </template>
 <script>
-import { iconsList, saveIcons, updateIcons, iconsDetail } from '@/api/base'
+import { activityList } from '@/api/thematic'
+import { iconsList, updateIcons, iconsDetail, iconsRemove } from '@/api/base'
+import addIcons from './addIcon.vue'
 export default {
-  name: 'role-name',
+  name: 'iconList',
   data () {
     return {
       imgShow1: '',
       imgUrl: '',
       modal1: false,
+      iconsItem: {},
       addLoading: false,
+      imageShow: false,
       operationShow: false,
       delModal: false,
       checkedIds: [],
+      activityList: [],
       checkedId: '',
       columnsList: [
         {
@@ -88,7 +96,8 @@ export default {
         },
         {
           title: '专题名称',
-          key: 'iconName'
+          key: 'activityName',
+          width: 120
         },
         {
           title: '图片预览',
@@ -116,7 +125,8 @@ export default {
         },
         {
           title: '权限',
-          key: 'sortOrder'
+          key: 'sortOrder',
+          width: 100
         },
         {
           title: '操作',
@@ -138,6 +148,9 @@ export default {
       tableLoading: false
     }
   },
+  components: {
+    addIcons
+  },
   methods: {
     async getPageList () {
       this.tableLoading = true
@@ -155,33 +168,42 @@ export default {
         this.tableLoading = false
       }
     },
-    addFn () {
-      this.$router.push({ name: 'thematicPub' })
-    },
-    async brandRemove () {
-      let ids = []
-      ids.push(this.dataList[this.delIndex].id)
-      if (ids && ids.length == 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择数据进行删除'
-        })
-        return
-      }
+    async getActivityList () {
       let data = {
         FLAG: 1,
-        ids: ids
+        pageIndex: 1,
+        pageSize: 100
       }
-      let res = await brandRemove(data)
+      let res = await activityList(data)
       if (res.data.code === 0) {
-        this.delModal = false
-        this.$Modal.success({
-          title: '提示',
-          content: '删除成功'
-        })
-        this.delIndex = ''
-        this.getPageList()
+        this.activityList = res.data.content.rows
+        console.log(this.activityList)
       }
+    },
+    async iconsDetail (id) {
+      let data = {
+        FLAG: 1,
+        id: id
+      }
+      let res = await iconsDetail(data)
+      if (res.data.code === 0) {
+        this.imageShow = true
+        this.iconsItem = res.data.content
+        this.iconsItem.FLAG = 1
+        // console.log(this.iconsItem)
+      }
+    },
+    addFn () {
+      this.iconsItem = {
+        FLAG: 1,
+        id: '',
+        activityId: '', // 选择活动
+        sortOrder: '', // 权重
+        pictureUrl: '' // 图片
+      }
+      this.operationShow = false
+      this.imageShow = false
+      this.modal1 = true
     },
     searchFn () {
       this.getPageList()
@@ -193,31 +215,16 @@ export default {
         // this.saveRole()
       }
     },
-    edit (index) {
-      this.operationShow = true
-      this.checkedId = this.dataList[index].id
-      this.$router.push({
-        path: 'thematicPub',
-        query: {
-          id: this.dataList[index].id,
-          type: 'edit'
-        }
-      })
-    },
-    remove (i) {
-      this.delModal = true
-      this.delIndex = i
-      console.log(this.delIndex)
-    },
-    async activityRemove () {
+    async iconsRemove () {
       let ids = []
       ids.push(this.dataList[this.delIndex].id)
       let data = {
         FLAG: 1,
         ids: ids
       }
-      let res = await activityRemove(data)
+      let res = await iconsRemove(data)
       if (res.data.code === 0) {
+        console.log(res)
         this.$Modal.success({
           title: '提示',
           content: '删除成功'
@@ -226,11 +233,29 @@ export default {
         this.getPageList()
       }
     },
+    edit (index) {
+      this.operationShow = true
+      this.checkedId = this.dataList[index].id
+      this.iconsDetail(this.dataList[index].id)
+      this.modal1 = true
+    },
+    remove (i) {
+      this.delModal = true
+      this.delIndex = i
+      console.log(this.delIndex)
+    },
     // 取消
     cancelModal1 () {
       this.modal1 = false
       this.menuIds = []
-      this.checkedPrentFn(this.ztreesData)
+    },
+    submitModal (bool) {
+      this.modal1 = false
+      this.getPageList()
+    },
+    hideModal (bool) {
+      this.modal1 = bool
+      this.menuIds = []
     },
     selected (res) {
       this.selectedList = res
@@ -258,6 +283,7 @@ export default {
   },
   created () {
     this.getPageList()
+    this.getActivityList()
   },
   mounted () {
 
@@ -426,5 +452,9 @@ export default {
   /deep/ .ivu-modal, .ivu-modal{
     top: 22px;
   }
+}
+.smsModel /deep/ .ivu-modal-footer,.smsModel .ivu-modal-footer{
+  padding: 0;
+  display: none;
 }
 </style>
