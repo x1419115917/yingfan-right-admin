@@ -81,6 +81,7 @@ export default {
         Cookies.set('username', res.data.content.username)
         Cookies.set('sessionId', res.data.content.sessionId)
         this.userMemu()
+        this.getAllBtn()
       }
     },
     async userMemu () {
@@ -97,7 +98,6 @@ export default {
           name: this.$config.homeName
         })
       }
-      this.getAllBtn()
     },
     // 获取按钮权限
     async getAllBtn () {
