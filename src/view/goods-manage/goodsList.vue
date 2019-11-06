@@ -400,9 +400,6 @@ export default {
       isupperShelf: 1,
       loading: false, // 分割线
       uploadLoading: false,
-      progressPercent: 0,
-      showProgress: false,
-      showRemoveFile: false,
       tableLoading: false
     }
   },
@@ -440,6 +437,7 @@ export default {
     async getPageList () {
       // console.log(new Date(this.beginTime))
       // return;
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         beginTime: this.beginTime != '' ? date2string(this.beginTime) : '',
@@ -457,6 +455,7 @@ export default {
         title: this.title
       }
       let res = await listGoodsPage(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows

@@ -238,6 +238,7 @@ export default {
   },
   methods: {
     async getPageList () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
@@ -245,6 +246,7 @@ export default {
         name: this.value
       }
       let res = await listBrandsPage(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows

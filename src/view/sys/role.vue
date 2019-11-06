@@ -236,6 +236,7 @@ export default {
   },
   methods: {
     async getPageList () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
@@ -245,6 +246,7 @@ export default {
         userIdCreate: this.userIdCreate
       }
       let res = await roleList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows

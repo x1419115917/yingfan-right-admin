@@ -226,6 +226,7 @@ export default {
   },
   methods: {
     async getPageList () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
@@ -234,6 +235,7 @@ export default {
         categoryId: this.categoryId
       }
       let res = await specList(data)
+      this.tableLoading = false
       console.log(res.data.content)
       if (res.data.code === 0) {
         console.log(res.data.content)

@@ -208,6 +208,7 @@ export default {
   components: { TreeGrid },
   methods: {
     async getPageList () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
@@ -215,6 +216,7 @@ export default {
         name: this.value
       }
       let res = await deptTreeList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         if (res.data.content && res.data.content.children.length > 0) {
           this.data = [...res.data.content.children]

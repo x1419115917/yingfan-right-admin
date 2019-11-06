@@ -251,12 +251,14 @@ export default {
   components: { TreeGrid },
   methods: {
     async getPageList () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
         pageSize: this.pageSize
       }
       let res = await treeList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         this.data = [...res.data.content.children]
         // this.total = +res.data.content.total
@@ -650,8 +652,5 @@ export default {
 }
 .btn-item{
   margin-left: 6px;
-}
-/deep/ .ivu-card-body,.ivu-card-body{
-  padding: 0;
 }
 </style>

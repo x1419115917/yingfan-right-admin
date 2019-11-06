@@ -375,6 +375,38 @@ export const appRouter = [
     ]
   },
   {
+    path: '/member',
+    name: 'member',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-stats',
+      title: '会员管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'memberList',
+        name: 'memberList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '会员列表'
+        },
+        component: () => import('@/view/member/memberList.vue')
+      },
+      {
+        path: 'memberDetail',
+        name: 'memberDetail',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-stats',
+          title: '会员详情'
+        },
+        component: () => import('@/view/member/memberDetail.vue')
+      }
+    ]
+  },
+  {
     path: '/orderManage',
     name: 'orderManage',
     meta: {

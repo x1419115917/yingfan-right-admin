@@ -1,20 +1,39 @@
 <template>
   <div>
-    <Card title="首页图标配置">
+    <Card title="会员列表">
       <Row class="role-top com_submenu">
         <Row>
-          <div class="set-con">
-            <Button class="btn" type="success" :loading="addLoading" @click="addFn">新增图标</Button>
+          <div class="role-top-input">
+            <div class="td-line">
+              <span class="name">绑定手机号</span>
+              <Input
+                placeholder="请输入绑定手机号"
+                class="w162"
+                v-model="value"
+              />
+            </div>
+            <div class="td-line">
+              <span class="name">推荐人手机号</span>
+              <Input
+                placeholder="请输入推荐人手机号"
+                class="w162"
+                v-model="value"
+              />
+            </div>
+            <div class="td-line btn">
+              <Button @click="clearInputs" style="margin-right: 6px;">重置</Button>
+              <Button type="primary" @click="searchFn">查询</Button>
+            </div>
           </div>
         </Row>
       </Row>
     </Card>
     <Row class="margin-top-10">
-      <div class="bank_table" style="position:relative">
+      <div class="bank_table" style="position:relative;">
           <Table
             :columns="columnsList"
             :data="dataList"
-            height="450"
+            height="420"
             border
             ref="mainTable"
             stripe
@@ -25,11 +44,7 @@
             <template slot-scope="{ row, index }" slot="action">
               <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
                 <i></i>
-                <span>编辑</span>
-              </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
-                <i></i>
-                <span>删除</span>
+                <span>详情</span>
               </Button>
             </template>
           </Table>
@@ -51,86 +66,56 @@
           />
         </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑图标': '新增图标'"  width="660" @on-cancel="cancelModal1">
-      <add-icons :activityList="activityList" :imageShow="imageShow" :iconsItem="iconsItem" :operationShow="operationShow" @submitModal="submitModal" @hideModal="hideModal"></add-icons>
-		</Modal>
-    <Modal
-				width="20"
-				v-model="delModal"
-				@on-ok="iconsRemove"
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>删除后无法恢复，确定删除？</p>
-		</Modal>
   </div>
 </template>
 <script>
 import { activityList } from '@/api/thematic'
-import { iconsList, updateIcons, iconsDetail, iconsRemove } from '@/api/base'
-import addIcons from './addIcon.vue'
 export default {
-  name: 'iconList',
+  name: 'role-name',
   data () {
     return {
+      value: '',
       imgShow1: '',
       imgUrl: '',
-      modal1: false,
-      iconsItem: {},
       addLoading: false,
-      imageShow: false,
       operationShow: false,
-      delModal: false,
       checkedIds: [],
-      activityList: [],
       checkedId: '',
       columnsList: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
+        // {
+        //   type: 'selection',
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
           title: '序号',
           width: 120,
           key: 'id'
         },
         {
-          title: '专题名称',
-          key: 'activityName',
-          width: 120
+          title: '绑定手机号',
+          key: 'bindPhone'
         },
         {
-          title: '图片预览',
-          key: 'pictureUrl',
-          width: 160,
-          render: (h, params) => {
-            return h('div', [
-              h('img', {
-                domProps: {
-                  'src': params.row.pictureUrl ? params.row.pictureUrl : ''
-                },
-                style: {
-                  display: 'block',
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '3px'
-                }
-              })
-            ])
-          }
+          title: '注册时间',
+          key: 'createdTime',
+          width: 180
         },
         {
-          title: '跳转链接',
-          key: 'pictureUrl'
+          title: '推荐人手机号',
+          key: 'recommendPhone'
         },
         {
-          title: '权限',
-          key: 'sortOrder',
-          width: 100
+          title: '销售奖励',
+          key: 'reward'
+        },
+        {
+          title: '积分金额',
+          key: 'integral'
         },
         {
           title: '操作',
-          width: 200,
+          width: 160,
           slot: 'action',
           align: 'center'
         }
@@ -148,60 +133,35 @@ export default {
       tableLoading: false
     }
   },
-  components: {
-    addIcons
-  },
   methods: {
     async getPageList () {
       this.tableLoading = true
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let res = await iconsList(data)
-      this.tableLoading = false
-      if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.dataList = res.data.content.rows
-      }
-    },
-    async getActivityList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: 1,
-        pageSize: 100
+        pageSize: this.pageSize,
+        activityName: this.value
       }
       let res = await activityList(data)
       if (res.data.code === 0) {
-        this.activityList = res.data.content.rows
-        console.log(this.activityList)
-      }
-    },
-    async iconsDetail (id) {
-      let data = {
-        FLAG: 1,
-        id: id
-      }
-      let res = await iconsDetail(data)
-      if (res.data.code === 0) {
-        this.imageShow = true
-        this.iconsItem = res.data.content
-        this.iconsItem.FLAG = 1
-        // console.log(this.iconsItem)
+        console.log(res.data.content)
+        this.dataList = [
+          {
+            id: 5,
+            bindPhone: '13694240213',
+            createdTime: '2019-09-26 14:12:03',
+            recommendPhone: '13423512456',
+            reward: '￥100.00',
+            integral: '￥32.00'
+          }
+        ]
+        this.tableLoading = false
+      } else {
+        this.tableLoading = false
       }
     },
     addFn () {
-      this.iconsItem = {
-        FLAG: 1,
-        id: '',
-        activityId: '', // 选择活动
-        sortOrder: '', // 权重
-        pictureUrl: '' // 图片
-      }
-      this.operationShow = false
-      this.imageShow = false
-      this.modal1 = true
+      this.$router.push({ name: 'thematicPub' })
     },
     searchFn () {
       this.getPageList()
@@ -213,47 +173,16 @@ export default {
         // this.saveRole()
       }
     },
-    async iconsRemove () {
-      let ids = []
-      ids.push(this.dataList[this.delIndex].id)
-      let data = {
-        FLAG: 1,
-        ids: ids
-      }
-      let res = await iconsRemove(data)
-      if (res.data.code === 0) {
-        console.log(res)
-        this.$Modal.success({
-          title: '提示',
-          content: '删除成功'
-        })
-        this.delIndex = ''
-        this.getPageList()
-      }
-    },
     edit (index) {
       this.operationShow = true
       this.checkedId = this.dataList[index].id
-      this.iconsDetail(this.dataList[index].id)
-      this.modal1 = true
-    },
-    remove (i) {
-      this.delModal = true
-      this.delIndex = i
-      console.log(this.delIndex)
-    },
-    // 取消
-    cancelModal1 () {
-      this.modal1 = false
-      this.menuIds = []
-    },
-    submitModal (bool) {
-      this.modal1 = false
-      this.getPageList()
-    },
-    hideModal (bool) {
-      this.modal1 = bool
-      this.menuIds = []
+      this.$router.push({
+        path: 'memberDetail',
+        query: {
+          id: this.dataList[index].id,
+          type: 'detail'
+        }
+      })
     },
     selected (res) {
       this.selectedList = res
@@ -276,12 +205,15 @@ export default {
     clearInputs () {
       this.pageNum = 1
       this.pageSize = 10
+      this.value = ''
       this.getPageList()
+    },
+    goBack () {
+      this.$router.go(-1)
     }
   },
   created () {
     this.getPageList()
-    this.getActivityList()
   },
   mounted () {
 
@@ -450,9 +382,5 @@ export default {
   /deep/ .ivu-modal, .ivu-modal{
     top: 22px;
   }
-}
-.smsModel /deep/ .ivu-modal-footer,.smsModel .ivu-modal-footer{
-  padding: 0;
-  display: none;
 }
 </style>

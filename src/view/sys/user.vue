@@ -275,6 +275,7 @@ export default {
   },
   methods: {
     async getPageList () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         pageIndex: this.pageNum,
@@ -284,7 +285,7 @@ export default {
         deptName: this.formValidate.dept
       }
       let res = await userList(data)
-      console.log(res.data.content)
+      this.tableLoading = false
       if (res.data.code === 0) {
         // console.log(res.data.content)
         this.dataList = res.data.content.rows
