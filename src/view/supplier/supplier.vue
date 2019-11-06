@@ -142,7 +142,7 @@ import has from '@/directive/module/has.js'
 import { listBrandsPage, categoryTreeList, singleUpload, brandSave, brandDetail, brandUpdate, brandRemove } from '@/api/nature'
 import { supplierList, removeSupplier } from '@/api/supplier'
 export default {
-  name: 'role-name',
+  name: 'supplier',
   data () {
     return {
       value: '',

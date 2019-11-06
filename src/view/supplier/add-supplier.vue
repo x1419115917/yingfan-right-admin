@@ -162,7 +162,7 @@
 import { categoryTreeList, brandListBrands } from '@/api/nature'
 import { editSupplier, categList, listBrands, saveSupplier, updateSupplier } from '@/api/supplier'
 export default {
-  name: 'supplier',
+  name: 'add-supplier',
   data () {
     return {
       brandListcheck: [],

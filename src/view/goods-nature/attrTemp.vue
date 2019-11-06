@@ -129,7 +129,7 @@ import has from '@/directive/module/has.js'
 import { sysDeptTree, userList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
 import { categoryTreeList, specList, saveSpec, editSpec, updateSpec, batchRemoveSpec } from '@/api/nature'
 export default {
-  name: 'spec-name',
+  name: 'attr',
   data () {
     return {
       value: '',

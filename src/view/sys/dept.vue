@@ -92,7 +92,7 @@ import has from '@/directive/module/has.js'
 import { deptTreeList, menuTree, deptsave, deptDetail, deptupdate, deptRemove } from '@/api/sys'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
-  name: 'role-name',
+  name: 'dept',
   data () {
     return {
       value: '',

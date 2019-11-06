@@ -166,7 +166,7 @@
 import has from '@/directive/module/has.js'
 import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
 export default {
-  name: 'role-name',
+  name: 'user',
   data () {
     return {
       value: '',

@@ -113,7 +113,7 @@ import has from '@/directive/module/has.js'
 import { treeList, menuTree, saveMenu, detailMenu, updateMenu, removeMenu } from '@/api/sys'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
-  name: 'role-name',
+  name: 'menu',
   data () {
     return {
       value: '',

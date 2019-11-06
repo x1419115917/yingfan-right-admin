@@ -138,7 +138,7 @@ import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, update
 import { categoryTreeList, catgSave, singleUpload, catgDetail, catgUpdate, catgRemove } from '@/api/nature'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
-  name: 'role-name',
+  name: 'categoryManger',
   data () {
     return {
       value: '',

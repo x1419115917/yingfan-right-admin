@@ -34,8 +34,8 @@
     <Row class="nav">
       <span class="nav-item" :class="currentNav === index ? 'nav-active' : ''" v-for="(item, index) in navList" :key="index" @click="changeNav(index)">{{item}}</span>
     </Row>
-    <Row v-show="currentNav === 0">
-      <div class="bank_table" style="position:relative;">
+    <Row>
+      <div class="bank_table" style="position:relative;" v-show="currentNav === 0">
         <Table
           :columns="columnsList"
           :data="dataList"
@@ -51,24 +51,10 @@
           <div class="no-tit">暂无数据</div>
         </div>
       </div>
-      <div class="pages">
-        <Page
-          :current="pageNum"
-          :page-size="pageSize"
-          :total="total"
-          show-total
-          show-elevator
-          show-sizer
-          @on-page-size-change="changePageSize"
-          @on-change="pageChange"
-        />
-      </div>
-    </Row>
-    <Row v-show="currentNav === 1">
-      <div class="bank_table" style="position:relative;">
+      <div class="bank_table" style="position:relative;" v-show="currentNav === 1">
         <Table
-          :columns="columnsList"
-          :data="dataList"
+          :columns="columnsList2"
+          :data="dataList2"
           height="380"
           border
           ref="mainTable"
@@ -76,7 +62,7 @@
           no-data-text
         >
         </Table>
-        <div class="no-data" v-if="dataList.length < 1">
+        <div class="no-data" v-if="dataList2.length < 1">
           <div class="no-tit">暂无数据</div>
         </div>
       </div>
@@ -98,7 +84,7 @@
 <script>
 import { activityList } from '@/api/thematic'
 export default {
-  name: 'role-name',
+  name: 'member-detail',
   data () {
     return {
       value: '',
@@ -256,6 +242,7 @@ export default {
     },
     changeNav (index) {
       this.currentNav = index
+      this.getPageList()
     },
     searchFn () {
       this.getPageList()

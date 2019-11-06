@@ -218,7 +218,7 @@ import { listBrandsPage } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
 import { date2string } from '@/libs/util'
 export default {
-  name: 'role-name',
+  name: 'goods-list',
   data () {
     return {
       value: '',

@@ -71,7 +71,7 @@
 <script>
 import { activityList } from '@/api/thematic'
 export default {
-  name: 'role-name',
+  name: 'memberList',
   data () {
     return {
       value: '',

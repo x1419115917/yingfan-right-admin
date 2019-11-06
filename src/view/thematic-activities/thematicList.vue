@@ -78,7 +78,7 @@
 <script>
 import { activityList, activityRemove } from '@/api/thematic'
 export default {
-  name: 'role-name',
+  name: 'thematicList',
   data () {
     return {
       value: '',

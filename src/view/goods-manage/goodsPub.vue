@@ -356,7 +356,7 @@ import { saveGoods, goodsDetail, updateGoods } from '@/api/goods'
 import editors from '@/components/editors/editor'
 import Cookies from 'js-cookie'
 export default {
-  name: 'supplier',
+  name: 'goodsPub',
   data () {
     return {
       vsShowNav: 0,
