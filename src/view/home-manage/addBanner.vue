@@ -2,24 +2,24 @@
 <template>
   <div class="add">
     <Card title="新增">
-    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+    <Form ref="form" :model="form" :rules="ruleValidate" :label-width="80">
         <FormItem label="展示位置" prop="plateRegion">
-            <RadioGroup v-model="formValidate.plateRegion" @on-change="selectPlateRegion">
-              <Radio label="0">首页banner</Radio>
-              <Radio label="1">首页活动版块</Radio>
-              <Radio label="2">首页主题精选</Radio>
-            </RadioGroup>
+          <RadioGroup v-model="form.plateRegion" @on-change="selectPlateRegion">
+            <Radio label="0">首页banner</Radio>
+            <Radio label="1">首页活动版块</Radio>
+            <Radio label="2">首页主题精选</Radio>
+          </RadioGroup>
         </FormItem>
         <FormItem label="展示模式" prop="showMode">
-            <RadioGroup v-model="formValidate.showMode" @on-change="selectMode">
+            <RadioGroup v-model="form.showMode" @on-change="selectMode">
               <Radio label="0">单图模式</Radio>
-              <template v-if="formValidate.plateRegion !== '0'">
+              <template v-if="form.plateRegion !== '0'">
                 <Radio label="1">一行两图模式</Radio>
                 <Radio label="2">一行三图模式</Radio>
-                <template v-if="formValidate.plateRegion === '2'">
+                <template v-if="form.plateRegion === '2'">
                   <Radio label="3">一行四图模式</Radio>
                 </template>
-                <template v-if="formValidate.plateRegion !== '2'">
+                <template v-if="form.plateRegion !== '2'">
                   <Radio label="4">组合模式(3个)</Radio>
                   <Radio label="5">组合模式(4个)</Radio>
                 </template>
@@ -27,14 +27,14 @@
             </RadioGroup>
         </FormItem>
         <FormItem label="活动名称" prop="plateName">
-          <Input v-model="formValidate.plateName" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
+          <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
         </FormItem>
         <FormItem label="图片">
-        <Table border :columns="imgColumns" :data="formValidate.plaDets">
+          <Table border :columns="imgColumns" :data="form.plaDets">
             <template slot-scope="{ row,index }" slot="uploadImg">
             <div class="imgWrap">
-              <img class="noImg" v-show="!formValidate.plaDets[index].pictureUrl" src="@/assets/images/noImg.png">
-              <img :src="formValidate.plaDets[index].pictureUrl" class="img-box1" v-show="formValidate.plaDets[index].pictureUrl">
+              <img class="noImg" v-show="!form.plaDets[index].pictureUrl" src="@/assets/images/noImg.png">
+              <img :src="form.plaDets[index].pictureUrl" class="img-box1" v-show="form.plaDets[index].pictureUrl">
               <div class="btn-upload">
                 <Button type="primary" class="upload-img">上传图片</Button>
                 <input type="file" class="img-ipt"
@@ -44,25 +44,25 @@
             </div>
             </template>
             <template slot-scope="{ row,index }" slot="activityId">
-              <Select v-model="formValidate.plaDets[index].activityId" placeholder="请选择活动" :style="{width: inpWidth}" clearable>
+              <Select v-model="form.plaDets[index].activityId" placeholder="请选择活动" :style="{width: inpWidth}" clearable>
                 <Option v-for="item in activeList" :value="item.id" :key="item.id">{{ item.activityName }}</Option>
               </Select>
             </template>
             <template slot-scope="{ row,index }" slot="sortOrder">
-              <Input v-model="formValidate.plaDets[index].sortOrder" :style="{width: inpWidth}" placeholder="请输入权重" clearable></Input>
+              <Input v-model="form.plaDets[index].sortOrder" :style="{width: inpWidth}" placeholder="请输入权重" clearable></Input>
               <div class="tips">（请输入1~5之间数字，1为最高权重）</div>
             </template>
           </Table>
         </FormItem>
         <FormItem label="状态" prop="isShow">
-          <RadioGroup v-model="formValidate.isShow">
-              <Radio label="0">显示</Radio>
-              <Radio label="1">隐藏</Radio>
+          <RadioGroup v-model="form.isShow">
+            <Radio label="0">显示</Radio>
+            <Radio label="1">隐藏</Radio>
           </RadioGroup>
         </FormItem>
         <FormItem>
-            <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-            <Button @click="returnBanner" style="margin-left: 8px">返回</Button>
+          <Button type="primary" @click="handleSubmit('form')">保存</Button>
+          <Button @click="returnBanner" style="margin-left: 8px">返回</Button>
         </FormItem>
     </Form>
     </Card>
@@ -73,8 +73,6 @@ import { doActiveList, doAddHomeBanner } from '@/api/home'
 import { singleUpload } from '@/api/nature'
 export default {
   name: 'addBanner',
-  components: {
-  },
   data () {
     const validatorPlateName = (rule, value, callback) => {
       if (!value) {
@@ -87,7 +85,7 @@ export default {
     }
     return {
       inpWidth: '200px',
-      formValidate: {
+      form: {
         plateRegion: '0', // 模块区域
         showMode: '0', // 展示模式
         plateName: '', // 活动名称
@@ -143,14 +141,14 @@ export default {
       }
       let res = await singleUpload(data)
       if (res.data.code === 0) {
-        this.formValidate.plaDets[index].pictureUrl = res.data.content
+        this.form.plaDets[index].pictureUrl = res.data.content
       }
     },
     selectPlateRegion () {
-      this.formValidate.showMode = '0'
+      this.form.showMode = '0'
     },
     selectMode (value) {
-      this.formValidate.plaDets.length = 0
+      this.form.plaDets.length = 0
       let count
       switch (value) {
         case '0': count = 1
@@ -176,23 +174,22 @@ export default {
         pictureUrl: '',
         sortOrder: ''
       }
-      this.formValidate.plaDets.push(obj)
+      this.form.plaDets.push(obj)
     },
     async handleSubmit (name) {
-      let data = Object.assign(this.formValidate, { FLAG: 1 })
+      // this.$refs[name].validate((valid) => {
+      //     if (valid) {
+      //       this.$Message.success('1111!')
+      //     } else {
+      //       this.$Message.error('操作失败!')
+      //     }
+      // })
+      let data = Object.assign(this.form, { FLAG: 1 })
       let res = await doAddHomeBanner(data)
       if (res.data.code === 0) {
         this.$Message.success('操作成功!')
         this.$router.push({ path: '/homeManage/bannerList' })
       }
-      // this.$refs[name].validate((valid) => {
-      //   console.log(valid)
-      //     if (valid) {
-      //       this.$Message.success('1111!')
-      //     } else {
-      //         this.$Message.error('操作失败!')
-      //     }
-      // })
     },
     returnBanner () {
       this.$router.push({ path: '/homeManage/bannerList' })

@@ -4,8 +4,8 @@
     <Card title="首页展示列表">
       <Row>
           <Col span="6">
-            <span>专题名称</span>
-            <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入专题名称" clearable></Input>
+            <span>名称</span>
+            <Input v-model="form.activityName" :style="{ width :inpWidth}" placeholder="请输入名称" clearable></Input>
           </Col>
           <Col span="5">
             <span>展示位置</span>
@@ -25,8 +25,9 @@
       <Table :columns="columns" border :data="activeList" stripe>
         <template slot-scope="{ row, index }" slot="plateRegion">{{ returnPlateRegion(row.plateRegion) }}</template>
         <template slot-scope="{ row, index }" slot="action">
+          <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row)">详情</Button>
           <Button type="primary" size="small" style="margin-right: 5px" @click="edit(index)" v-has="'sys:homePage:edit'">编辑</Button>
-          <Button type="error" size="small" @click="remove(index)" v-has="'sys:homePage:remove'">删除</Button>
+          <Button type="error" size="small" @click="remove(row)" v-has="'sys:homePage:remove'">删除</Button>
         </template>
       </Table>
       <Page
@@ -37,30 +38,44 @@
         show-elevator
         show-sizer
         @on-page-size-change="changePageSize"
-        @on-change="pageChange"/>
+        @on-change="pageChange" />
     </div>
     <Modal
       v-model="modal"
       title="提示"
       @on-ok="ok">
       <p>删除后无法恢复，确定删除？</p>
+    </Modal>
+    <Modal
+    width='800'
+      v-model="detailModal"
+      title="活动详情">
+      <banner-detail :activeMsg="activeMsg"></banner-detail>
   </Modal>
   </div>
 </template>
 <script>
 import has from '@/directive/module/has.js'
+import bannerDetail from './bannerDetail'
 import { showDot } from './homeManage.js'
-import { doActiveList, doBannerList } from '@/api/home'
+import { doActiveList, doBannerList, doRemoveHomeBanner } from '@/api/home'
 export default {
   name: 'bannerList',
   components: {
+    bannerDetail
   },
   data () {
     return {
       modal: false,
+      detailModal: false,
+      activeMsg: '', // 活动详情
       inpWidth: '200px',
       activeList: [],
       pageTotal: null,
+      deleteIds: {
+        FLAG: 1,
+        ids: []
+      },
       form: {
         FLAG: 1,
         activityName: '', // 专题名称
@@ -71,27 +86,19 @@ export default {
       columns: [
         {
           title: '序号',
-          key: 'totalOrderId',
+          key: 'id',
           width: 60,
           align: 'center'
         },
         {
-          title: '专题名称',
+          title: '名称',
           align: 'center',
           key: 'plateName'
-        },
-        {
-          title: '图片预览',
-          align: 'center'
         },
         {
           title: '展示位置',
           align: 'center',
           slot: 'plateRegion'
-        },
-        {
-          title: '权重',
-          align: 'center'
         },
         {
           title: '操作',
@@ -109,35 +116,43 @@ export default {
         case 1 : return '首页活动版块'
           break
         case 2 : return '首页主题精选'
+          break
       }
     },
-    ok () {
-      this.$Message.info('Clicked ok')
+    search () {
+      this.getActiveList()
     },
-    search () {},
     changePageSize (value) {
+      this.form.pageSize = value
+      this.getActiveList()
     },
     pageChange (value) {
+      this.form.pageIndex = value
+      this.getActiveList()
+    },
+    checkDetail (row) {
+      this.detailModal = true
+      this.activeMsg = row
     },
     edit () {},
-    remove () {
+    remove (row) {
       this.modal = true
+      this.deleteIds.ids.length = 0
+      this.deleteIds.ids.push(row.id)
+    },
+    async ok () {
+      let res = await doRemoveHomeBanner(this.deleteIds)
+      if (res.data.code === 0) {
+        this.$Message.success('操作成功!')
+        this.getActiveList()
+      }
     },
     async getActiveList () {
-      let form = {
-        FLAG: 1,
-        plateRegion: 0,
-        pageIndex: 1,
-        pageSize: 10
-      }
-      let res = await doBannerList(form)
+      let res = await doBannerList(this.form)
       if (res.data.code === 0) {
         this.activeList = res.data.content.rows
+        this.pageTotal = res.data.content.total
       }
-      // let res = await doActiveList(this.form)
-      // if (res.data.code === 0) {
-      //   this.activeList = res.data.content.rows
-      // }
     },
     add () {
       this.$router.push({ path: '/homeManage/addBanner' })
