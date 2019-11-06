@@ -530,11 +530,6 @@ export default {
                   // console.log(event.target.value)
                 }
               }
-              // on: {
-              //     input: (val) => {
-              //         params.row.tcode = val;
-              //     }
-              // }
             })
           }
         },
@@ -697,6 +692,7 @@ export default {
       dataDel: [],
       addShow: false,
       sendContractBut: false,
+      validateType: false,
       selectedList: [],
       contractInfo: '',
       expandSpec: [],
@@ -992,15 +988,88 @@ export default {
           imgList.push(item.imgUrl)
         }
       })
-      // 遍历table
+      this.validateTable() // 校验table
+      if (!this.validateType) {
+        // 遍历table
+        this.dataList.forEach((item, index) => {
+          let skuSpecs = []
+          if (this.expandSpec && this.expandSpec.length === 1) {
+            skuSpecs = [{
+              specName: this.expandSpec[0].specName,
+              specValue: item.guige0
+            }]
+          } else if (this.expandSpec && this.expandSpec.length === 2) {
+            skuSpecs = [
+              {
+                specName: this.expandSpec[0].specName,
+                specValue: item.guige0
+              },
+              {
+                specName: this.expandSpec[1].specName,
+                specValue: item.guige1
+              }
+            ]
+          }
+          skus.push({
+            barcode: item.tcode,
+            chooseSpec: '',
+            exchangePoints: item.exchangePoints,
+            commissionRate: item.brokerage,
+            imageList: imgList,
+            merchantCode: item.code,
+            minWholesaleVolume: item.wholesale,
+            pointRate: item.integral,
+            retailPrice: item.retail,
+            skuId: '',
+            skuSpecs: skuSpecs,
+            stockNum: item.stock,
+            supplyPrice: item.supply,
+            tradePrice: item.trade
+          })
+        })
+        let data = {
+          FLAG: 1,
+          attrTemplate: attrTemplate,
+          brandId: this.brandsId,
+          cid1: this.cur1,
+          cid2: this.cur2,
+          cid3: this.cur3,
+          description: this.ctx,
+          enableWholesale: 0,
+          imageList: imgList,
+          isNew: this.newGoods,
+          isSellWell: this.explosiveGoods,
+          minWholesaleVolume: '',
+          mixedBatch: '',
+          skus: skus,
+          specTemplate: this.expandSpec,
+          spuId: '',
+          subTitle: this.subtitle,
+          supplierId: this.supplierId,
+          title: this.goodsTitle
+        }
+        let res = await saveGoods(data)
+        if (res.data.code == 0) {
+          console.log(res)
+          if (res.data.code === 0) {
+            this.$Modal.success({
+              title: '提示',
+              content: '发布成功'
+            })
+            this.$router.push({ name: 'goodsList' })
+          }
+        }
+      }
+    },
+    validateTable () {
+      this.validateType = false
       this.dataList.forEach((item, index) => {
-        let skuSpecs = []
         if (item.imageUrl == '') {
           this.$Modal.warning({
             title: '提示',
             content: '请上传图片'
           })
-          return
+          this.validateType = true
         }
         // this.validateStr(item.imageUrl)
         this.validateStr(item.code, '')
@@ -1012,79 +1081,8 @@ export default {
         this.validateStr(item.trade, 'number')
         this.validateStr(item.brokerage, 'number', 'range')
         this.validateStr(item.integral, 'number', 'range')
-        if (this.expandSpec && this.expandSpec.length === 1) {
-          skuSpecs = [{
-            specName: this.expandSpec[0].specName,
-            specValue: item.guige0
-          }]
-        } else if (this.expandSpec && this.expandSpec.length === 2) {
-          skuSpecs = [
-            {
-              specName: this.expandSpec[0].specName,
-              specValue: item.guige0
-            },
-            {
-              specName: this.expandSpec[1].specName,
-              specValue: item.guige1
-            }
-          ]
-        }
-        skus.push({
-          barcode: item.tcode,
-          chooseSpec: '',
-          exchangePoints: item.exchangePoints,
-          commissionRate: item.brokerage,
-          imageList: imgList,
-          merchantCode: item.code,
-          minWholesaleVolume: item.wholesale,
-          pointRate: item.integral,
-          retailPrice: item.retail,
-          skuId: '',
-          skuSpecs: skuSpecs,
-          stockNum: item.stock,
-          supplyPrice: item.supply,
-          tradePrice: item.trade
-        })
+        // this.validateType = false
       })
-      console.log('skus', skus)
-      // console.log('imgList', imgList)
-      // console.log('dataList', this.dataList)
-      // // return
-      // console.log('this.ctx', this.ctx)
-      // return
-      let data = {
-        FLAG: 1,
-        attrTemplate: attrTemplate,
-        brandId: this.brandsId,
-        cid1: this.cur1,
-        cid2: this.cur2,
-        cid3: this.cur3,
-        description: this.ctx,
-        enableWholesale: 0,
-        imageList: imgList,
-        isNew: this.newGoods,
-        isSellWell: this.explosiveGoods,
-        minWholesaleVolume: '',
-        mixedBatch: '',
-        skus: skus,
-        specTemplate: this.expandSpec,
-        spuId: '',
-        subTitle: this.subtitle,
-        supplierId: this.supplierId,
-        title: this.goodsTitle
-      }
-
-      let res = await saveGoods(data)
-      if (res.data.code == 0) {
-        console.log(res)
-        if (res.data.code === 0) {
-          this.$Modal.success({
-            title: '提示',
-            content: '发布成功'
-          })
-          this.$router.push({ name: 'goodsList' })
-        }
-      }
     },
     // 更新商品
     async updateGoods () {
@@ -1156,23 +1154,6 @@ export default {
       // 遍历table
       this.dataList.forEach((item, index) => {
         let skuSpecs = []
-        if (item.imageUrl == '') {
-          this.$Modal.warning({
-            title: '提示',
-            content: '请上传图片'
-          })
-          return
-        }
-        // this.validateStr(item.imageUrl)
-        this.validateStr(item.code, '')
-        this.validateStr(item.tcode, '')
-        this.validateStr(item.stock, 'number')
-        this.validateStr(item.retail, 'number')
-        this.validateStr(item.supply, 'number')
-        this.validateStr(item.wholesale, 'number')
-        this.validateStr(item.trade, 'number')
-        this.validateStr(item.brokerage, 'number', 'range')
-        this.validateStr(item.integral, 'number', 'range')
         if (this.expandSpec && this.expandSpec.length === 1) {
           skuSpecs = [{
             specName: this.expandSpec[0].specName,
@@ -1207,36 +1188,39 @@ export default {
           tradePrice: item.trade
         })
       })
-      let data = {
-        FLAG: 1,
-        attrTemplate: attrTemplate,
-        brandId: this.brandsId,
-        cid1: this.cur1,
-        cid2: this.cur2,
-        cid3: this.cur3,
-        description: this.ctx,
-        enableWholesale: 0,
-        imageList: imgList,
-        isNew: this.newGoods,
-        isSellWell: this.explosiveGoods,
-        minWholesaleVolume: '',
-        mixedBatch: '',
-        skus: skus,
-        specTemplate: this.expandSpec,
-        spuId: this.goodsId,
-        subTitle: this.subtitle,
-        supplierId: this.supplierId,
-        title: this.goodsTitle
-      }
-      let res = await updateGoods(data)
-      if (res.data.code == 0) {
-        console.log(res)
-        if (res.data.code === 0) {
-          this.$Modal.success({
-            title: '提示',
-            content: '更新商品信息成功'
-          })
-          this.$router.push({ name: 'goodsList' })
+      this.validateTable()
+      if (!this.validateType) {
+        let data = {
+          FLAG: 1,
+          attrTemplate: attrTemplate,
+          brandId: this.brandsId,
+          cid1: this.cur1,
+          cid2: this.cur2,
+          cid3: this.cur3,
+          description: this.ctx,
+          enableWholesale: 0,
+          imageList: imgList,
+          isNew: this.newGoods,
+          isSellWell: this.explosiveGoods,
+          minWholesaleVolume: '',
+          mixedBatch: '',
+          skus: skus,
+          specTemplate: this.expandSpec,
+          spuId: this.goodsId,
+          subTitle: this.subtitle,
+          supplierId: this.supplierId,
+          title: this.goodsTitle
+        }
+        let res = await updateGoods(data)
+        if (res.data.code == 0) {
+          console.log(res)
+          if (res.data.code === 0) {
+            this.$Modal.success({
+              title: '提示',
+              content: '更新商品信息成功'
+            })
+            this.$router.push({ name: 'goodsList' })
+          }
         }
       }
     },
@@ -1246,20 +1230,22 @@ export default {
     },
     // 校验
     validateStr (str, type, scope) {
-      let reg = /^\d+(\.\d{2})?$/
+      let reg = /^\d+(\.\d{1,2})?$/
       if (str == '') {
         this.$Modal.warning({
           title: '提示',
           content: '请填写完整信息'
         })
-        return false
+        this.validateType = true
+        console.log('validateType', this.validateType)
       } else if (type === 'number') {
         if (!reg.test(str)) {
           this.$Modal.warning({
             title: '提示',
             content: '请输入数字格式'
           })
-          return false
+          this.validateType = true
+          return
         }
         if (scope && scope === 'range') {
           if (!/^([1-9]\d{0,1}|100|NA)$/.test(str)) {
@@ -1267,7 +1253,7 @@ export default {
               title: '提示',
               content: '(%)只能输入1-100的正整数'
             })
-            return false
+            this.validateType = true
           }
         }
       }
