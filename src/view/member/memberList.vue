@@ -9,7 +9,7 @@
               <Input
                 placeholder="请输入绑定手机号"
                 class="w162"
-                v-model="value"
+                v-model="bindPhone"
               />
             </div>
             <div class="td-line">
@@ -17,7 +17,7 @@
               <Input
                 placeholder="请输入推荐人手机号"
                 class="w162"
-                v-model="value"
+                v-model="recommdPhone"
               />
             </div>
             <div class="td-line btn">
@@ -39,7 +39,6 @@
             stripe
             :loading="tableLoading"
             no-data-text
-            @on-selection-change="selected"
           >
             <template slot-scope="{ row, index }" slot="action">
               <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
@@ -74,7 +73,8 @@ export default {
   name: 'memberList',
   data () {
     return {
-      value: '',
+      bindPhone: '',
+      recommdPhone: '',
       imgShow1: '',
       imgUrl: '',
       addLoading: false,
@@ -124,7 +124,6 @@ export default {
       userIdCreate: '',
       dataDel: [],
       addShow: false,
-      selectedList: [],
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
@@ -140,9 +139,11 @@ export default {
         FLAG: 1,
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        activityName: this.value
+        bindPhone: this.bindPhone,
+        recommdPhone: this.recommdPhone
       }
       let res = await activityList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = [
@@ -155,23 +156,10 @@ export default {
             integral: '￥32.00'
           }
         ]
-        this.tableLoading = false
-      } else {
-        this.tableLoading = false
       }
-    },
-    addFn () {
-      this.$router.push({ name: 'thematicPub' })
     },
     searchFn () {
       this.getPageList()
-    },
-    operationRole () {
-      if (this.operationShow) {
-        // this.brandUpdate()
-      } else {
-        // this.saveRole()
-      }
     },
     edit (index) {
       this.operationShow = true
@@ -183,10 +171,6 @@ export default {
           type: 'detail'
         }
       })
-    },
-    selected (res) {
-      this.selectedList = res
-      console.log(res)
     },
     changePageSize (value) {
       this.pageNum = 1
@@ -214,87 +198,10 @@ export default {
   },
   created () {
     this.getPageList()
-  },
-  mounted () {
-
   }
 }
 </script>
 <style lang="less" scoped>
-.form-item{
-  padding-left: 6px;
-  margin-bottom: 24px;
-  overflow: hidden;
-  position: relative;
-  & > * {
-    float: left;
-  }
-  .name{
-    float: left;
-    margin-right: 13px;
-    span{
-      display: inline-block;
-      margin-right: 4px;
-      line-height: 1;
-      font-family: SimSun;
-      font-size: 12px;
-      color: #ed4014;
-    }
-  }
-  .btn-upload{
-    position: relative;
-    .upload-img{
-      margin-top: 10px;
-      margin-left: 8px;
-      width: 80px;
-      height: 32px;
-    }
-    .img-ipt{
-      position: absolute;
-      left: 8px;
-      top: 10px;
-      opacity: 0;
-      width: 80px;
-      height: 32px;
-    }
-    .tips-upload{
-      font-size: 12px;
-      color: #999;
-      position: absolute;
-      top: 49px;
-      width: 154px;
-      left: 8px;
-    }
-  }
-  .form-item-img{
-    width: 80px;
-    height: 80px;
-    display: inline-block;
-    border: 1px solid #e6e6e6;
-  }
-  .img-box1{
-    width: 80px;
-    height: 80px;
-    display: inline-block;
-    border: 1px solid #e6e6e6;
-  }
-}
-.set-top{
-  padding: 10px;
-  span{
-    display: inline-block;
-    width: 112px;
-    height: 51px;
-    text-align: center;
-    line-height: 51px;
-    border: 1px solid #e6e6e6;
-    cursor: pointer;
-  }
-  .btn-active{
-    color: #6699CC;
-    // border-color: #6699CC;
-  }
-}
 .role-top{
   width: 100%;
   position: relative;

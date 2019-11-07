@@ -148,12 +148,6 @@ export default {
         // roleSign: [
         //   { required: true, message: '不能为空', trigger: 'blur' }
         // ],
-        // sort: [
-        //   { required: true, message: '不能为空', trigger: 'blur' }
-        // ],
-        // icon: [
-        //   { required: true, message: '不能为空', trigger: 'blur' }
-        // ],
         menuName: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]

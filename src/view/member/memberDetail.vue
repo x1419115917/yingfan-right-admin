@@ -213,6 +213,7 @@ export default {
         activityName: this.value
       }
       let res = await activityList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = [
@@ -235,9 +236,6 @@ export default {
             status: '已转'
           }
         ]
-        this.tableLoading = false
-      } else {
-        this.tableLoading = false
       }
     },
     changeNav (index) {

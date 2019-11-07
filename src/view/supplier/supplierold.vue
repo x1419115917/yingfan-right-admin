@@ -116,7 +116,7 @@
 <script>
 import { supplierList } from '@/api/supplier'
 export default {
-  name: 'supplier',
+  name: 'supplier-list',
   data () {
     return {
       value: '',

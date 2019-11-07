@@ -707,8 +707,8 @@ export default {
     },
     selectedSku (res) {
       this.selectedListSpu = res
-      console.log(res)
-      console.log(this.dataList)
+      // console.log(res)
+      // console.log(this.dataList)
     },
     selClist1 (id) {
       this.getcategList(id, '', 1)
@@ -748,7 +748,7 @@ export default {
       // this.$refs.selection.selectAll(true)
     },
     cancelModal () {
-      console.log('取消')
+      // console.log('取消')
       this.modal1 = false
     },
     changePageSize (value) {
