@@ -485,6 +485,8 @@ export default {
     },
     addFn () {
       this.modal1 = true
+      this.imgShow1 = false
+      this.imgUrl = ''
       this.operationShow = false
       this.formValidate = {
         roleName: '',
