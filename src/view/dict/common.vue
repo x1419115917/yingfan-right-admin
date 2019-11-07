@@ -439,6 +439,8 @@ export default {
       }
     },
     addFn () {
+      this.$Message.warning('该功能暂无开放')
+      return
       this.modal1 = true
       this.operationShow = false
       this.formValidate = {
@@ -449,6 +451,8 @@ export default {
       }
     },
     bactchDel () {
+      this.$Message.warning('该功能暂无开放')
+      return
       this.delBatchModal = true
     },
     async batchRemove () {
@@ -491,12 +495,16 @@ export default {
       }
     },
     edit (i) {
+      this.$Message.warning('该功能暂无开放')
+      return
       this.modal1 = true
       this.operationShow = true
       this.checkedId = this.dataList[i].roleId
       this.roleDetail(this.dataList[i].roleId)
     },
     remove (i) {
+      this.$Message.warning('该功能暂无开放')
+      return
       this.delModal = true
       this.delIndex = i
       console.log(this.delIndex)
