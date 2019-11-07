@@ -353,16 +353,6 @@ export const appRouter = [
         component: () => import('@/view/home-manage/bannerList.vue')
       },
       {
-        path: 'addBanner',
-        name: 'addBanner',
-        meta: {
-          hideInMenu: true,
-          icon: 'ios-stats',
-          title: '新增首页banner'
-        },
-        component: () => import('@/view/home-manage/addBanner.vue')
-      },
-      {
         path: 'iconList',
         name: 'iconList',
         meta: {
