@@ -202,7 +202,7 @@ export default {
       }
     },
     returnBanner () {
-      this.$emit('close', false)
+      this.$emit('close')
     },
     async getBannerDetail (obj) {
       let res = await doBannerDetail(obj)

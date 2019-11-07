@@ -60,28 +60,28 @@ export function orderStatus () {
     }
   ]
 }
-/* 售后状态 */
+/* 退款状态 */
 export function afterSale () {
   return [
     {
-      value: '0',
+      value: ' ',
       label: '全部'
     },
     {
+      value: '0',
+      label: '退款中'
+    },
+    {
       value: '1',
-      label: '申请退款'
-    },
-    {
-      value: '2',
-      label: '拒绝退款'
-    },
-    {
-      value: '3',
       label: '退款成功'
     },
     {
-      value: '4',
+      value: '2',
       label: '退款关闭'
+    },
+    {
+      value: '3',
+      label: '拒绝退款'
     }
   ]
 }

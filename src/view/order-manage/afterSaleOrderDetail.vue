@@ -1,59 +1,39 @@
-<!--订单管理-订单详情-->
+<!--订单管理-售后订单详情-->
 <template>
-  <div class="orderDetail">
+  <div class="afterSaleOrderDetail">
     <div class="title">订单信息</div>
     <Row class="wrap">
       <Col :span="12">
         <Row>
-          <Col :span="10">订单号</Col>
-          <Col :span="14">{{ orderDetail.totalOrderId }}</Col>
-          <Col :span="10">订单状态</Col>
-          <Col :span="14">{{ returnOrderStatus(orderDetail.orderStatus)}}</Col>
-          <Col :span="10">供应商</Col>
+          <Col :span="10">退款编号</Col>
+          <Col :span="14">{{ orderDetail.id }}</Col>
+          <Col :span="10">退款状态</Col>
+          <Col :span="14">{{ returnAfterStatus(orderDetail.orderStatus)}}</Col>
+          <Col :span="10">退款金额</Col>
+          <Col :span="14" class="money">¥{{ orderDetail.refundAmt }}</Col>
+          <Col :span="10">售后类型</Col>
           <Col :span="14">-</Col>
-          <Col :span="10">下单时间</Col>
-          <Col :span="14">{{ orderDetail.createTime }}</Col>
+          <Col :span="10">运费</Col>
+          <Col :span="14" class="money">-</Col>
+          <Col :span="10">用户说明</Col>
+          <Col :span="14">-</Col>
         </Row>
       </Col>
       <Col :span="12">
         <Row>
+          <Col :span="10">订单号</Col>
+          <Col :span="14">{{ orderDetail.subOrderId }}</Col>
+          <Col :span="10">订单状态</Col>
+          <Col :span="14">{{ returnOrderStatus(orderDetail.payStatus) }}</Col>
+          <Col :span="10">供应商</Col>
+          <Col :span="14">
+            <template v-if="orderDetail.supplierName">{{ orderDetail.supplierName }}</template>
+            <template v-else>-</template>
+          </Col>
           <Col :span="10">商品总额</Col>
           <Col :span="14" class="money">¥{{ orderDetail.payAmt }}</Col>
-          <Col :span="10">运费</Col>
-          <Col :span="14" class="money">¥{{ orderDetail.logisticAmt }}</Col>
           <Col :span="10">税费</Col>
           <Col :span="14" class="money">-</Col>
-          <Col :span="10">付款时间</Col>
-          <Col :span="14">
-            <template v-if="orderDetail.payTime">{{ orderDetail.payTime }}</template>
-            <template v-else>-</template>
-          </Col>
-        </Row>
-      </Col>
-    </Row>
-    <div class="title">收货人信息</div>
-    <Row class="wrap">
-      <Col :span="12">
-        <Row>
-          <Col :span="10">下单人</Col>
-          <Col :span="14">
-            <template v-if="orderDetail.userName">{{ orderDetail.userName }}</template>
-            <template v-else>-</template>
-          </Col>
-          <Col :span="10">收货地址</Col>
-          <Col :span="14">
-            <template v-if="orderDetail.address">{{ orderDetail.address }}</template>
-            <template v-else>-</template>
-          </Col>
-        </Row>
-      </Col>
-      <Col :span="12">
-        <Row>
-          <Col :span="10">收货人</Col>
-          <Col :span="14">
-            <template v-if="orderDetail.consignee">{{ orderDetail.consignee }}</template>
-            <template v-else>-</template>
-          </Col>
         </Row>
       </Col>
     </Row>
@@ -94,9 +74,9 @@
   </div>
 </template>
 <script>
-import { doOrderDetail } from '@/api/order'
+import { doAfterSaleOrderDetail } from '@/api/order'
 export default {
-  name: 'orderDetail',
+  name: 'afterSaleOrderDetail',
   data () {
     return {
       inpWidth: '162px',
@@ -119,8 +99,7 @@ export default {
         },
         {
           title: '商品条形码',
-          slot: 'barcode',
-          align: 'center'
+          slot: 'barcode'
         },
         {
           title: '商品名称',
@@ -145,37 +124,57 @@ export default {
   },
   props: ['orderId'],
   methods: {
-    returnOrderStatus (item) {
+    returnAfterStatus (item) {
       switch (item) {
-        case 0 : return '待付款'
-        case 1 : return '待发货'
-        case 2 : return '已发货'
-        case 3 : return ''
-        case 4 : return '交易关闭'
+        case 0 : return '退款中'
+          break
+        case 1 : return '退款成功'
+          break
+        case 2 : return '退款关闭'
+          break
+        case 3 : return '拒绝退款'
+          break
       }
     },
-    async getOrderDetail () {
-      let orderId = {
-        FLAG: 1,
-        orderId: this.orderId
+    // 订单状态
+    returnOrderStatus (item) {
+      switch (item) {
+        case 0 : return '待支付'
+          break
+        case 1 : return '已支付(待发货)'
+          break
+        case 2 : return '已发货'
+          break
+        case 3 : return '已收货'
+          break
+        case 4 : return '交易关闭'
+          break
+        case 5 : return '退款'
+          break
       }
-      let res = await doOrderDetail(orderId)
+    },
+    async getAfterSaleOrderDetail () {
+      let obj = {
+        FLAG: 1,
+        subOrderId: this.orderId
+      }
+      let res = await doAfterSaleOrderDetail(obj)
       if (res.data.code === 0) {
         this.orderDetail = res.data.content
-        this.goodsList = res.data.content.suborderSkuItemList
+        this.goodsList = res.data.content.items
       }
     }
   },
   watch: {
     orderId (val) {
       this.orderId = val
-      this.getOrderDetail()
+      this.getAfterSaleOrderDetail()
     }
   }
 }
 </script>
 <style lang="less" scoped>
-.orderDetail {
+.afterSaleOrderDetail {
   .mark {
     margin-top: 16px;
   }

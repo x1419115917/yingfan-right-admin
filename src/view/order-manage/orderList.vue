@@ -12,7 +12,6 @@
             placeholder="年/月/日" ></DatePicker>
         </Col>
         <Col span="6">
-        <!--v-model="form.type"-->
           <Select style="width: 100px; margin-right: 6px;" clearable>
             <Option v-for="item in typeOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>

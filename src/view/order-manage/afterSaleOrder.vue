@@ -1,130 +1,263 @@
 <!--订单管理-售后订单-->
 <template>
-  <div class="orderList">
-    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-        <FormItem label="Name" prop="name">
-            <Input v-model="formValidate.name" placeholder="Enter your name"></Input>
-        </FormItem>
-        <FormItem label="E-mail" prop="mail">
-            <Input v-model="formValidate.mail" placeholder="Enter your e-mail"></Input>
-        </FormItem>
-        <FormItem label="City" prop="city">
-            <Select v-model="formValidate.city" placeholder="Select your city">
-                <Option value="beijing">New York</Option>
-                <Option value="shanghai">London</Option>
-                <Option value="shenzhen">Sydney</Option>
-            </Select>
-        </FormItem>
-        <FormItem label="Date">
-            <Row>
-                <Col span="11">
-                    <FormItem prop="date">
-                        <DatePicker type="date" placeholder="Select date" v-model="formValidate.date"></DatePicker>
-                    </FormItem>
-                </Col>
-                <Col span="2" style="text-align: center">-</Col>
-                <Col span="11">
-                    <FormItem prop="time">
-                        <TimePicker type="time" placeholder="Select time" v-model="formValidate.time"></TimePicker>
-                    </FormItem>
-                </Col>
-            </Row>
-        </FormItem>
-        <FormItem label="Gender" prop="gender">
-            <RadioGroup v-model="formValidate.gender">
-                <Radio label="male">Male</Radio>
-                <Radio label="female">Female</Radio>
-            </RadioGroup>
-        </FormItem>
-        <FormItem label="Hobby" prop="interest">
-            <CheckboxGroup v-model="formValidate.interest">
-                <Checkbox label="Eat"></Checkbox>
-                <Checkbox label="Sleep"></Checkbox>
-                <Checkbox label="Run"></Checkbox>
-                <Checkbox label="Movie"></Checkbox>
-            </CheckboxGroup>
-        </FormItem>
-        <FormItem label="Desc" prop="desc">
-            <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
-        </FormItem>
-        <FormItem>
-            <Button type="primary" @click="handleSubmit('formValidate')">Submit</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
-        </FormItem>
-    </Form>
+  <div class="afterSaleList">
+    <Card title="订单列表">
+      <Row>
+        <Col span="6">
+        <span>下单时间</span>
+          <DatePicker
+            type="daterange"
+            v-model="date"
+            @on-change="selectDate"
+            placeholder="年/月/日" ></DatePicker>
+        </Col>
+        <Col span="6">
+          <Select style="width: 100px; margin-right: 6px;" clearable>
+            <Option v-for="item in typeOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+          <Input v-model="form.type" :style="{ width: inpWidth}" placeholder="请输入" />
+        </Col>
+        <Col span="6">
+          <span>退款状态</span>
+          <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
+            <Option v-for="item in afterSaleOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </Col>
+        <Col span="6">
+          <span>供应商</span>
+          <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable disabled>
+            <Option v-for="item in afterSaleOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </Col>
+      </Row>
+      <div class="btn">
+        <Button type="primary" style="margin-right: 5px" @click="search">查询</Button>
+        <Button type="primary" @click="download">数据下载</Button>
+      </div>
+    </Card>
+    <div class="wrap">
+      <div class="state">
+        <span
+          @click="selectState(item.value,index)"
+          :class="activeIndex === index ? 'btnActive' : ''"
+          v-for="(item,index) in afterSaleOpts"
+          :value="item.value" :key="item.value" class="stateBtn">{{ item.label }}</span>
+      </div>
+      <Table :columns="columns" border :data="dataList" stripe>
+        <template slot-scope="{ row, index }" slot="payAmt"><span>¥{{ row.payAmt }}</span></template>
+        <template slot-scope="{ row, index }" slot="refundAmt"><span>¥{{ row.refundAmt }}</span></template>
+        <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
+        <template slot-scope="{ row, index }" slot="action">
+          <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
+          <!--待发货-->
+          <template v-if="row.orderStatus === 0">
+            <Button type="primary" size="small" style="margin-right: 5px" @click="handle">处理</Button>
+          </template>
+        </template>
+      </Table>
+      <Page
+        :current="form.pageNum"
+        :page-size="form.pageSize"
+        :total="pageTotal"
+        show-total
+        show-elevator
+        show-sizer
+        @on-page-size-change="changePageSize"
+        @on-change="pageChange"/>
+      <Modal v-model="modal" width="800">
+        <after-order-detail :orderId="orderId"></after-order-detail>
+      </Modal>
+    </div>
   </div>
 </template>
 <script>
-import { doOrderList } from '@/api/order'
-import { orderStatus, afterSale, type } from './orderList'
-import orderDetail from './orderDetail'
+import { doAfterSaleOrderList, doAfterSaleOrderDetail } from '@/api/order'
+import { afterSale, type } from './orderList'
+import afterOrderDetail from './afterSaleOrderDetail'
 export default {
   name: 'orderList',
   components: {
-    orderDetail
+    afterOrderDetail
   },
   data () {
     return {
-      formValidate: {
-        name: '',
-        mail: '',
-        city: '',
-        gender: '',
-        interest: [],
-        date: '',
-        time: '',
-        desc: ''
+      modal: false,
+      activeIndex: 0,
+      inpWidth: '162px',
+      dataList: [], // 订单列表
+      date: [], // 选择日期
+      pageTotal: null,
+      orderId: null, // 订单id
+      form: {
+        FLAG: 1,
+        startTime: null, // 开始时间
+        endTime: null, // 结束时间
+        // type: null,          //查询类型
+        orderStatus: null, // 订单状态
+        pageIndex: 1,
+        pageSize: 10 // 每页查询数量
       },
-      ruleValidate: {
-        name: [
-          { required: true, message: 'The name cannot be empty', trigger: 'blur' }
-        ],
-        mail: [
-          { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' },
-          { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
-        ],
-        city: [
-          { required: true, message: 'Please select the city', trigger: 'change' }
-        ],
-        gender: [
-          { required: true, message: 'Please select gender', trigger: 'change' }
-        ],
-        interest: [
-          { required: true, type: 'array', min: 1, message: 'Choose at least one hobby', trigger: 'change' },
-          { type: 'array', max: 2, message: 'Choose two hobbies at best', trigger: 'change' }
-        ],
-        date: [
-          { required: true, type: 'date', message: 'Please select the date', trigger: 'change' }
-        ],
-        time: [
-          { required: true, type: 'string', message: 'Please select time', trigger: 'change' }
-        ],
-        desc: [
-          { required: true, message: 'Please enter a personal introduction', trigger: 'blur' },
-          { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
-        ]
-      }
+      columns: [
+        {
+          title: '退款编号',
+          key: 'subOrderId',
+          align: 'center'
+        },
+        {
+          title: '订单号',
+          key: 'orderId',
+          align: 'center'
+        },
+        {
+          title: '订单金额',
+          align: 'center',
+          slot: 'payAmt'
+        },
+        {
+          title: '退款金额',
+          align: 'center',
+          slot: 'refundAmt'
+        },
+        {
+          title: '下单人',
+          align: 'center',
+          key: 'userName'
+        },
+        {
+          title: '下单时间',
+          align: 'center',
+          key: 'payTime'
+        },
+        {
+          title: '申请时间',
+          align: 'center',
+          key: 'refundTime'
+        },
+        {
+          title: '订单状态',
+          align: 'center',
+          slot: 'orderStatus'
+        },
+        {
+          title: '操作',
+          align: 'center',
+          slot: 'action'
+        }
+      ]
     }
   },
   methods: {
-    handleSubmit (name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.$Message.success('Success!')
-        } else {
-          this.$Message.error('Fail!')
-        }
-      })
+    returnOrderStatus (item) {
+      switch (item) {
+        case 0 : return '退款中'
+          break
+        case 1 : return '退款成功'
+          break
+        case 2 : return '退款关闭'
+          break
+        case 3 : return '拒绝退款'
+          break
+      }
     },
-    handleReset (name) {
-      this.$refs[name].resetFields()
+    changePageSize (value) {
+      this.form.pageSize = value
+      this.getOrderList()
+    },
+    pageChange (value) {
+      this.form.pageIndex = value
+      this.getOrderList()
+    },
+    // 选择订单状态
+    selectState (value, index) {
+      this.activeIndex = index
+      this.form.orderStatus = value
+      this.getOrderList()
+    },
+    selectDate () {
+      this.form.startTime = new Date(this.date[0]).valueOf()
+      this.form.endTime = new Date(this.date[1]).valueOf()
+    },
+    // 发货
+    handle () {
+      this.$Message.warning('该功能暂未开放')
+    },
+    // 查询订单
+    search () {
+      this.getOrderList()
+    },
+    // 查询订单详情
+    checkDetail (data, index) {
+      this.orderId = data.subOrderId
+      this.modal = true
+    },
+    download () {
+      this.$Message.warning('该功能暂未开放')
+    },
+    async getOrderList () {
+      let data = this.form
+      let res = await doAfterSaleOrderList(data)
+      if (res.data.code === 0) {
+        if (res.data.content.rows && res.data.content.rows.length > 0) {
+          this.dataList = [...res.data.content.rows]
+        } else {
+          this.dataList = []
+        }
+        this.pageTotal = res.data.content.total
+      }
+    }
+  },
+  computed: {
+    afterSaleOpts () {
+      return afterSale()
+    },
+    typeOpts () {
+      return type()
     }
   },
   created () {
+    this.getOrderList()
   }
 }
 </script>
 <style lang="less" scoped>
-.orderList {
+.afterSaleList {
+  .btnActive {
+    color: #6699CC
+  }
+  .wrap {
+    margin-top: 10px;
+    padding: 14px;
+    background-color: #fff;
+    .state {
+      margin-bottom: 14px;
+      span{
+        display: inline-block;
+        width: 112px;
+        height: 51px;
+        text-align: center;
+        line-height: 51px;
+        border: 1px solid #e6e6e6;
+        cursor: pointer;
+      }
+      .btn-active{
+        color: #6699CC;
+      }
+    }
+  }
+  .btn {
+    margin-top: 16px;
+    text-align: right;
+  }
+  .ivu-card-body {
+    .ivu-col {
+      span {
+        margin-right: 6px;
+      }
+    }
+  }
+  .ivu-page {
+    margin-top: 14px;
+    text-align: center;
+  }
 }
 </style>
