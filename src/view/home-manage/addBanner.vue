@@ -1,7 +1,6 @@
-<!--首页配置-新增banner-->
+<!--首页配置-新增/编辑banner-->
 <template>
   <div class="add">
-    <Card title="新增">
     <Form ref="form" :model="form" :rules="ruleValidate" :label-width="80">
         <FormItem label="展示位置" prop="plateRegion">
           <RadioGroup v-model="form.plateRegion" @on-change="selectPlateRegion">
@@ -30,7 +29,7 @@
           <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
         </FormItem>
         <FormItem label="图片">
-          <Table border :columns="imgColumns" :data="form.plaDets">
+          <Table max-height="400" border :columns="imgColumns" :data="form.plaDets">
             <template slot-scope="{ row,index }" slot="uploadImg">
             <div class="imgWrap">
               <img class="noImg" v-show="!form.plaDets[index].pictureUrl" src="@/assets/images/noImg.png">
@@ -49,7 +48,7 @@
               </Select>
             </template>
             <template slot-scope="{ row,index }" slot="sortOrder">
-              <Input v-model="form.plaDets[index].sortOrder" :style="{width: inpWidth}" placeholder="请输入权重" clearable></Input>
+              <Input type="number" v-model="form.plaDets[index].sortOrder" :style="{width: inpWidth}" placeholder="请输入权重"></Input>
               <div class="tips">（请输入1~5之间数字，1为最高权重）</div>
             </template>
           </Table>
@@ -65,11 +64,10 @@
           <Button @click="returnBanner" style="margin-left: 8px">返回</Button>
         </FormItem>
     </Form>
-    </Card>
   </div>
 </template>
 <script>
-import { doActiveList, doAddHomeBanner } from '@/api/home'
+import { doActiveList, doAddHomeBanner, doBannerDetail, doEditHomeBanner } from '@/api/home'
 import { singleUpload } from '@/api/nature'
 export default {
   name: 'addBanner',
@@ -84,6 +82,7 @@ export default {
       }
     }
     return {
+      bannerDetail: '',
       inpWidth: '200px',
       form: {
         plateRegion: '0', // 模块区域
@@ -100,14 +99,12 @@ export default {
       imgColumns: [
         {
           title: '图片',
-          width: 500,
           align: 'center',
           slot: 'uploadImg'
         },
         {
           title: '选择活动',
           align: 'center',
-          width: 500,
           slot: 'activityId'
         },
         {
@@ -132,6 +129,7 @@ export default {
       }
     }
   },
+  // 编辑操作时接收的数据
   methods: {
     async filezm (e, index) {
       let file = e.target.files[0]
@@ -184,18 +182,43 @@ export default {
       //       this.$Message.error('操作失败!')
       //     }
       // })
-      let data = Object.assign(this.form, { FLAG: 1 })
-      let res = await doAddHomeBanner(data)
-      if (res.data.code === 0) {
-        this.$Message.success('操作成功!')
-        this.$router.push({ path: '/homeManage/bannerList' })
+
+      if (this.editType === 1) { // 编辑
+        let data = Object.assign(this.form, { FLAG: 1, id: this.activeMsg.id })
+        let res = await doEditHomeBanner(data)
+        if (res.data.code === 0) {
+          this.$Message.success('操作成功!')
+          this.$emit('close')
+          this.$emit('updateList')
+        }
+      } else if (this.editType === 2) { // 新增
+        let data = Object.assign(this.form, { FLAG: 1 })
+        let res = await doAddHomeBanner(data)
+        if (res.data.code === 0) {
+          this.$Message.success('操作成功!')
+          this.$emit('close')
+          this.$emit('updateList')
+        }
       }
     },
     returnBanner () {
-      this.$router.push({ path: '/homeManage/bannerList' })
-      // this.$store.dispatch('delView', this.$route).then(() => {
-      //   this.$router.replace({ path: '/homeManage/bannerList' })
-      // })
+      this.$emit('close', false)
+    },
+    async getBannerDetail (obj) {
+      let res = await doBannerDetail(obj)
+      if (res.data.code === 0) {
+        this.bannerDetail = res.data.content
+        this.form.plateName = this.bannerDetail.plateName
+        this.form.showMode = this.bannerDetail.showMode.toString()
+        this.form.plateRegion = this.bannerDetail.plateRegion.toString()
+        this.form.isShow = this.bannerDetail.isShow.toString()
+        let plaDets = []
+        for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
+          delete this.bannerDetail.plaDets[i].id
+          plaDets.push(this.bannerDetail.plaDets[i])
+        }
+        this.form.plaDets = plaDets
+      }
     },
     async getActiveList () {
       let data = {
@@ -210,8 +233,41 @@ export default {
       }
     }
   },
+  props: ['activeMsg', 'editType'],
+  watch: {
+    activeMsg () {
+      if (this.activeMsg) {
+        let obj = {
+          FLAG: 1,
+          id: this.activeMsg.id,
+          plateRegion: this.activeMsg.plateRegion
+        }
+        this.getBannerDetail(obj)
+      } else {
+        this.form = {
+          plateRegion: '0',
+          showMode: '0',
+          plateName: '',
+          plaDets: [{
+            activityId: '',
+            pictureUrl: '',
+            sortOrder: ''
+          }],
+          isShow: '0'
+        }
+      }
+    }
+  },
   created () {
     this.getActiveList()
+    if (this.activeMsg) {
+      let obj = {
+        FLAG: 1,
+        id: this.activeMsg.id,
+        plateRegion: this.activeMsg.plateRegion
+      }
+      this.getBannerDetail(obj)
+    }
   }
 }
 </script>

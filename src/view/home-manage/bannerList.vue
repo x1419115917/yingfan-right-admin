@@ -5,7 +5,7 @@
       <Row>
           <Col span="6">
             <span>名称</span>
-            <Input v-model="form.activityName" :style="{ width :inpWidth}" placeholder="请输入名称" clearable></Input>
+            <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入名称" clearable></Input>
           </Col>
           <Col span="5">
             <span>展示位置</span>
@@ -17,7 +17,7 @@
             <Button type="primary" style="margin-right: 5px" @click="search">查询</Button>
           </Col>
           <Col span="6" offset="1">
-            <Button class="addBtn" icon="ios-add" type="success" @click="add" v-has="'sys:homePage:add'">新增</Button>
+            <Button class="addBtn" icon="ios-add" type="success" @click="operate('',2)" v-has="'sys:homePage:add'">新增</Button>
           </Col>
       </Row>
     </Card>
@@ -25,8 +25,8 @@
       <Table :columns="columns" border :data="activeList" stripe>
         <template slot-scope="{ row, index }" slot="plateRegion">{{ returnPlateRegion(row.plateRegion) }}</template>
         <template slot-scope="{ row, index }" slot="action">
-          <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row)">详情</Button>
-          <Button type="primary" size="small" style="margin-right: 5px" @click="edit(index)" v-has="'sys:homePage:edit'">编辑</Button>
+          <Button type="primary" size="small" style="margin-right: 5px" @click="operate(row,0)">详情</Button>
+          <Button type="primary" size="small" style="margin-right: 5px" @click="operate(row,1)" v-has="'sys:homePage:edit'">编辑</Button>
           <Button type="error" size="small" @click="remove(row)" v-has="'sys:homePage:remove'">删除</Button>
         </template>
       </Table>
@@ -47,25 +47,38 @@
       <p>删除后无法恢复，确定删除？</p>
     </Modal>
     <Modal
-    width='800'
+      class="detailModal"
+      :width='modalWid'
       v-model="detailModal"
-      title="活动详情">
-      <banner-detail :activeMsg="activeMsg"></banner-detail>
+      :title="modalTitle">
+      <!--活动详情-->
+      <template v-if="editType === 0">
+        <banner-detail :activeMsg="activeMsg"></banner-detail>
+      </template>
+      <!--新增/编辑-->
+      <template v-else-if="editType === 1 || editType === 2">
+        <add-banner :activeMsg="activeMsg" :editType="editType" @updateList="getActiveList" @close="detailModal= false"></add-banner>
+      </template>
   </Modal>
   </div>
 </template>
 <script>
 import has from '@/directive/module/has.js'
 import bannerDetail from './bannerDetail'
+import addBanner from './addBanner'
 import { showDot } from './homeManage.js'
 import { doActiveList, doBannerList, doRemoveHomeBanner } from '@/api/home'
 export default {
   name: 'bannerList',
   components: {
-    bannerDetail
+    bannerDetail,
+    addBanner
   },
   data () {
     return {
+      modalTitle: '',
+      editType: '',
+      modalWid: '800',
       modal: false,
       detailModal: false,
       activeMsg: '', // 活动详情
@@ -78,7 +91,7 @@ export default {
       },
       form: {
         FLAG: 1,
-        activityName: '', // 专题名称
+        plateName: '',
         plateRegion: '', // 展示位置
         pageIndex: 1,
         pageSize: 10 // 每页查询数量
@@ -130,11 +143,25 @@ export default {
       this.form.pageIndex = value
       this.getActiveList()
     },
-    checkDetail (row) {
+    operate (row, type) {
+      switch (type) {
+        case 0: this.modalTitle = '活动详情'
+          this.modalWid = '800'
+          this.activeMsg = row
+          break
+        case 1: this.modalTitle = '编辑'
+          this.modalWid = '1000'
+          this.activeMsg = row
+          break
+        case 2: this.modalTitle = '新增'
+          this.modalWid = '1000'
+          this.activeMsg = ''
+          break
+      }
+      this.modalWid = '1000'
       this.detailModal = true
-      this.activeMsg = row
+      this.editType = type
     },
-    edit () {},
     remove (row) {
       this.modal = true
       this.deleteIds.ids.length = 0
@@ -153,9 +180,6 @@ export default {
         this.activeList = res.data.content.rows
         this.pageTotal = res.data.content.total
       }
-    },
-    add () {
-      this.$router.push({ path: '/homeManage/addBanner' })
     }
   },
   computed: {

@@ -41,6 +41,10 @@ export default {
       this.detail = this.activeMsg.activityDetails
       this.activeList = this.activeMsg.activityDetails
     }
+  },
+  created () {
+    this.detail = this.activeMsg.activityDetails
+    this.activeList = this.activeMsg.activityDetails
   }
 }
 </script>
