@@ -858,6 +858,9 @@ export default {
   /deep/ .ivu-tree{
     padding-bottom: 15px;
     padding-left: 8px;
+    height: 550px;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
   /deep/ .ivu-tree ul li:first-child{
     margin-top: 0px;

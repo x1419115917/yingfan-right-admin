@@ -182,11 +182,9 @@ export default {
     clearInputs () {
       this.pageNum = 1
       this.pageSize = 10
-      this.value = ''
+      this.beInvitePhone = ''
+      this.invitePhone = ''
       this.getPageList()
-    },
-    goBack () {
-      this.$router.go(-1)
     }
   },
   created () {

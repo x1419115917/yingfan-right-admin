@@ -66,6 +66,21 @@
           <div class="no-tit">暂无数据</div>
         </div>
       </div>
+      <div class="bank_table" style="position:relative;" v-show="currentNav === 2">
+        <Table
+          :columns="columnsList3"
+          :data="dataList3"
+          height="380"
+          border
+          ref="mainTable"
+          :loading="tableLoading"
+          no-data-text
+        >
+        </Table>
+        <div class="no-data" v-if="dataList2.length < 1">
+          <div class="no-tit">暂无数据</div>
+        </div>
+      </div>
       <div class="pages">
         <Page
           :current="pageNum"
@@ -90,7 +105,7 @@ export default {
       value: '',
       imgShow1: '',
       imgUrl: '',
-      navList: ['销售奖励', '积分奖励'],
+      navList: ['销售奖励', '积分奖励', '团队成员'],
       type: this.$route.query.type,
       memberId: this.$route.query.id,
       currentNav: 0,
@@ -178,6 +193,28 @@ export default {
         }
       ],
       dataList2: [],
+      columnsList3: [
+        {
+          title: '序号',
+          width: 120,
+          key: 'id'
+        },
+        {
+          title: '成员手机号',
+          key: 'phone'
+        },
+        {
+          title: '注册时间',
+          key: 'createTime'
+        }
+      ],
+      dataList3: [
+        {
+          id: 2,
+          phone: '13694240214',
+          createTime: '2019-11-07 12:30:30'
+        }
+      ],
       addShow: false,
       pageNum: 1,
       pageSize: 10,
