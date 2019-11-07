@@ -49,3 +49,27 @@ export const iconsRemove = data => {
     method: 'post'
   })
 }
+// 会员列表
+export const listUsersPage = data => {
+  return axios.request({
+    url: '/account/member/listUsersPage',
+    data,
+    method: 'post'
+  })
+}
+// 积分
+export const listScoresPage = data => {
+  return axios.request({
+    url: '/account/member/listScoresPage',
+    data,
+    method: 'post'
+  })
+}
+// 奖励
+export const listBonussPage = data => {
+  return axios.request({
+    url: '/account/member/listBonussPage',
+    data,
+    method: 'post'
+  })
+}

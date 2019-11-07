@@ -155,12 +155,11 @@ export default {
         activityName: this.value
       }
       let res = await activityList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
+        this.total = +res.data.content.total
         this.dataList = res.data.content.rows
-        this.tableLoading = false
-      } else {
-        this.tableLoading = false
       }
     },
     addFn () {

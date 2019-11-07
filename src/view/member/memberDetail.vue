@@ -5,8 +5,8 @@
     <Row class="margin-top-10 table-item">
       <div class="bank_table" style="position:relative;">
           <Table
-            :columns="columnsList1"
-            :data="dataList1"
+            :columns="columnsList"
+            :data="dataList"
             height="90"
             border
             ref="mainTable"
@@ -37,8 +37,8 @@
     <Row>
       <div class="bank_table" style="position:relative;" v-show="currentNav === 0">
         <Table
-          :columns="columnsList"
-          :data="dataList"
+          :columns="columnsList1"
+          :data="dataList1"
           height="380"
           border
           ref="mainTable"
@@ -46,7 +46,7 @@
           no-data-text
         >
         </Table>
-        <div class="no-data" v-if="dataList.length < 1">
+        <div class="no-data" v-if="dataList1.length < 1">
           <!-- <div class="no-data-img"></div> -->
           <div class="no-tit">暂无数据</div>
         </div>
@@ -82,7 +82,7 @@
   </div>
 </template>
 <script>
-import { activityList } from '@/api/thematic'
+import { listBonussPage, listScoresPage } from '@/api/base'
 export default {
   name: 'member-detail',
   data () {
@@ -91,43 +91,34 @@ export default {
       imgShow1: '',
       imgUrl: '',
       navList: ['销售奖励', '积分奖励'],
+      type: this.$route.query.type,
+      memberId: this.$route.query.id,
       currentNav: 0,
       operationShow: false,
-      columnsList1: [
+      columnsList: [
         {
           title: '绑定手机号',
-          key: 'bindPhone'
+          key: 'phone'
         },
         {
           title: '注册时间',
-          key: 'createdTime'
+          key: 'createTime'
         },
         {
           title: '推荐人手机号',
-          key: 'recommendPhone'
+          key: 'invitePhone'
         },
         {
           title: '累计奖励',
-          key: 'reward'
+          key: 'bonus'
         },
         {
           title: '累计积分',
-          key: 'integral'
-        },
-        {
-          title: '累计积分金额',
-          key: 'integralPrice'
+          key: 'score'
         }
       ],
-      dataList1: [{
-        bindPhone: '13694240321',
-        createdTime: '2019-09-26 14:12:03',
-        recommendPhone: '13423524512',
-        reward: '￥100.00',
-        integral: '44550',
-        integralPrice: '￥32.00'
-      }],
-      columnsList: [
+      dataList: [],
+      columnsList1: [
         {
           title: '序号',
           width: 120,
@@ -135,30 +126,26 @@ export default {
         },
         {
           title: '订单号',
-          key: 'orderId'
+          key: 'totalOrderId'
         },
         {
           title: '下单手机号',
-          key: 'orderPhone'
+          key: 'phone'
         },
         {
           title: '订单金额',
-          key: 'orderPrice'
-        },
-        {
-          title: '奖励比例',
-          key: 'scale'
+          key: 'payAmt'
         },
         {
           title: '销售奖励',
-          key: 'award'
+          key: 'bonus'
         },
         {
           title: '奖励状态',
-          key: 'status'
+          key: 'status1'
         }
       ],
-      dataList: [],
+      dataList1: [],
       columnsList2: [
         {
           title: '序号',
@@ -167,31 +154,27 @@ export default {
         },
         {
           title: '订单号',
-          key: 'orderId'
+          key: 'totalOrderId'
         },
         {
           title: '下单手机号',
-          key: 'orderPhone'
+          key: 'phone'
         },
         {
           title: '订单金额',
-          key: 'orderPrice'
-        },
-        {
-          title: '积分比例',
-          key: 'scale'
+          key: 'payAmt'
         },
         {
           title: '积分金额',
-          key: 'point'
+          key: 'score'
         },
         {
           title: '积分类型',
-          key: 'pointType'
+          key: 'businessType1'
         },
         {
           title: '奖励状态',
-          key: 'status'
+          key: 'status1'
         }
       ],
       dataList2: [],
@@ -205,41 +188,53 @@ export default {
   },
   methods: {
     async getPageList () {
-      this.tableLoading = true
+      switch (this.currentNav) {
+        case 0:
+          this.listBonussPage()
+          break
+        case 1:
+          this.listScoresPage()
+          break
+      }
+    },
+    async listBonussPage () {
       let data = {
         FLAG: 1,
+        businessUserPhone: this.value,
         pageIndex: this.pageNum,
-        pageSize: this.pageSize,
-        activityName: this.value
+        pageSize: this.pageSize
       }
-      let res = await activityList(data)
-      this.tableLoading = false
+      let res = await listBonussPage(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.dataList = [
-          {
-            id: 10,
-            orderId: '5563420192060165620',
-            orderPhone: '13694241201',
-            orderPrice: '￥100.00',
-            scale: '30%',
-            award: '￥30.00',
-            status: '已转'
-          },
-          {
-            id: 8,
-            orderId: '5563420192325165620',
-            orderPhone: '13694246501',
-            orderPrice: '￥200.00',
-            scale: '30%',
-            award: '￥60.00',
-            status: '已转'
-          }
-        ]
+        console.log(res)
+        this.total = +res.data.content.total
+        this.dataList1 = res.data.content.rows
+        this.dataList1.forEach(item => {
+          item.status1 = item.status === 0 ? '冻结' : item.status === 1 ? '生效' : '失效'
+        })
+      }
+    },
+    async listScoresPage () {
+      let data = {
+        FLAG: 1,
+        businessUserPhone: this.value,
+        pageIndex: this.pageNum,
+        pageSize: this.pageSize
+      }
+      let res = await listBonussPage(data)
+      if (res.data.code === 0) {
+        this.total = +res.data.content.total
+        this.dataList2 = res.data.content.rows
+        this.dataList2.forEach(item => {
+          item.businessType1 = item.businessType === 1 ? '购物获得积分' : '下级购物返积分'
+          item.status1 = item.status === 0 ? '冻结' : item.status === 1 ? '生效' : '失效'
+        })
       }
     },
     changeNav (index) {
       this.currentNav = index
+      this.pageNum = 1
+      this.pageSize = 10
       this.getPageList()
     },
     searchFn () {
@@ -270,7 +265,9 @@ export default {
     this.getPageList()
   },
   mounted () {
-
+    this.dataList = []
+    let memberObj = JSON.parse(sessionStorage.getItem('memberObj'))
+    this.dataList = [{ ...memberObj }]
   }
 }
 </script>

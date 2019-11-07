@@ -9,7 +9,7 @@
               <Input
                 placeholder="请输入绑定手机号"
                 class="w162"
-                v-model="bindPhone"
+                v-model="beInvitePhone"
               />
             </div>
             <div class="td-line">
@@ -17,7 +17,7 @@
               <Input
                 placeholder="请输入推荐人手机号"
                 class="w162"
-                v-model="recommdPhone"
+                v-model="invitePhone"
               />
             </div>
             <div class="td-line btn">
@@ -68,13 +68,13 @@
   </div>
 </template>
 <script>
-import { activityList } from '@/api/thematic'
+import { listUsersPage } from '@/api/base'
 export default {
   name: 'memberList',
   data () {
     return {
-      bindPhone: '',
-      recommdPhone: '',
+      beInvitePhone: '',
+      invitePhone: '',
       imgShow1: '',
       imgUrl: '',
       addLoading: false,
@@ -94,24 +94,24 @@ export default {
         },
         {
           title: '绑定手机号',
-          key: 'bindPhone'
+          key: 'phone'
         },
         {
           title: '注册时间',
-          key: 'createdTime',
+          key: 'createTime',
           width: 180
         },
         {
           title: '推荐人手机号',
-          key: 'recommendPhone'
+          key: 'invitePhone'
         },
         {
           title: '销售奖励',
-          key: 'reward'
+          key: 'bonus'
         },
         {
-          title: '积分金额',
-          key: 'integral'
+          title: '积分',
+          key: 'score'
         },
         {
           title: '操作',
@@ -139,23 +139,15 @@ export default {
         FLAG: 1,
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        bindPhone: this.bindPhone,
-        recommdPhone: this.recommdPhone
+        beInvitePhone: this.beInvitePhone,
+        invitePhone: this.invitePhone
       }
-      let res = await activityList(data)
+      let res = await listUsersPage(data)
       this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
-        this.dataList = [
-          {
-            id: 5,
-            bindPhone: '13694240213',
-            createdTime: '2019-09-26 14:12:03',
-            recommendPhone: '13423512456',
-            reward: '￥100.00',
-            integral: '￥32.00'
-          }
-        ]
+        this.total = +res.data.content.total
+        this.dataList = res.data.content.rows
       }
     },
     searchFn () {
@@ -164,6 +156,7 @@ export default {
     edit (index) {
       this.operationShow = true
       this.checkedId = this.dataList[index].id
+      sessionStorage.setItem('memberObj', JSON.stringify(this.dataList[index]))
       this.$router.push({
         path: 'memberDetail',
         query: {

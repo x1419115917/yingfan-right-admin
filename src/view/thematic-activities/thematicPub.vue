@@ -413,8 +413,7 @@ export default {
           width: 240
         }
       ],
-      dataList: [
-      ],
+      dataList: [],
       pageNum: 1,
       pageSize: 10,
       delIndex: '',

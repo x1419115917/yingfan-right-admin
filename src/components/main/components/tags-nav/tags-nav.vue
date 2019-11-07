@@ -199,6 +199,11 @@ export default {
   mounted () {
     setTimeout(() => {
       this.getTagElementByRoute(this.$route)
+      let res = this.list.filter(item => routeEqual(this.currentRouteObj, item) || item.name === this.$config.homeName)
+      this.$emit('on-close', res, 'others', this.currentRouteObj)
+      setTimeout(() => {
+        this.getTagElementByRoute(this.currentRouteObj)
+      }, 100)
     }, 200)
   }
 }
