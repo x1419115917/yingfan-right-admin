@@ -104,52 +104,57 @@
               <li class="photo-item">
                 <input type="file" class="img-ipt"
                       ref="filezm1"
-                      @change="filezmFn(1)"
+                      @change="filezmFn($event, 1)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
                 <img :src="goodsImgList[0].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[0].imgShow">
+                <span v-show="goodsImgList[0].imgShow" class="del-file" @click="delFile(0)">删除</span>
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
                       ref="filezm2"
-                      @change="filezmFn(2)"
+                      @change="filezmFn($event, 2)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
                 <img :src="goodsImgList[1].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[1].imgShow">
+                <span v-show="goodsImgList[1].imgShow" class="del-file" @click="delFile(1)">删除</span>
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
                       ref="filezm3"
-                      @change="filezmFn(3)"
+                      @change="filezmFn($event, 3)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
                 <img :src="goodsImgList[2].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[2].imgShow">
+                <span v-show="goodsImgList[2].imgShow" class="del-file" @click="delFile(2)">删除</span>
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
                       ref="filezm4"
-                      @change="filezmFn(4)"
+                      @change="filezmFn($event, 4)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
                 <img :src="goodsImgList[3].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[3].imgShow">
+                <span v-show="goodsImgList[3].imgShow" class="del-file" @click="delFile(3)">删除</span>
               </li>
               <li class="photo-item">
                 <input type="file" class="img-ipt"
                       ref="filezm5"
-                      @change="filezmFn(5)"
+                      @change="filezmFn($event, 5)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
                 <img :src="goodsImgList[4].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[4].imgShow">
+                <span v-show="goodsImgList[4].imgShow" class="del-file" @click="delFile(4)">删除</span>
               </li>
             </ul>
             <span class="photo-tips">【建议：图片上传尺寸为：800*800&nbsp;&nbsp; 宽高比例：1:1 &nbsp;&nbsp; 小于500K】</span>
@@ -220,7 +225,7 @@
                     <div class="spce-right">
                       <span class="check-box to-ipt-show" v-show="!item.showEdit">{{item.specVals[0]}}</span>
                       <div class="edit-item">
-                        <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
+                        <Icon v-show="!item.showEdit && false" @click="editFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
                           <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
@@ -601,23 +606,23 @@ export default {
             })
           }
         },
-        {
-          title: '积分兑换',
-          key: 'exchangePoints',
-          render: (h, params) => {
-            var vm = this
-            return h('Input', {
-              props: {
-                value: vm.dataList[params.index].exchangePoints
-              },
-              on: {
-                'on-change' (event) {
-                  vm.dataList[params.index].exchangePoints = event.target.value
-                }
-              }
-            })
-          }
-        },
+        // {
+        //   title: '积分兑换',
+        //   key: 'exchangePoints',
+        //   render: (h, params) => {
+        //     var vm = this
+        //     return h('Input', {
+        //       props: {
+        //         value: vm.dataList[params.index].exchangePoints
+        //       },
+        //       on: {
+        //         'on-change' (event) {
+        //           vm.dataList[params.index].exchangePoints = event.target.value
+        //         }
+        //       }
+        //     })
+        //   }
+        // },
         {
           title: '批发价(元)',
           key: 'trade',
@@ -873,7 +878,7 @@ export default {
         this.dataList[index].trade = skusList[index].tradePrice
         this.dataList[index].brokerage = skusList[index].commissionRate
         this.dataList[index].integral = skusList[index].pointRate
-        this.dataList[index].exchangePoints = skusList[index].exchangePoints
+        // this.dataList[index].exchangePoints = skusList[index].exchangePoints
       })
       this.columnsList = [...this.columnsListUpdata]
     },
@@ -892,6 +897,18 @@ export default {
         this.expandSpec2 = [...this.expandSpec[1].specVals]
         this.dataList = this.Descates
       } else if (this.expandSpec && this.expandSpec.length == 1) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      }
+      this.columnsList = [...this.columnsListUpdata]
+    },
+    expandSpecForEach (arr) {
+      if (arr && arr.length == 2) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = [...this.expandSpec[1].specVals]
+        this.dataList = this.Descates
+      } else if (arr && arr.length == 1) {
         this.expandSpec1 = [...this.expandSpec[0].specVals]
         this.expandSpec2 = []
         this.dataList = this.Descates
@@ -1013,7 +1030,7 @@ export default {
           skus.push({
             barcode: item.tcode,
             chooseSpec: '',
-            exchangePoints: item.exchangePoints,
+            // exchangePoints: item.exchangePoints,
             commissionRate: item.brokerage,
             imageList: imgList,
             merchantCode: item.code,
@@ -1175,7 +1192,7 @@ export default {
           skuId: item.skuId || '',
           barcode: item.tcode,
           chooseSpec: '',
-          exchangePoints: item.exchangePoints,
+          // exchangePoints: item.exchangePoints,
           commissionRate: item.brokerage,
           imageList: imgList,
           merchantCode: item.code,
@@ -1313,18 +1330,39 @@ export default {
         e.target.value = ''
       }
     },
+    delFile (val) {
+      this.goodsImgList[val].imgShow = false
+      this.goodsImgList[val].imgUrl = ''
+      switch (val) {
+        case 0:
+          this.$refs.filezm1.value = ''
+          break
+        case 1:
+          this.$refs.filezm2.value = ''
+          break
+        case 2:
+          this.$refs.filezm3.value = ''
+          break
+        case 3:
+          this.$refs.filezm4.value = ''
+          break
+        case 4:
+          this.$refs.filezm5.value = ''
+          break
+      }
+    },
     // 上传图片
-    async filezmFn (val) {
+    async filezmFn (e, val) {
       let data = {}
       let files = ''
       let res = ''
       // console.log(this.$refs.filezm1.files[0])
       switch (val) {
         case 1:
-          files = this.$refs.filezm1.files[0]
+          files = e.target.files[0]
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm1.value = ''
+            e.target.value = ''
             return
           }
           data = {
@@ -1336,14 +1374,14 @@ export default {
             console.log(res)
             this.goodsImgList[0].imgShow = true
             this.goodsImgList[0].imgUrl = res.data.content
-            this.$refs.filezm1.value = ''
+            e.target.files[0].value = ''
           }
           break
         case 2:
-          files = this.$refs.filezm2.files[0]
+          files = e.target.files[0]
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm2.value = ''
+            e.target.value = ''
             return
           }
           let data = {
@@ -1355,14 +1393,14 @@ export default {
             console.log(res)
             this.goodsImgList[1].imgShow = true
             this.goodsImgList[1].imgUrl = res.data.content
-            this.$refs.filezm2.value = ''
+            e.target.value = ''
           }
           break
         case 3:
-          files = this.$refs.filezm3.files[0]
+          files = e.target.files[0]
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm3.value = ''
+            e.target.value = ''
             return
           }
           data = {
@@ -1374,14 +1412,14 @@ export default {
             console.log(res)
             this.goodsImgList[2].imgShow = true
             this.goodsImgList[2].imgUrl = res.data.content
-            this.$refs.filezm3.value = ''
+            e.target.value = ''
           }
           break
         case 4:
-          files = this.$refs.filezm4.files[0]
+          files = e.target.files[0]
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm4.value = ''
+            e.target.value = ''
             return
           }
           data = {
@@ -1393,14 +1431,14 @@ export default {
             console.log(res)
             this.goodsImgList[3].imgShow = true
             this.goodsImgList[3].imgUrl = res.data.content
-            this.$refs.filezm4.value = ''
+            e.target.value = ''
           }
           break
         case 5:
-          files = this.$refs.filezm5.files[0]
+          files = e.target.files[0]
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm5.value = ''
+            e.target.value = ''
             return
           }
           data = {
@@ -1412,7 +1450,7 @@ export default {
             console.log(res)
             this.goodsImgList[4].imgShow = true
             this.goodsImgList[4].imgUrl = res.data.content
-            this.$refs.filezm5.value = ''
+            e.target.value = ''
           }
           break
       }
@@ -1548,7 +1586,7 @@ export default {
       console.log('index3210', index)
       console.log('this.expandSpec-edit-edit2', this.expandSpec)
       if (this.type !== 'edit') {
-        this.specArrFor(this.expandSpec)
+        this.expandSpecForEach(this.expandSpec)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)
       }
@@ -1556,6 +1594,7 @@ export default {
     iptFocus (e, index, idx) {
       let obj = this.expandSpec[index]
       this.speaval = obj.specVals[idx]
+      this.baseSpec = this.baseSpec
     },
     iptChange (e, index, idx) {
       let obj = this.expandSpec[index]
@@ -1570,7 +1609,7 @@ export default {
       this.$set(this.expandSpec, index, obj)
       this.speaval = ''
       if (this.type !== 'edit') {
-        this.specArrFor(this.expandSpec)
+        this.expandSpecForEach(this.expandSpec)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)
       }
@@ -2041,6 +2080,18 @@ export default {
       height: 140px;
       z-index: 2;
       background-color: #f20;
+    }
+    .del-file{
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 120px;
+      height: 26px;
+      line-height: 26px;
+      background: rgba(0,0,0,.4);
+      color: #fff;
+      cursor: pointer;
+      z-index: 4;
     }
     .bg-glay-add{
       position: absolute;
