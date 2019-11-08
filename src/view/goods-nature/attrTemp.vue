@@ -189,12 +189,12 @@ export default {
         {
           title: '属性类型',
           width: 100,
-          key: 'operate'
+          key: 'operateType'
         },
         {
           title: '权重',
           width: 80,
-          key: 'operateType'
+          key: 'sort'
         },
         {
           title: '操作',

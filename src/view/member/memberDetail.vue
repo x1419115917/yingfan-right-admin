@@ -77,7 +77,7 @@
           no-data-text
         >
         </Table>
-        <div class="no-data" v-if="dataList2.length < 1">
+        <div class="no-data" v-if="dataList3.length < 1">
           <div class="no-tit">暂无数据</div>
         </div>
       </div>
