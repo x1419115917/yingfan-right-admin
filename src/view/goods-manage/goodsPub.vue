@@ -1030,7 +1030,7 @@ export default {
           skus.push({
             barcode: item.tcode,
             chooseSpec: '',
-            // exchangePoints: item.exchangePoints,
+            exchangePoints: '0',
             commissionRate: item.brokerage,
             imageList: imgList,
             merchantCode: item.code,
@@ -1192,7 +1192,7 @@ export default {
           skuId: item.skuId || '',
           barcode: item.tcode,
           chooseSpec: '',
-          // exchangePoints: item.exchangePoints,
+          exchangePoints: '0',
           commissionRate: item.brokerage,
           imageList: imgList,
           merchantCode: item.code,
