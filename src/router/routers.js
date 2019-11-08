@@ -361,6 +361,26 @@ export const appRouter = [
           title: '首页图标配置'
         },
         component: () => import('@/view/home-manage/iconList.vue')
+      },
+      {
+        path: 'thematicList',
+        name: 'thematicList',
+        meta: {
+          icon: 'ios-stats',
+          title: '专题活动列表',
+          hideInMenu: true
+        },
+        component: () => import('@/view/thematic-activities/thematicList.vue')
+      },
+      {
+        path: 'thematicPub',
+        name: 'thematicPub',
+        meta: {
+          icon: 'ios-stats',
+          title: '专题活动发布',
+          hideInMenu: true
+        },
+        component: () => import('@/view/thematic-activities/thematicPub.vue')
       }
     ]
   },
@@ -482,38 +502,38 @@ export const appRouter = [
       }
     ]
   },
-  {
-    path: '/thematicManager',
-    name: 'thematicManager',
-    meta: {
-      icon: 'ios-stats',
-      title: '专题管理',
-      hideInMenu: true
-    },
-    component: Main,
-    children: [
-      {
-        path: 'thematicList',
-        name: 'thematicList',
-        meta: {
-          icon: '',
-          title: '专题活动列表',
-          hideInMenu: true
-        },
-        component: () => import('@/view/thematic-activities/thematicList.vue')
-      },
-      {
-        path: 'thematicPub',
-        name: 'thematicPub',
-        meta: {
-          icon: '',
-          title: '专题活动发布',
-          hideInMenu: true
-        },
-        component: () => import('@/view/thematic-activities/thematicPub.vue')
-      }
-    ]
-  },
+  // {
+  //   path: '/thematicManager',
+  //   name: 'thematicManager',
+  //   meta: {
+  //     icon: 'ios-stats',
+  //     title: '专题管理',
+  //     hideInMenu: true
+  //   },
+  //   component: Main,
+  //   children: [
+  //     {
+  //       path: 'thematicList',
+  //       name: 'thematicList',
+  //       meta: {
+  //         icon: '',
+  //         title: '专题活动列表',
+  //         hideInMenu: true
+  //       },
+  //       component: () => import('@/view/thematic-activities/thematicList.vue')
+  //     },
+  //     {
+  //       path: 'thematicPub',
+  //       name: 'thematicPub',
+  //       meta: {
+  //         icon: '',
+  //         title: '专题活动发布',
+  //         hideInMenu: true
+  //       },
+  //       component: () => import('@/view/thematic-activities/thematicPub.vue')
+  //     }
+  //   ]
+  // },
   {
     path: '/multilevel',
     name: 'multilevel',
