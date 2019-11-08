@@ -108,6 +108,10 @@
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <Spin fix class="loading-box" v-show="goodsImgList[0].loading">
+                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                    <div>上传中</div>
+                </Spin>
                 <img :src="goodsImgList[0].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[0].imgShow">
                 <span v-show="goodsImgList[0].imgShow" class="del-file" @click="delFile(0)">删除</span>
@@ -119,6 +123,10 @@
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <Spin fix class="loading-box" v-show="goodsImgList[1].loading">
+                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                    <div>上传中</div>
+                </Spin>
                 <img :src="goodsImgList[1].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[1].imgShow">
                 <span v-show="goodsImgList[1].imgShow" class="del-file" @click="delFile(1)">删除</span>
@@ -130,6 +138,10 @@
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <Spin fix class="loading-box" v-show="goodsImgList[2].loading">
+                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                    <div>上传中</div>
+                </Spin>
                 <img :src="goodsImgList[2].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[2].imgShow">
                 <span v-show="goodsImgList[2].imgShow" class="del-file" @click="delFile(2)">删除</span>
@@ -141,6 +153,10 @@
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <Spin fix class="loading-box" v-show="goodsImgList[3].loading">
+                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                    <div>上传中</div>
+                </Spin>
                 <img :src="goodsImgList[3].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[3].imgShow">
                 <span v-show="goodsImgList[3].imgShow" class="del-file" @click="delFile(3)">删除</span>
@@ -152,6 +168,10 @@
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                <Spin fix class="loading-box" v-show="goodsImgList[4].loading">
+                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                    <div>上传中</div>
+                </Spin>
                 <img :src="goodsImgList[4].imgUrl" class="img-box1"
                     id="ad21" v-show="goodsImgList[4].imgShow">
                 <span v-show="goodsImgList[4].imgShow" class="del-file" @click="delFile(4)">删除</span>
@@ -379,22 +399,27 @@ export default {
       goodsImgList: [
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         }
       ], // 商品图片列表
@@ -726,22 +751,27 @@ export default {
         vm.goodsImgList = [
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           }
         ]
@@ -772,22 +802,27 @@ export default {
         vm.goodsImgList = [
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           }
         ]
@@ -1363,6 +1398,7 @@ export default {
     },
     delFile (val) {
       this.goodsImgList[val].imgShow = false
+      this.goodsImgList[val].loading = false
       this.goodsImgList[val].imgUrl = ''
       switch (val) {
         case 0:
@@ -1391,6 +1427,7 @@ export default {
       switch (val) {
         case 1:
           files = e.target.files[0]
+          this.goodsImgList[0].loading = true
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
             e.target.value = ''
@@ -1404,12 +1441,14 @@ export default {
           if (res.data.code === 0) {
             console.log(res)
             this.goodsImgList[0].imgShow = true
+            this.goodsImgList[0].loading = false
             this.goodsImgList[0].imgUrl = res.data.content
             e.target.files[0].value = ''
           }
           break
         case 2:
           files = e.target.files[0]
+          this.goodsImgList[1].loading = true
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
             e.target.value = ''
@@ -1423,12 +1462,14 @@ export default {
           if (res.data.code === 0) {
             console.log(res)
             this.goodsImgList[1].imgShow = true
+            this.goodsImgList[1].loading = false
             this.goodsImgList[1].imgUrl = res.data.content
             e.target.value = ''
           }
           break
         case 3:
           files = e.target.files[0]
+          this.goodsImgList[2].loading = true
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
             e.target.value = ''
@@ -1442,12 +1483,14 @@ export default {
           if (res.data.code === 0) {
             console.log(res)
             this.goodsImgList[2].imgShow = true
+            this.goodsImgList[2].loading = false
             this.goodsImgList[2].imgUrl = res.data.content
             e.target.value = ''
           }
           break
         case 4:
           files = e.target.files[0]
+          this.goodsImgList[3].loading = true
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
             e.target.value = ''
@@ -1461,12 +1504,14 @@ export default {
           if (res.data.code === 0) {
             console.log(res)
             this.goodsImgList[3].imgShow = true
+            this.goodsImgList[3].loading = false
             this.goodsImgList[3].imgUrl = res.data.content
             e.target.value = ''
           }
           break
         case 5:
           files = e.target.files[0]
+          this.goodsImgList[4].loading = true
           if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
             this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
             e.target.value = ''
@@ -1480,6 +1525,7 @@ export default {
           if (res.data.code === 0) {
             console.log(res)
             this.goodsImgList[4].imgShow = true
+            this.goodsImgList[4].loading = false
             this.goodsImgList[4].imgUrl = res.data.content
             e.target.value = ''
           }
@@ -1531,6 +1577,7 @@ export default {
         this.ctx = spuInfo.description
         imageList.forEach((item, index) => {
           this.goodsImgList[index].imgUrl = imageList[index]
+          this.goodsImgList[index].loading = false
           this.goodsImgList[index].imgShow = true
         })
         this.cur1 = spuInfo.cid1
@@ -2150,6 +2197,14 @@ export default {
       z-index: 3;
     }
   }
+}
+.demo-spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+    from { transform: rotate(0deg);}
+    50%  { transform: rotate(180deg);}
+    to   { transform: rotate(360deg);}
 }
 .nav-top{
   text-align: center;
