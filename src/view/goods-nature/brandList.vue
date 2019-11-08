@@ -249,6 +249,7 @@ export default {
       this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
+        this.total = +res.data.content.total
         this.dataList = res.data.content.rows
       }
     },
