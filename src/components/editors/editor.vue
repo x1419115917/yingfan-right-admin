@@ -119,9 +119,7 @@ export default {
   },
   watch: {
     initContent: function (val, oval) {
-  		if (val) {
-  			this.detailContent = val
-  		}
+      this.detailContent = val
   	},
   	isInit: function (val, oval) {
   		if (val) {
