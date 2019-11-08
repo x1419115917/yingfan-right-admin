@@ -748,6 +748,8 @@ export default {
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.$route.query.type === 'edit') {
         vm.vsShowNav = 0
+        vm.goodsTitle = ''
+        vm.subTitle = ''
         vm.goodsImgList = [
           {
             imgUrl: '',
@@ -787,6 +789,7 @@ export default {
         vm.brandsId = ''
         vm.supplierId = ''
         vm.goodsTitle = ''
+        vm.subTitle = ''
         vm.clist2 = []
         vm.clist3 = []
         // vm.columnsList = [...vm.columnsListOriginal]
