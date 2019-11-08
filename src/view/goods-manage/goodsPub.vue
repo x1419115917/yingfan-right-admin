@@ -722,6 +722,28 @@ export default {
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.$route.query.type === 'edit') {
         vm.vsShowNav = 0
+        vm.goodsImgList = [
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            imgShow: false
+          }
+        ]
         vm.type = vm.$route.query.type,
         vm.goodsId = vm.$route.query.id,
         console.log('vm.$route', vm.$route)
@@ -930,6 +952,7 @@ export default {
     },
     // 批量填入
     saveGoodsObj () {
+      console.log(this.goodsObj)
       this.dataList.forEach(item => {
         item.stock = this.goodsObj.stock
         item.supply = this.goodsObj.supply
