@@ -90,6 +90,7 @@ export default {
       if (res.data.code === 0) {
         let menus = JSON.stringify(res.data.content.menus)
         console.log('res.data.content.menus', res.data.content.menus)
+        // return;
         this.forGetTitle(res.data.content.menus)
         sessionStorage.setItem('menus', JSON.stringify(this.menusList))
         this.getuserMenuInit()
@@ -127,7 +128,7 @@ export default {
       arr.forEach(item => {
         this.menusList.push(
           {
-            icon: item.icon,
+            icon: item.attributes.icon,
             title: item.text,
             hideMenu: item.showMenu === 1 ? 0 : 1
           }

@@ -112,6 +112,7 @@
 import has from '@/directive/module/has.js'
 import { treeList, menuTree, saveMenu, detailMenu, updateMenu, removeMenu } from '@/api/sys'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
+import { icons } from './menu'
 export default {
   name: 'menu',
   data () {
@@ -137,7 +138,6 @@ export default {
         showMenu: '',
         icon: ''
       },
-      icons: ['ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add', 'ios-alarm-outline', 'ios-checkmark', 'ios-checkmark', 'ios-add-circle', 'ios-add', 'ios-checkmark', 'ios-checkmark', 'ios-add-circle', 'ios-alarm'],
       ruleValidate: {
         menuType: [
           { required: true, message: '不能为空', trigger: 'blur' }
@@ -243,6 +243,11 @@ export default {
     }
   },
   components: { TreeGrid },
+  computed: {
+    icons () {
+      return icons()
+    }
+  },
   methods: {
     async getPageList () {
       this.tableLoading = true

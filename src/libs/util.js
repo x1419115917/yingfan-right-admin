@@ -66,12 +66,16 @@ export const routerFor = (arr1, arr2) => {
     arr.forEach((item, index) => {
       if (item.meta.title === item1.title) {
         item.meta.hideInMenu = item1.hideMenu === 1
+        item.meta.icon = item1.icon
+        item.icon = item1.icon
       }
       if (item.children) {
         // alert(123)
         item.children.forEach((value, index) => {
           if (value.meta.title === item1.title) {
             value.meta.hideInMenu = item1.hideMenu === 1
+            value.meta.icon = item1.icon
+            value.icon = item1.icon
           }
         })
       }

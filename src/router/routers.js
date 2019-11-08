@@ -201,7 +201,7 @@ export const appRouter = [
     path: '/sys',
     name: 'sys',
     meta: {
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '系统管理',
       hideInMenu: true
     },
@@ -262,7 +262,7 @@ export const appRouter = [
     path: '/goodsManage',
     name: 'goodsManage',
     meta: {
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '商品管理',
       hideInMenu: true
     },
@@ -294,7 +294,7 @@ export const appRouter = [
     path: '/goodsNature',
     name: 'goodsNature',
     meta: {
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '商品属性管理',
       hideInMenu: true
     },
@@ -337,7 +337,7 @@ export const appRouter = [
     name: 'homeManage',
     meta: {
       hideInMenu: true,
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '首页'
     },
     component: Main,
@@ -347,7 +347,7 @@ export const appRouter = [
         name: 'bannerList',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: '',
           title: '首页banner'
         },
         component: () => import('@/view/home-manage/bannerList.vue')
@@ -357,7 +357,7 @@ export const appRouter = [
         name: 'iconList',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: '',
           title: '首页图标配置'
         },
         component: () => import('@/view/home-manage/iconList.vue')
@@ -366,7 +366,7 @@ export const appRouter = [
         path: 'thematicList',
         name: 'thematicList',
         meta: {
-          icon: 'ios-stats',
+          icon: '',
           title: '专题活动列表',
           hideInMenu: true
         },
@@ -376,7 +376,7 @@ export const appRouter = [
         path: 'thematicPub',
         name: 'thematicPub',
         meta: {
-          icon: 'ios-stats',
+          icon: '',
           title: '专题活动发布',
           hideInMenu: true
         },
@@ -389,7 +389,7 @@ export const appRouter = [
     name: 'member',
     meta: {
       hideInMenu: true,
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '会员管理'
     },
     component: Main,
@@ -399,7 +399,7 @@ export const appRouter = [
         name: 'memberList',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: 'ios-menu',
           title: '会员列表'
         },
         component: () => import('@/view/member/memberList.vue')
@@ -409,7 +409,7 @@ export const appRouter = [
         name: 'memberDetail',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: 'ios-menu',
           title: '会员详情'
         },
         component: () => import('@/view/member/memberDetail.vue')
@@ -421,7 +421,7 @@ export const appRouter = [
     name: 'orderManage',
     meta: {
       hideInMenu: true,
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '订单管理'
     },
     component: Main,
@@ -431,7 +431,7 @@ export const appRouter = [
         name: 'orderList',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: '',
           title: '商城订单'
         },
         component: () => import('@/view/order-manage/orderList.vue')
@@ -441,7 +441,7 @@ export const appRouter = [
         name: 'afterSaleOrder',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: '',
           title: '售后订单'
         },
         component: () => import('@/view/order-manage/afterSaleOrder.vue')
@@ -453,7 +453,7 @@ export const appRouter = [
     name: 'financeManage',
     meta: {
       hideInMenu: true,
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '财务管理'
     },
     component: Main,
@@ -463,7 +463,7 @@ export const appRouter = [
         path: 'payList',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: 'ios-menu',
           title: '交易流水'
         },
         component: () => import('@/view/finance-manage/payList.vue')
@@ -474,7 +474,7 @@ export const appRouter = [
     path: '/supplierManager',
     name: 'supplierManager',
     meta: {
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '供应商',
       hideInMenu: true
     },
@@ -484,7 +484,7 @@ export const appRouter = [
         path: 'supplier',
         name: 'supplier',
         meta: {
-          icon: 'ios-stats',
+          icon: 'ios-menu',
           title: '供应商管理',
           hideInMenu: true
         },
@@ -506,7 +506,7 @@ export const appRouter = [
   //   path: '/thematicManager',
   //   name: 'thematicManager',
   //   meta: {
-  //     icon: 'ios-stats',
+  //     icon: 'ios-menu',
   //     title: '专题管理',
   //     hideInMenu: true
   //   },
