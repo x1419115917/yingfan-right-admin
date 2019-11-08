@@ -265,10 +265,10 @@
                 <Col span="2" class="goods-info-left text-right">批量填充：</Col>
                 <Col span="22" class="goods-info-content text-left">
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.supply" placeholder="输入供货价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.retail" placeholder="输入零售价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="最低批发量"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.stock" placeholder="可售卖库存"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.retail" placeholder="输入零售价"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="最低批发量"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
                   <span class="goods-info-ipt">
                     佣金比例: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
                   </span>
@@ -549,6 +549,7 @@ export default {
               },
               on: {
                 'on-change' (event) {
+                  console.log(event.target.value)
                   vm.dataList[params.index].supply = event.target.value
                 }
               }
@@ -953,7 +954,10 @@ export default {
     // 批量填入
     saveGoodsObj () {
       console.log(this.goodsObj)
-      this.dataList.forEach(item => {
+      let newDataList = []
+      newDataList = [...this.dataList]
+      this.dataList = []
+      newDataList.forEach(item => {
         item.stock = this.goodsObj.stock
         item.supply = this.goodsObj.supply
         item.retail = this.goodsObj.retail
@@ -962,6 +966,8 @@ export default {
         item.brokerage = this.goodsObj.brokerage
         item.integral = this.goodsObj.integral
       })
+      this.dataList = newDataList
+      console.log('this.dataList+-+-', this.dataList)
     },
     // 保存添加商品
     async saveGood () {
