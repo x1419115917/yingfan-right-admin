@@ -2673,4 +2673,7 @@ export default {
 .w100{
   width: 100px;
 }
+/deep/ .ivu-card-body,.ivu-card-body{
+  display: none;
+}
 </style>
