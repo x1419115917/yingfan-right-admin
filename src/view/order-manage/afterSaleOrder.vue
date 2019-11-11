@@ -65,13 +65,13 @@
         @on-page-size-change="changePageSize"
         @on-change="pageChange"/>
       <Modal v-model="modal" width="1000" class="afterOrderDetailModal">
-        <after-order-detail :orderId="orderId"></after-order-detail>
+        <after-order-detail @close="modal = false" @updateList="getOrderList" :orderId="orderId"></after-order-detail>
       </Modal>
     </div>
   </div>
 </template>
 <script>
-import { doAfterSaleOrderList, doAfterSaleOrderDetail } from '@/api/order'
+import { doAfterSaleOrderList } from '@/api/order'
 import { afterSale, type } from './orderList'
 import afterOrderDetail from './afterSaleOrderDetail'
 export default {
@@ -150,13 +150,9 @@ export default {
     returnOrderStatus (item) {
       switch (item) {
         case 0 : return '退款中'
-          break
         case 1 : return '退款成功'
-          break
         case 2 : return '退款关闭'
-          break
         case 3 : return '拒绝退款'
-          break
       }
     },
     changePageSize (value) {

@@ -160,50 +160,41 @@ export default {
       this.modal = true
     },
     async ok () {
-      let obj = {
+      let data = {
         FLAG: 1,
         orderStatus: this.editType,
         auditConclusion: this.formValidate.auditConclusion,
         subOrderId: this.orderId
       }
-      console.log(JSON.stringify(obj))
-      // if(this.formValidate.auditConclusion === ''){
-      //   this.$Message.error('原因不能为空!')
-      //   return false
-      // } else {
-      let res = await doSaledOrderStatus(obj)
-      if (res.data.code === 0) {
-
+      if (this.formValidate.auditConclusion === '' && this.editType !== 1) {
+        this.$Message.error('原因不能为空!')
+      } else {
+        let res = await doSaledOrderStatus(data)
+        if (res.data.code === 0) {
+          this.$Message.success('操作成功')
+          this.modal = false
+          this.$emit('close')
+          this.$emit('updateList')
+        }
       }
-      // }
     },
     returnAfterStatus (item) {
       switch (item) {
         case 0 : return '退款中'
-          break
         case 1 : return '退款成功'
-          break
         case 2 : return '退款关闭'
-          break
         case 3 : return '拒绝退款'
-          break
       }
     },
     // 订单状态
     returnOrderStatus (item) {
       switch (item) {
         case 0 : return '待支付'
-          break
         case 1 : return '已支付(待发货)'
-          break
         case 2 : return '已发货'
-          break
         case 3 : return '已收货'
-          break
         case 4 : return '交易关闭'
-          break
         case 5 : return '退款'
-          break
       }
     },
     async getAfterSaleOrderDetail () {

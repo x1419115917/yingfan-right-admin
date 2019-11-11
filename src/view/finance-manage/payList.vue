@@ -115,7 +115,9 @@ export default {
       this.form.pageIndex = value
       this.getPayList()
     },
-    download () {},
+    download () {
+      this.$Message.warning('该功能暂未开放')
+    },
     async getPayList () {
       let data = this.form
       let res = await doPayList(data)
