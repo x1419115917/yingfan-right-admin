@@ -691,6 +691,7 @@ export default {
         vm.vsShowNav = 0
         vm.goodsTitle = ''
         vm.subTitle = ''
+        vm.specListArr = []
         vm.goodsImgList = [
           {
             imgUrl: '',
@@ -737,6 +738,7 @@ export default {
         vm.expandSpec = []
         vm.expandSpec1 = []
         vm.expandSpec2 = []
+        vm.specListArr = []
         vm.cur1 = ''
         vm.cur2 = ''
         vm.cur3 = ''
@@ -956,60 +958,62 @@ export default {
       let imgList = []
       let skus = []
       let cheval = ''
-      // 判断基本属性是否选中
-      let checkedSpecVal = this.baseSpec.filter((item, index) => {
-        if (item.operateType == 2) {
-          if (item.checkspeVals && item.checkspeVals.length > 0) {
-            cheval = '1'
+      if (this.baseSpec && this.baseSpec.length > 0) {
+        // 判断基本属性是否选中
+        let checkedSpecVal = this.baseSpec.filter((item, index) => {
+          if (item.operateType == 2) {
+            if (item.checkspeVals && item.checkspeVals.length > 0) {
+              cheval = '1'
+            }
+          } else if (item.operateType == 1) {
+            if (item.checkVals && item.checkVals.length > 0) {
+              cheval = '1'
+            }
+          } else if (item.operateType == 3) {
+            if (item.specVals && item.specVals.length > 0) {
+              cheval = '1'
+            }
           }
-        } else if (item.operateType == 1) {
-          if (item.checkVals && item.checkVals.length > 0) {
-            cheval = '1'
-          }
-        } else if (item.operateType == 3) {
-          if (item.specVals && item.specVals.length > 0) {
-            cheval = '1'
-          }
-        }
-        return cheval
-      })
-      if (cheval === '') {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择基本属性'
+          return cheval
         })
-        return
-      }
-      this.baseSpec.forEach((item, index) => {
-        if (item.operateType == 2) {
-          if (item.checkspeVals && item.checkspeVals.length > 0) {
-            attrTemplate.push({
-              attrName: item.specName,
-              attrType: item.operateType,
-              attrValues: item.specVals,
-              datas: item.checkspeVals
-            })
-          }
-        } else if (item.operateType == 1) {
-          if (item.checkVals && item.checkVals.length > 0) {
-            attrTemplate.push({
-              attrName: item.specName,
-              attrType: item.operateType,
-              attrValues: item.specVals,
-              datas: [ item.checkVals ]
-            })
-          }
-        } else if (item.operateType == 3) {
-          if (item.specVals && item.specVals.length > 0) {
-            attrTemplate.push({
-              attrName: item.specName,
-              attrType: item.specType,
-              attrValues: item.specVals,
-              datas: item.specVals
-            })
-          }
+        if (cheval === '') {
+          this.$Modal.warning({
+            title: '提示',
+            content: '请选择基本属性'
+          })
+          return
         }
-      })
+        this.baseSpec.forEach((item, index) => {
+          if (item.operateType == 2) {
+            if (item.checkspeVals && item.checkspeVals.length > 0) {
+              attrTemplate.push({
+                attrName: item.specName,
+                attrType: item.operateType,
+                attrValues: item.specVals,
+                datas: item.checkspeVals
+              })
+            }
+          } else if (item.operateType == 1) {
+            if (item.checkVals && item.checkVals.length > 0) {
+              attrTemplate.push({
+                attrName: item.specName,
+                attrType: item.operateType,
+                attrValues: item.specVals,
+                datas: [ item.checkVals ]
+              })
+            }
+          } else if (item.operateType == 3) {
+            if (item.specVals && item.specVals.length > 0) {
+              attrTemplate.push({
+                attrName: item.specName,
+                attrType: item.specType,
+                attrValues: item.specVals,
+                datas: item.specVals
+              })
+            }
+          }
+        })
+      }
       // 循环商品图片
       this.goodsImgList.forEach(item => {
         if (item.imgUrl != '') {

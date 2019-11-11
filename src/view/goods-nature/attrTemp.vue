@@ -189,7 +189,7 @@ export default {
         {
           title: '属性类型',
           width: 100,
-          key: 'operateType'
+          key: 'specTypes'
         },
         {
           title: '权重',
@@ -243,6 +243,7 @@ export default {
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
           item.specValsStr = item.specVals.join('，')
+          item.specTypes = item.specType == 1 ? '基本' : '规格'
           // item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
       }
