@@ -8,44 +8,52 @@
       </Row>
     </Card>
     <Row class="margin-top-10" style="background:#fff;padding:30px;">
-      <div class="nav-top">
-        <span class="nav-top-item" @click="changeNav(0)" :class="vsShowNav == 0 ? 'nav-top-item-active' : ''">选择供应商</span>
-        <span class="nav-top-item" @click="changeNav(1)" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">编辑商品共有信息</span>
-        <span class="nav-top-item" @click="changeNav(2)" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">编辑商品属性信息</span>
-      </div>
+      <Row class="nav-top" type="flex" justify="center">
+        <Col span="8">
+          <span @click="changeNav(0)" class="nav-top-item" :class="vsShowNav == 0 ? 'nav-top-item-active' : ''">选择供应商</span>
+        </Col>
+        <Col span="8">
+          <span @click="changeNav(1)" class="nav-top-item" :class="vsShowNav == 1 ? 'nav-top-item-active' : ''">编辑商品共有信息</span>
+        </Col>
+        <Col span="8">
+          <span @click="changeNav(2)" class="nav-top-item" :class="vsShowNav == 2 ? 'nav-top-item-active' : ''">编辑商品属性信息</span>
+        </Col>
+      </Row>
       <div class="bank_table bank_content" style="position: relative;" v-show="vsShowNav == 0">
         <Row style="margin-top: 35px;">
-          <div class="tb-line">
-            <span class="name">供应商：</span>
-            <Select class="w422" v-model="supplierId" filterable allow-create @on-change="selClistBrand">
-                  <Option v-for="item in supplierListArr" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
+          <div class="tb-line tb-line-item">
+            <Row>
+              <Col span="3" class="name">供应商：</Col>
+              <Col span="21">
+                <Select class="" v-model="supplierId" filterable allow-create @on-change="selClistBrand">
+                      <Option v-for="item in supplierListArr" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                </Select>
+              </Col>
+            </Row>
           </div>
         </Row>
         <Row>
           <div class="tb-line btn">
-            <Button class="save-goods-info-btn" type="success" @click="navSave(1)">下一步，编辑商品共有信息</Button>
+            <Button class="save-goods-info-btn" type="primary" @click="navSave(1)">下一步，编辑商品共有信息</Button>
           </div>
         </Row>
       </div>
       <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 1">
-        <Row style="width: 738px;margin: 40px auto 0;">
-          <Row class="sub-left-item name"><span>*</span>商品类目：<span v-show="type !== 'edit'" class="goto-brand" @click="goPage(1)">没有相关类目？去创建类目</span></Row>
-          <Row style="margin-top: 30px;">
-            <Row style="margin-bottom: 35px;" v-show="type !== 'edit'">
+        <Row style="width: 800px;margin: 30px auto 0;">
+          <Row class="sub-left-item tb-line-item name"><span>*</span>商品类目：<span v-show="type !== 'edit'" class="goto-brand" @click="goPage(1)">没有相关类目？去创建类目</span></Row>
+          <Row class="tb-line-item">
+            <Row style="margin-bottom: 10px;" type="flex" justify="space-between" v-show="type !== 'edit'">
               <Col span="7">
                 <Select v-model="cur1" filterable allow-create @on-change="selClist1">
                   <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.name }}</Option>
                 </Select>
               </Col>
-              <Col span="1" style="width: 15px;height: 10px;">
               </Col>
               <Col span="7">
                 <Select v-model="cur2" filterable allow-create @on-change="selClist2">
                   <Option v-for="item in clist2" :value="item.id" :key="item.id">{{ item.name }}</Option>
                 </Select>
               </Col>
-              <Col span="1" style="width: 15px;height: 10px;">
               </Col>
               <Col span="7">
                 <Select v-model="cur3" filterable allow-create @on-change="selClist3">
@@ -53,16 +61,12 @@
                 </Select>
               </Col>
             </Row>
-            <Row style="margin-bottom: 35px;" v-show="type === 'edit'">
+            <Row style="margin-bottom: 10px;" type="flex" justify="space-between" v-show="type === 'edit'">
               <Col span="7">
                 <span class="selname">{{cname1}}</span>
               </Col>
-              <Col span="1" style="width: 15px;height: 10px;">
-              </Col>
               <Col span="7">
                 <span class="selname">{{cname2}}</span>
-              </Col>
-              <Col span="1" style="width: 15px;height: 10px;">
               </Col>
               <Col span="7">
                 <span class="selname">{{cname3}}</span>
@@ -71,73 +75,88 @@
           </Row>
         </Row>
         <Row class="">
-          <div class="tb-title">
-            <h5 class="name title-h5">商品基本信息</h5>
-          </div>
-          <div class="tb-line">
-            <span class="name"><span>*</span>商品标题：</span>
-            <Input class="w687" v-model="goodsTitle" placeholder="请输入商品标题" />
-          </div>
-          <div class="tb-line">
-            <span class="name">商品副标题：</span>
-            <Input class="w687" v-model="subTitle" placeholder="输入商品副标题"  />
-          </div>
-          <div class="tb-line">
-            <span class="name"><span>*</span>品牌：</span>
-            <Select class="w687" v-model="brandsId" filterable>
+          <Row class="tb-title tb-line-item">
+            <span class="name title-h5">商品基本信息</span>
+          </Row>
+          <Row class="tb-line tb-line-item">
+            <Col span="3" class="name"><span>*</span>商品标题：</Col>
+            <Col span="21"><Input v-model="goodsTitle" placeholder="请输入商品标题" /></Col>
+          </Row>
+          <Row class="tb-line tb-line-item">
+            <Col span="3" class="name">商品副标题：</Col>
+            <Col span="21"><Input class="" v-model="subTitle" placeholder="输入商品副标题"  /></Col>
+          </Row>
+          <Row class="tb-line tb-line-item">
+            <Col span="3" class="name"><span>*</span>品牌：</Col>
+            <Col span="21">
+              <Select v-model="brandsId" filterable>
                 <Option v-for="(item, index) in BrandsList" :value="item.id" :key="index">{{ item.name }}</Option>
-            </Select>
-          </div>
-          <div class="tb-line">
-            <span class="name"><span></span>是否新款：</span>
-            <Select v-model="newGoods" style="width: 286px" filterable>
-                <Option v-for="item in newGoodsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-            <span class="name"><span></span>是否爆款：</span>
-            <Select style="width: 286px" v-model="explosiveGoods" filterable>
-                <Option v-for="item in explosiveGoodsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-          </div>
-          <div class="tb-line photo-con photo-tips-box">
-            <span class="name"><span>*</span>商品图片：</span>
-            <ul class="photo-list">
-              <li class="photo-item" v-for="(item,index) in goodsImgList" :key="index">
-                <input type="file" class="img-ipt"
-                      ref="filezm1"
-                      @change="filezmFn($event, index)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <Spin fix class="loading-box" v-show="item.loading">
-                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
-                    <div>上传中</div>
-                </Spin>
-                <img :src="item.imgUrl" class="img-box1"
-                    id="ad21" v-show="item.imgShow">
-                <span v-show="item.imgShow" class="del-file" @click="delFile(index)">删除</span>
-              </li>
-            </ul>
-            <span class="photo-tips">【建议：图片上传尺寸为：800*800&nbsp;&nbsp; 宽高比例：1:1 &nbsp;&nbsp; 小于500K】</span>
+              </Select>
+            </Col>
+          </Row>
+          <Row class="tb-line tb-line-item">
+            <Col span="3" class="name"><span></span>是否新款：</Col>
+            <Col span="8">
+              <Select v-model="newGoods" filterable>
+                  <Option v-for="item in newGoodsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </Col>
+            <Col span="2" style="height: 10px;"></Col>
+            <Col span="3" class="name"><span></span>是否爆款：</Col>
+            <Col span="8">
+              <Select v-model="explosiveGoods" filterable>
+                  <Option v-for="item in explosiveGoodsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </Col>
+          </Row>
+          <div class="tb-line photo-con photo-tips-box" style="margin: 0 auto;">
+            <Row class=" tb-line-item name" style="margin: 0 auto 10px;">
+              <span>*</span>商品图片：
+              <span class="goto-brand">【建议：图片上传尺寸为：800*800&nbsp;宽高比例：1:1&nbsp;小于500K】</span>
+            </Row>
+            <Row class="tb-line-item" style="margin: 0 auto;">
+              <ul class="photo-list tb-line-item" >
+                <li class="photo-item" v-for="(item,index) in goodsImgList" :key="index">
+                  <input type="file" class="img-ipt"
+                        ref="filezm1"
+                        @change="filezmFn($event, index)"
+                        accept="image/*"
+                        capture="camera">
+                  <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
+                  <Spin fix class="loading-box" v-show="item.loading">
+                      <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                      <div>上传中</div>
+                  </Spin>
+                  <img :src="item.imgUrl" class="img-box1"
+                      id="ad21" v-show="item.imgShow">
+                  <span v-show="item.imgShow" class="del-file" @click="delFile(index)">删除</span>
+                </li>
+              </ul>
+            </Row>
           </div>
           <div class="tb-line tb-editor photo-tips-box">
-            <span class="name"><span>*</span>商品详情页：</span>
-            <div class="editor">
-              <v-editor @on-change="_getContext" :initContent='ctx'></v-editor>
-            </div>
-            <span class="photo-tips">【建议：图片上传尺寸为：宽度800以下，高度1200以下 &nbsp;&nbsp; 单张图片小于500K】</span>
+            <Row class="tb-line-item name" style="margin: 0 auto 10px;">
+              <span>*</span>商品详情页：
+              <span class="goto-brand">【建议：图片上传尺寸为：宽度800以下，高度1200以下&nbsp;单张图片小于500K】</span>
+            </Row>
+            <Row class="tb-line-item" style="margin: 0 auto;">
+              <div class="editor">
+                <v-editor @on-change="_getContext" :initContent='ctx'></v-editor>
+              </div>
+            </Row>
           </div>
         </Row>
         <Row>
           <div class="tb-line btn btn-goods">
-            <Button class="save-goods-info-btn" type="success" @click="navSave(2)">下一步，编辑商品属性信息</Button>
+            <Button class="save-goods-info-btn" type="primary" @click="navSave(2)">下一步，编辑商品属性信息</Button>
           </div>
         </Row>
       </div>
       <div class="bank_table bank_content" style="position:relative;" v-show="vsShowNav == 2">
         <Row class="">
-          <div class="tb-title">
+          <Row class="tb-title tb-line-item2">
             <h5 class="name">商品属性信息<span class="sub-name">（错误填写商品属性，可能会引起商品描述不正确，影响您的正常销售，请认真准确填写！）</span></h5>
-          </div>
+          </Row>
           <div class="tb-line tb-line2">
             <span class="name"><span>*</span>基本属性：</span>
             <!-- <Button class="add-attr-btn" type="success" @click="addFn">添加属性</Button> -->
@@ -219,10 +238,12 @@
               </div>
             </div>
           </div>
+           <Row class="tb-title tb-line-item2">
+            <h5 class="name">商品价格<span class="sub-name"> 【sku图片尺寸：180*180，宽高比例：1：1，小于200k】</span></h5>
+          </Row>
           <div class="tb-line tb-line3">
-              <h5 class="goods-info-title text-left">商品价格 <span class="title-span-tips">&nbsp;&nbsp;&nbsp;【sku图片尺寸：180*180，宽高比例：1：1，小于200k】</span></h5>
               <Row style="margin-bottom: 30px;">
-                <Col span="2" class="goods-info-left text-right">批量填充：</Col>
+                <Col span="2" class="goods-info-left">批量填充：</Col>
                 <Col span="22" class="goods-info-content text-left">
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.supply" placeholder="输入供货价"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.stock" placeholder="可售卖库存"  />
@@ -264,7 +285,7 @@
         </Row>
         <Row>
           <div class="tb-line btn btn-goods">
-            <Button class="save-goods-info-btn" type="success" @click="navSave(3)">保&nbsp;&nbsp;存</Button>
+            <Button class="save-goods-info-btn" type="primary" @click="navSave(3)">保&nbsp;&nbsp;存</Button>
           </div>
         </Row>
       </div>
@@ -301,14 +322,6 @@
 				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
 			</div>
-		</Modal>
-    <Modal
-				width="20"
-				v-model="delModal"
-				@on-ok=""
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除？</p>
 		</Modal>
   </div>
 </template>
@@ -433,7 +446,6 @@ export default {
       value3: '',
       modal1: false,
       operationShow: false,
-      delModal: false,
       checkedIds: [],
       checkedId: '',
       roleName: '',
@@ -671,10 +683,8 @@ export default {
       expandSpec1: [],
       expandSpec2: [],
       baseSpec: [],
-      delIndex: '',
       pageNum: 1,
       pageSize: 10,
-      delIndex: '',
       total: 0,
       loading: false, // 分割线
       uploadLoading: false,
@@ -884,6 +894,10 @@ export default {
         this.expandSpec1 = [...arr[0].specVals]
         this.expandSpec2 = []
         this.dataList = this.Descates
+      } else {
+        this.expandSpec1 = []
+        this.expandSpec2 = []
+        this.dataList = this.Descates
       }
       skusList.forEach((item, index) => {
         this.dataList[index].skuId = skusList[index].skuId
@@ -945,6 +959,10 @@ export default {
         this.dataList = this.Descates
       } else if (arr && arr.length == 1) {
         this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      } else {
+        this.expandSpec1 = []
         this.expandSpec2 = []
         this.dataList = this.Descates
       }
@@ -1904,11 +1922,6 @@ export default {
       this.checkedId = this.dataList[i].roleId
       this.roleDetail(this.dataList[i].roleId)
     },
-    remove (i) {
-      this.delModal = true
-      this.delIndex = i
-      console.log(this.delIndex)
-    },
     // 取消
     cancelModal1 () {
       this.modal1 = false
@@ -1977,15 +1990,16 @@ export default {
 .sub-left-item{
   display: inline-block;
   margin-right: 10px;
+  color: #333;
 }
 .tb-top-item{
   overflow: hidden;
   .top-name{
     float: left;
     line-height: 32px;
-    width: 86px;
-    line-height: 22px;
-    text-align: right;
+    width: 90px;
+    // line-height: 22px;
+    text-align: left;
   }
   .check-box{
     max-width: 560px;
@@ -2013,11 +2027,11 @@ export default {
   float: left;
 }
 .photo-con{
-  width: 800px;
+  // width: 800px;
   margin: 0 auto;
   overflow: hidden;
   .name{
-    float: left;
+    // float: left;
   }
 }
 .photo-list{
@@ -2025,7 +2039,7 @@ export default {
   .photo-item{
     display: inline-block;
     position: relative;
-    width: 122px;
+    width: 147px;
     height: 142px;
     box-sizing: border-box;
     border: 1px solid #e6e6e6;
@@ -2038,7 +2052,7 @@ export default {
       position: absolute;
       left: 0;
       top: 0;
-      width: 120px;
+      width: 146px;
       height: 140px;
       z-index: 2;
       background-color: #f20;
@@ -2047,9 +2061,10 @@ export default {
       position: absolute;
       left: 0;
       bottom: 0;
-      width: 120px;
+      width: 146px;
       height: 26px;
       line-height: 26px;
+      text-align: center;
       background: rgba(0,0,0,.4);
       color: #fff;
       cursor: pointer;
@@ -2059,7 +2074,7 @@ export default {
       position: absolute;
       left: 0;
       top: 0;
-      width: 120px;
+      width: 146px;
       height: 140px;
       z-index: 1;
       background-color: #f9f9f9;
@@ -2075,7 +2090,7 @@ export default {
       position: absolute;
       left: 0;
       top: 0;
-      width: 120px;
+      width: 146px;
       height: 140px;
       opacity: 0;
       z-index: 3;
@@ -2091,19 +2106,23 @@ export default {
     to   { transform: rotate(360deg);}
 }
 .nav-top{
+  width: 806px;
+  margin: 0 auto;
   text-align: center;
   .nav-top-item{
     display: inline-block;
+    width: 100%;
     font-size: 16px;
     color: rgb(102, 153, 204);
-    padding: 10px 34px;
+    height: 38px;
+    line-height: 38px;
     border: 1px solid #e6e6e6;
     cursor: pointer;
   }
   .nav-top-item-active{
-    background: #19be6b;
+    background: #2D8CF0;
     color: #fff;
-    border-color: #19be6b;
+    border-color: #2D8CF0;
   }
 }
 .goto-brand{
@@ -2111,7 +2130,7 @@ export default {
   font-style: normal;
   font-size: 14px;
   line-height: 35px;
-  color: #6699CC;
+  color: #CC3333;
   cursor: pointer;
 }
 .check-item{
@@ -2125,8 +2144,8 @@ export default {
 }
 .sub-left-item{
   font-style: normal;
-  font-size: 16px;
-  color: rgba(51, 51, 51, 0.8);
+  font-size: 14px;
+  color: #333;
 }
 .list-group{
   height: 200px;
@@ -2187,9 +2206,9 @@ export default {
     }
     .name{
       display: inline-block;
-      width: 100px;
-      text-align: right;
-      margin-right: 10px;
+      text-align: left;
+      height: 32px;
+      line-height: 32px;
       span{
         display: inline-block;
         margin-right: 4px;
@@ -2227,7 +2246,7 @@ export default {
       width: 86%;
     }
     .expand-attr{
-      margin-left: 110px;
+      margin-left: 70px;
       margin-top: 10px;
     }
     .name-left{
@@ -2275,16 +2294,37 @@ export default {
   .tb-title{
     h5{
       width: 100%;
-      margin: 0 auto;
       font-size: 14px;
       margin-bottom: 26px;
+      color: #333;
     }
     .title-h5{
-      width: 780px;
+      width: 604px;
+      padding-bottom: 6px;
+      display: inline-block;
     }
   }
   .tb-line.btn{
     margin-top: 200px;
+  }
+  .tb-line-item{
+    width: 804px;
+    margin: 0 auto 20px;
+    text-align: left;
+    .name{
+      text-align: left;
+    }
+  }
+  .tb-line-item2{
+    .name{
+      margin-top: 10px;
+      font-weight: 400;
+      font-size: 14px;
+      color: #333;
+      .sub-name{
+
+      }
+    }
   }
   .btn.btn-goods{
     margin-top: 50px;
@@ -2427,14 +2467,14 @@ export default {
 }
 .tb-editor{
   width: 800px;
-  margin: 0 auto 25px;
+  margin: 0 auto 20px;
   .name{
-    float: left;
+    // float: left;
   }
   .editor{
     float: left;
     text-align: left;
-    width: 680px;
+    width: 100%;
   }
 }
 .uploader{
@@ -2524,7 +2564,7 @@ export default {
 }
 .selname{
   display: inline-block;
-  width: 212px;
+  width: 100%;
   height: 32px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2534,9 +2574,11 @@ export default {
   border: 1px solid #e6e6e6;
 }
 .goods-info-left{
-  font-size: 14px;
+  font-size: 13px;
+  width: 71px;
   color: #666666;
   line-height: 32px;
+  text-align: left;
   height: 32px;
 }
 .text-left{

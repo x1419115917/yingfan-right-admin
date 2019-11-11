@@ -178,17 +178,15 @@ export default {
         },
         {
           title: '属性名称',
-          width: 240,
           key: 'specName'
         },
         {
           title: '属性值',
-          width: 240,
           key: 'specValsStr'
         },
         {
           title: '属性类型',
-          width: 100,
+          width: 110,
           key: 'specTypes'
         },
         {
