@@ -317,6 +317,7 @@ import { menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } f
 import { listBrandsPage, singleUpload, specList, saveSpec } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
 import { saveGoods, goodsDetail, updateGoods } from '@/api/goods'
+import { scrollTop } from '@/libs/util'
 // import editor from '@/components/editor'
 import editors from '@/components/editors/editor'
 import Cookies from 'js-cookie'
@@ -1314,7 +1315,6 @@ export default {
           item.checkVals = ''
           item.checkspeVals = []
         })
-        this.specListArr = this.specListArr
         this.specArrFor(this.specListArr)
       }
     },
@@ -1386,121 +1386,6 @@ export default {
       }
       console.log(this.goodsImgList)
     },
-    // 上传图片
-    // async filezmFn (e, val) {
-    //   let data = {}
-    //   let files = ''
-    //   let res = ''
-    //   // console.log(this.$refs.filezm1.files[0])
-    //   switch (val) {
-    //     case 1:
-    //       files = e.target.files[0]
-    //       this.goodsImgList[0].loading = true
-    //       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-    //         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-    //         e.target.value = ''
-    //         return
-    //       }
-    //       data = {
-    //         file: files,
-    //         tag: 0
-    //       }
-    //       res = await singleUpload(data)
-    //       if (res.data.code === 0) {
-    //         console.log(res)
-    //         this.goodsImgList[0].imgShow = true
-    //         this.goodsImgList[0].loading = false
-    //         this.goodsImgList[0].imgUrl = res.data.content
-    //         e.target.files[0].value = ''
-    //       }
-    //       break
-    //     case 2:
-    //       files = e.target.files[0]
-    //       this.goodsImgList[1].loading = true
-    //       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-    //         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-    //         e.target.value = ''
-    //         return
-    //       }
-    //       let data = {
-    //         file: files,
-    //         tag: 0
-    //       }
-    //       res = await singleUpload(data)
-    //       if (res.data.code === 0) {
-    //         console.log(res)
-    //         this.goodsImgList[1].imgShow = true
-    //         this.goodsImgList[1].loading = false
-    //         this.goodsImgList[1].imgUrl = res.data.content
-    //         e.target.value = ''
-    //       }
-    //       break
-    //     case 3:
-    //       files = e.target.files[0]
-    //       this.goodsImgList[2].loading = true
-    //       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-    //         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-    //         e.target.value = ''
-    //         return
-    //       }
-    //       data = {
-    //         file: files,
-    //         tag: 0
-    //       }
-    //       res = await singleUpload(data)
-    //       if (res.data.code === 0) {
-    //         console.log(res)
-    //         this.goodsImgList[2].imgShow = true
-    //         this.goodsImgList[2].loading = false
-    //         this.goodsImgList[2].imgUrl = res.data.content
-    //         e.target.value = ''
-    //       }
-    //       break
-    //     case 4:
-    //       files = e.target.files[0]
-    //       this.goodsImgList[3].loading = true
-    //       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-    //         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-    //         e.target.value = ''
-    //         return
-    //       }
-    //       data = {
-    //         file: files,
-    //         tag: 0
-    //       }
-    //       res = await singleUpload(data)
-    //       if (res.data.code === 0) {
-    //         console.log(res)
-    //         this.goodsImgList[3].imgShow = true
-    //         this.goodsImgList[3].loading = false
-    //         this.goodsImgList[3].imgUrl = res.data.content
-    //         e.target.value = ''
-    //       }
-    //       break
-    //     case 5:
-    //       files = e.target.files[0]
-    //       this.goodsImgList[4].loading = true
-    //       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-    //         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-    //         e.target.value = ''
-    //         return
-    //       }
-    //       data = {
-    //         file: files,
-    //         tag: 0
-    //       }
-    //       res = await singleUpload(data)
-    //       if (res.data.code === 0) {
-    //         console.log(res)
-    //         this.goodsImgList[4].imgShow = true
-    //         this.goodsImgList[4].loading = false
-    //         this.goodsImgList[4].imgUrl = res.data.content
-    //         e.target.value = ''
-    //       }
-    //       break
-    //   }
-    //   console.log(this.goodsImgList)
-    // },
     _getContext (ctx) {
       // console.log(ctx)
       this.ctx = ctx.html
@@ -1705,6 +1590,9 @@ export default {
       console.log(id)
     },
     changeNav (val) {
+      let imageUrl = this.goodsImgList.filter(item => {
+        return item.imgUrl != ''
+      })
       switch (val) {
         case 0:
           this.vsShowNav = 0
@@ -2029,22 +1917,13 @@ export default {
           this.modal1 = false
           break
       }
-    },
-    goBack () {
-      this.$router.go(-1)
-    }, // 分割线
-    initUpload () {
-      this.file = null
-      this.showProgress = false
-      this.loadingProgress = 0
-      this.tableData = []
-      this.tableTitle = []
     }
   },
   created () {
     // this.getcategList(0, '', 1)
   },
   mounted () {
+    // window.addEventListener('scroll', this.scrollToTop)
     let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
     this.getcategList(0, '', 1)
     this.getSupplierList()
@@ -2543,8 +2422,8 @@ export default {
   font-style: normal;
   font-size: 16px;
   color: #666666;
-  margin: 6px 10px 20px 10px;
-  padding-left: 12px;
+  margin: 6px 10px 20px 0px;
+  padding-left: 0px;
 }
 .goods-info-content{
   .goods-info-ipt{
