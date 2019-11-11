@@ -27,6 +27,9 @@
             <span v-if="row.transactionId">{{ row.transactionId }}</span>
             <span v-else>-</span>
           </template>
+          <template slot-scope="{ row, index }" slot="createTime">
+            {{ $moment(row.createTime).format("YYYY-MM-DD HH:mm:ss")}}
+          </template>
           <template slot-scope="{ row, index }" slot="status"><span>{{ returnStatus(row.status) }}</span></template>
           <template slot-scope="{ row, index }" slot="totalFee">
             <span v-if="row.totalFee">¥{{ row.totalFee }}</span>
@@ -78,7 +81,7 @@ export default {
         {
           title: '支付时间',
           align: 'center',
-          key: 'createTime'
+          slot: 'createTime'
         },
         {
           title: '交易金额（元）',
