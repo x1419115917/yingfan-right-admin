@@ -1434,6 +1434,7 @@ export default {
         this.goodsImgList[val].imgShow = true
         this.goodsImgList[val].loading = false
         this.goodsImgList[val].imgUrl = res.data.content
+        this.$refs.filezm1.value = ''
         e.target.files[0].value = ''
       }
       console.log(this.goodsImgList)
@@ -2040,7 +2041,7 @@ export default {
     display: inline-block;
     position: relative;
     width: 147px;
-    height: 142px;
+    height: 162px;
     box-sizing: border-box;
     border: 1px solid #e6e6e6;
     cursor: pointer;
@@ -2053,7 +2054,7 @@ export default {
       left: 0;
       top: 0;
       width: 146px;
-      height: 140px;
+      height: 160px;
       z-index: 2;
       background-color: #f20;
     }
@@ -2075,7 +2076,7 @@ export default {
       left: 0;
       top: 0;
       width: 146px;
-      height: 140px;
+      height: 160px;
       z-index: 1;
       background-color: #f9f9f9;
       .icon-add{
@@ -2190,7 +2191,7 @@ export default {
   }
 }
 .sub-name{
-  color: red;
+  color: #cc3333;
   font-size: 12px;
   font-weight: 400;
 }

@@ -218,12 +218,14 @@ export default {
       total: 0,
       rolelistArr: [],
       detailInfo: {},
+      expandSpecs: [],
       loading: false, // 分割线
       tableLoading: false
     }
   },
   methods: {
     async getPageList () {
+      this.expandSpecs = []
       this.tableLoading = true
       let data = {
         FLAG: 1,
@@ -242,6 +244,9 @@ export default {
         this.dataList.forEach((item) => {
           item.specValsStr = item.specVals.join('，')
           item.specTypes = item.specType == 1 ? '基本' : '规格'
+          if (item.specType == 0) {
+            this.expandSpecs.push(item)
+          }
           // item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
       }
@@ -476,6 +481,13 @@ export default {
             })
             return
           }
+          if (this.expandSpecs && this.expandSpecs.length >= 2) {
+            this.$Modal.warning({
+              title: '提示',
+              content: '规格属性不能多于两个'
+            })
+            return
+          }
           this.addSpec()
         }
       })
@@ -630,6 +642,7 @@ export default {
     cancelModal1 () {
       this.modal1 = false
       this.menuIds = []
+      this.attrListArr = []
       this.checkedId = ''
       this.formValidate = {
         name: '',
