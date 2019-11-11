@@ -101,80 +101,20 @@
           <div class="tb-line photo-con photo-tips-box">
             <span class="name"><span>*</span>商品图片：</span>
             <ul class="photo-list">
-              <li class="photo-item">
+              <li class="photo-item" v-for="(item,index) in goodsImgList" :key="index">
                 <input type="file" class="img-ipt"
                       ref="filezm1"
-                      @change="filezmFn($event, 1)"
+                      @change="filezmFn($event, index + 1)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <Spin fix class="loading-box" v-show="goodsImgList[0].loading">
+                <Spin fix class="loading-box" v-show="item.loading">
                     <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
                     <div>上传中</div>
                 </Spin>
-                <img :src="goodsImgList[0].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[0].imgShow">
-                <span v-show="goodsImgList[0].imgShow" class="del-file" @click="delFile(0)">删除</span>
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm2"
-                      @change="filezmFn($event, 2)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <Spin fix class="loading-box" v-show="goodsImgList[1].loading">
-                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
-                    <div>上传中</div>
-                </Spin>
-                <img :src="goodsImgList[1].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[1].imgShow">
-                <span v-show="goodsImgList[1].imgShow" class="del-file" @click="delFile(1)">删除</span>
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm3"
-                      @change="filezmFn($event, 3)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <Spin fix class="loading-box" v-show="goodsImgList[2].loading">
-                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
-                    <div>上传中</div>
-                </Spin>
-                <img :src="goodsImgList[2].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[2].imgShow">
-                <span v-show="goodsImgList[2].imgShow" class="del-file" @click="delFile(2)">删除</span>
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm4"
-                      @change="filezmFn($event, 4)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <Spin fix class="loading-box" v-show="goodsImgList[3].loading">
-                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
-                    <div>上传中</div>
-                </Spin>
-                <img :src="goodsImgList[3].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[3].imgShow">
-                <span v-show="goodsImgList[3].imgShow" class="del-file" @click="delFile(3)">删除</span>
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm5"
-                      @change="filezmFn($event, 5)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <Spin fix class="loading-box" v-show="goodsImgList[4].loading">
-                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
-                    <div>上传中</div>
-                </Spin>
-                <img :src="goodsImgList[4].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[4].imgShow">
-                <span v-show="goodsImgList[4].imgShow" class="del-file" @click="delFile(4)">删除</span>
+                <img :src="item.imgUrl" class="img-box1"
+                    id="ad21" v-show="item.imgShow">
+                <span v-show="item.imgShow" class="del-file" @click="delFile(index)">删除</span>
               </li>
             </ul>
             <span class="photo-tips">【建议：图片上传尺寸为：800*800&nbsp;&nbsp; 宽高比例：1:1 &nbsp;&nbsp; 小于500K】</span>
