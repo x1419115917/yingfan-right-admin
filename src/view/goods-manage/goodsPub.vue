@@ -198,7 +198,7 @@
             </div>
              <div class="base-attr expand-attr" v-show="expandSpec && expandSpec.length > 0">
               <div v-for="(item,index) in expandSpec" :key="index">
-                <div class="name-left w687" v-show="item.operateType == 3">
+                <div class="name-left w687">
                   <div class="tb-top-item">
                     <span class="top-name">{{item.specName}}：</span>
                     <div class="spce-right">
@@ -896,6 +896,7 @@ export default {
           this.baseSpec.push(item)
         }
       })
+      console.log('this.expandSpec++', this.expandSpec)
       if (this.expandSpec && this.expandSpec.length == 2) {
         this.expandSpec1 = [...this.expandSpec[0].specVals]
         this.expandSpec2 = [...this.expandSpec[1].specVals]
@@ -1343,6 +1344,7 @@ export default {
       this.goodsImgList[val].imgShow = false
       this.goodsImgList[val].loading = false
       this.goodsImgList[val].imgUrl = ''
+      this.$refs.filezm1.value = ''
       switch (val) {
         case 0:
           this.$refs.filezm1.value = ''
@@ -1949,6 +1951,9 @@ export default {
   .top-name{
     float: left;
     line-height: 32px;
+    width: 86px;
+    line-height: 22px;
+    text-align: right;
   }
   .check-box{
     max-width: 560px;

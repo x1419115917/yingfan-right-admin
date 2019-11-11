@@ -74,8 +74,8 @@
 				</FormItem>
         <FormItem label="状态:" prop="status">
 					<RadioGroup v-model="formValidate.status">
-            <Radio label="1">显示</Radio>
-            <Radio label="0">隐藏</Radio>
+            <Radio label="0">显示</Radio>
+            <Radio label="1">隐藏</Radio>
           </RadioGroup>
 				</FormItem>
         <div class="form-item" v-show="level == 3">
