@@ -74,8 +74,8 @@
 				</FormItem>
         <FormItem label="状态:" prop="status">
 					<RadioGroup v-model="formValidate.status">
-            <Radio label="1">显示</Radio>
-            <Radio label="0">隐藏</Radio>
+            <Radio label="0">显示</Radio>
+            <Radio label="1">隐藏</Radio>
           </RadioGroup>
 				</FormItem>
         <div class="form-item" v-show="level == 3">
@@ -858,11 +858,30 @@ export default {
   /deep/ .ivu-tree{
     padding-bottom: 15px;
     padding-left: 8px;
+    height: 550px;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
   /deep/ .ivu-tree ul li:first-child{
     margin-top: 0px;
     padding: 8px 0 0;
   }
+}
+/* 定义滚动条样式 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0px rgba(240, 240, 240, .5);
+    border-radius: 10px;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 0px rgba(240, 240, 240, .5);
 }
 .role-top{
   overflow: hidden;

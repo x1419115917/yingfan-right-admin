@@ -1,6 +1,3 @@
-<style lang="less">
-  @import "./common.less";
-</style>
 <template>
   <div>
     <Card :title="type == 'edit' ? '编辑供应商' : '新增供应商'">

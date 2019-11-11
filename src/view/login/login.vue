@@ -86,11 +86,12 @@ export default {
     },
     async userMemu () {
       let res = await userMemu()
-      this.menusList = []
       if (res.data.code === 0) {
         let menus = JSON.stringify(res.data.content.menus)
-        console.log('res.data.content.menus', res.data.content.menus)
+        this.menusList = []
         this.forGetTitle(res.data.content.menus)
+        // console.log('res.data.content.menus', this.menusList)
+        // return;
         sessionStorage.setItem('menus', JSON.stringify(this.menusList))
         this.getuserMenuInit()
         sessionStorage.setItem('isfirst', '1')
@@ -127,7 +128,7 @@ export default {
       arr.forEach(item => {
         this.menusList.push(
           {
-            icon: item.icon,
+            icon: item.attributes.icon,
             title: item.text,
             hideMenu: item.showMenu === 1 ? 0 : 1
           }

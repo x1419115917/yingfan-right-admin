@@ -101,55 +101,20 @@
           <div class="tb-line photo-con photo-tips-box">
             <span class="name"><span>*</span>商品图片：</span>
             <ul class="photo-list">
-              <li class="photo-item">
+              <li class="photo-item" v-for="(item,index) in goodsImgList" :key="index">
                 <input type="file" class="img-ipt"
                       ref="filezm1"
-                      @change="filezmFn(1)"
+                      @change="filezmFn($event, index)"
                       accept="image/*"
                       capture="camera">
                 <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="goodsImgList[0].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[0].imgShow">
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm2"
-                      @change="filezmFn(2)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="goodsImgList[1].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[1].imgShow">
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm3"
-                      @change="filezmFn(3)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="goodsImgList[2].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[2].imgShow">
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm4"
-                      @change="filezmFn(4)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="goodsImgList[3].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[3].imgShow">
-              </li>
-              <li class="photo-item">
-                <input type="file" class="img-ipt"
-                      ref="filezm5"
-                      @change="filezmFn(5)"
-                      accept="image/*"
-                      capture="camera">
-                <span class="bg-glay-add"><Icon class="icon-add" size="50" type="md-add" /></span>
-                <img :src="goodsImgList[4].imgUrl" class="img-box1"
-                    id="ad21" v-show="goodsImgList[4].imgShow">
+                <Spin fix class="loading-box" v-show="item.loading">
+                    <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                    <div>上传中</div>
+                </Spin>
+                <img :src="item.imgUrl" class="img-box1"
+                    id="ad21" v-show="item.imgShow">
+                <span v-show="item.imgShow" class="del-file" @click="delFile(index)">删除</span>
               </li>
             </ul>
             <span class="photo-tips">【建议：图片上传尺寸为：800*800&nbsp;&nbsp; 宽高比例：1:1 &nbsp;&nbsp; 小于500K】</span>
@@ -220,7 +185,7 @@
                     <div class="spce-right">
                       <span class="check-box to-ipt-show" v-show="!item.showEdit">{{item.specVals[0]}}</span>
                       <div class="edit-item">
-                        <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
+                        <Icon v-show="!item.showEdit && false" @click="editFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
                           <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
@@ -233,7 +198,7 @@
             </div>
              <div class="base-attr expand-attr" v-show="expandSpec && expandSpec.length > 0">
               <div v-for="(item,index) in expandSpec" :key="index">
-                <div class="name-left w687" v-show="item.operateType == 3">
+                <div class="name-left w687">
                   <div class="tb-top-item">
                     <span class="top-name">{{item.specName}}：</span>
                     <div class="spce-right">
@@ -260,10 +225,10 @@
                 <Col span="2" class="goods-info-left text-right">批量填充：</Col>
                 <Col span="22" class="goods-info-content text-left">
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.supply" placeholder="输入供货价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.retail" placeholder="输入零售价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
-                  <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="最低批发量"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.stock" placeholder="可售卖库存"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.retail" placeholder="输入零售价"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="最低批发量"  />
+                  <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
                   <span class="goods-info-ipt">
                     佣金比例: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
                   </span>
@@ -352,6 +317,7 @@ import { menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } f
 import { listBrandsPage, singleUpload, specList, saveSpec } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
 import { saveGoods, goodsDetail, updateGoods } from '@/api/goods'
+import { scrollTop } from '@/libs/util'
 // import editor from '@/components/editor'
 import editors from '@/components/editors/editor'
 import Cookies from 'js-cookie'
@@ -374,22 +340,27 @@ export default {
       goodsImgList: [
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         },
         {
           imgUrl: '',
+          loading: false,
           imgShow: false
         }
       ], // 商品图片列表
@@ -544,6 +515,7 @@ export default {
               },
               on: {
                 'on-change' (event) {
+                  console.log(event.target.value)
                   vm.dataList[params.index].supply = event.target.value
                 }
               }
@@ -601,23 +573,23 @@ export default {
             })
           }
         },
-        {
-          title: '积分兑换',
-          key: 'exchangePoints',
-          render: (h, params) => {
-            var vm = this
-            return h('Input', {
-              props: {
-                value: vm.dataList[params.index].exchangePoints
-              },
-              on: {
-                'on-change' (event) {
-                  vm.dataList[params.index].exchangePoints = event.target.value
-                }
-              }
-            })
-          }
-        },
+        // {
+        //   title: '积分兑换',
+        //   key: 'exchangePoints',
+        //   render: (h, params) => {
+        //     var vm = this
+        //     return h('Input', {
+        //       props: {
+        //         value: vm.dataList[params.index].exchangePoints
+        //       },
+        //       on: {
+        //         'on-change' (event) {
+        //           vm.dataList[params.index].exchangePoints = event.target.value
+        //         }
+        //       }
+        //     })
+        //   }
+        // },
         {
           title: '批发价(元)',
           key: 'trade',
@@ -716,6 +688,36 @@ export default {
     next(vm => {
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.$route.query.type === 'edit') {
+        vm.vsShowNav = 0
+        vm.goodsTitle = ''
+        vm.subTitle = ''
+        vm.goodsImgList = [
+          {
+            imgUrl: '',
+            loading: false,
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            loading: false,
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            loading: false,
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            loading: false,
+            imgShow: false
+          },
+          {
+            imgUrl: '',
+            loading: false,
+            imgShow: false
+          }
+        ]
         vm.type = vm.$route.query.type,
         vm.goodsId = vm.$route.query.id,
         console.log('vm.$route', vm.$route)
@@ -728,6 +730,7 @@ export default {
         vm.brandsId = ''
         vm.supplierId = ''
         vm.goodsTitle = ''
+        vm.subTitle = ''
         vm.clist2 = []
         vm.clist3 = []
         // vm.columnsList = [...vm.columnsListOriginal]
@@ -743,27 +746,33 @@ export default {
         vm.goodsImgList = [
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           },
           {
             imgUrl: '',
+            loading: false,
             imgShow: false
           }
         ]
         sessionStorage.removeItem('BrandLists')
         sessionStorage.removeItem('specListArr')
+        console.log('vm.ctx', vm.ctx)
       }
     })
   },
@@ -873,7 +882,7 @@ export default {
         this.dataList[index].trade = skusList[index].tradePrice
         this.dataList[index].brokerage = skusList[index].commissionRate
         this.dataList[index].integral = skusList[index].pointRate
-        this.dataList[index].exchangePoints = skusList[index].exchangePoints
+        // this.dataList[index].exchangePoints = skusList[index].exchangePoints
       })
       this.columnsList = [...this.columnsListUpdata]
     },
@@ -887,11 +896,24 @@ export default {
           this.baseSpec.push(item)
         }
       })
+      console.log('this.expandSpec++', this.expandSpec)
       if (this.expandSpec && this.expandSpec.length == 2) {
         this.expandSpec1 = [...this.expandSpec[0].specVals]
         this.expandSpec2 = [...this.expandSpec[1].specVals]
         this.dataList = this.Descates
       } else if (this.expandSpec && this.expandSpec.length == 1) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      }
+      this.columnsList = [...this.columnsListUpdata]
+    },
+    expandSpecForEach (arr) {
+      if (arr && arr.length == 2) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = [...this.expandSpec[1].specVals]
+        this.dataList = this.Descates
+      } else if (arr && arr.length == 1) {
         this.expandSpec1 = [...this.expandSpec[0].specVals]
         this.expandSpec2 = []
         this.dataList = this.Descates
@@ -911,7 +933,11 @@ export default {
     },
     // 批量填入
     saveGoodsObj () {
-      this.dataList.forEach(item => {
+      console.log(this.goodsObj)
+      let newDataList = []
+      newDataList = [...this.dataList]
+      this.dataList = []
+      newDataList.forEach(item => {
         item.stock = this.goodsObj.stock
         item.supply = this.goodsObj.supply
         item.retail = this.goodsObj.retail
@@ -920,6 +946,8 @@ export default {
         item.brokerage = this.goodsObj.brokerage
         item.integral = this.goodsObj.integral
       })
+      this.dataList = newDataList
+      console.log('this.dataList+-+-', this.dataList)
     },
     // 保存添加商品
     async saveGood () {
@@ -1013,7 +1041,7 @@ export default {
           skus.push({
             barcode: item.tcode,
             chooseSpec: '',
-            exchangePoints: item.exchangePoints,
+            exchangePoints: '0',
             commissionRate: item.brokerage,
             imageList: imgList,
             merchantCode: item.code,
@@ -1175,7 +1203,7 @@ export default {
           skuId: item.skuId || '',
           barcode: item.tcode,
           chooseSpec: '',
-          exchangePoints: item.exchangePoints,
+          exchangePoints: '0',
           commissionRate: item.brokerage,
           imageList: imgList,
           merchantCode: item.code,
@@ -1288,7 +1316,6 @@ export default {
           item.checkVals = ''
           item.checkspeVals = []
         })
-        this.specListArr = this.specListArr
         this.specArrFor(this.specListArr)
       }
     },
@@ -1313,108 +1340,51 @@ export default {
         e.target.value = ''
       }
     },
-    // 上传图片
-    async filezmFn (val) {
-      let data = {}
-      let files = ''
-      let res = ''
-      // console.log(this.$refs.filezm1.files[0])
+    delFile (val) {
+      this.goodsImgList[val].imgShow = false
+      this.goodsImgList[val].loading = false
+      this.goodsImgList[val].imgUrl = ''
+      this.$refs.filezm1.value = ''
       switch (val) {
+        case 0:
+          this.$refs.filezm1.value = ''
+          break
         case 1:
-          files = this.$refs.filezm1.files[0]
-          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm1.value = ''
-            return
-          }
-          data = {
-            file: files,
-            tag: 0
-          }
-          res = await singleUpload(data)
-          if (res.data.code === 0) {
-            console.log(res)
-            this.goodsImgList[0].imgShow = true
-            this.goodsImgList[0].imgUrl = res.data.content
-            this.$refs.filezm1.value = ''
-          }
+          this.$refs.filezm2.value = ''
           break
         case 2:
-          files = this.$refs.filezm2.files[0]
-          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm2.value = ''
-            return
-          }
-          let data = {
-            file: files,
-            tag: 0
-          }
-          res = await singleUpload(data)
-          if (res.data.code === 0) {
-            console.log(res)
-            this.goodsImgList[1].imgShow = true
-            this.goodsImgList[1].imgUrl = res.data.content
-            this.$refs.filezm2.value = ''
-          }
+          this.$refs.filezm3.value = ''
           break
         case 3:
-          files = this.$refs.filezm3.files[0]
-          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm3.value = ''
-            return
-          }
-          data = {
-            file: files,
-            tag: 0
-          }
-          res = await singleUpload(data)
-          if (res.data.code === 0) {
-            console.log(res)
-            this.goodsImgList[2].imgShow = true
-            this.goodsImgList[2].imgUrl = res.data.content
-            this.$refs.filezm3.value = ''
-          }
+          this.$refs.filezm4.value = ''
           break
         case 4:
-          files = this.$refs.filezm4.files[0]
-          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm4.value = ''
-            return
-          }
-          data = {
-            file: files,
-            tag: 0
-          }
-          res = await singleUpload(data)
-          if (res.data.code === 0) {
-            console.log(res)
-            this.goodsImgList[3].imgShow = true
-            this.goodsImgList[3].imgUrl = res.data.content
-            this.$refs.filezm4.value = ''
-          }
+          this.$refs.filezm5.value = ''
           break
-        case 5:
-          files = this.$refs.filezm5.files[0]
-          if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
-            this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
-            this.$refs.filezm5.value = ''
-            return
-          }
-          data = {
-            file: files,
-            tag: 0
-          }
-          res = await singleUpload(data)
-          if (res.data.code === 0) {
-            console.log(res)
-            this.goodsImgList[4].imgShow = true
-            this.goodsImgList[4].imgUrl = res.data.content
-            this.$refs.filezm5.value = ''
-          }
-          break
+      }
+    },
+    // 上传图片
+    async filezmFn (e, val) {
+      let data = {}
+      let files = e.target.files[0]
+      // console.log(this.$refs.filezm1.files[0])
+      this.goodsImgList[val].loading = true
+      if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+        this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+        e.target.value = ''
+        return
+      }
+      data = {
+        file: files,
+        tag: 0
+      }
+      let res = await singleUpload(data)
+      if (res.data.code === 0) {
+        console.log(res)
+        this.goodsImgList[val].imgShow = true
+        this.goodsImgList[val].loading = false
+        this.goodsImgList[val].imgUrl = res.data.content
+        e.target.files[0].value = ''
       }
       console.log(this.goodsImgList)
     },
@@ -1462,6 +1432,7 @@ export default {
         this.ctx = spuInfo.description
         imageList.forEach((item, index) => {
           this.goodsImgList[index].imgUrl = imageList[index]
+          this.goodsImgList[index].loading = false
           this.goodsImgList[index].imgShow = true
         })
         this.cur1 = spuInfo.cid1
@@ -1548,7 +1519,7 @@ export default {
       console.log('index3210', index)
       console.log('this.expandSpec-edit-edit2', this.expandSpec)
       if (this.type !== 'edit') {
-        this.specArrFor(this.expandSpec)
+        this.expandSpecForEach(this.expandSpec)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)
       }
@@ -1556,6 +1527,7 @@ export default {
     iptFocus (e, index, idx) {
       let obj = this.expandSpec[index]
       this.speaval = obj.specVals[idx]
+      this.baseSpec = this.baseSpec
     },
     iptChange (e, index, idx) {
       let obj = this.expandSpec[index]
@@ -1570,7 +1542,7 @@ export default {
       this.$set(this.expandSpec, index, obj)
       this.speaval = ''
       if (this.type !== 'edit') {
-        this.specArrFor(this.expandSpec)
+        this.expandSpecForEach(this.expandSpec)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)
       }
@@ -1620,6 +1592,9 @@ export default {
       console.log(id)
     },
     changeNav (val) {
+      let imageUrl = this.goodsImgList.filter(item => {
+        return item.imgUrl != ''
+      })
       switch (val) {
         case 0:
           this.vsShowNav = 0
@@ -1944,22 +1919,13 @@ export default {
           this.modal1 = false
           break
       }
-    },
-    goBack () {
-      this.$router.go(-1)
-    }, // 分割线
-    initUpload () {
-      this.file = null
-      this.showProgress = false
-      this.loadingProgress = 0
-      this.tableData = []
-      this.tableTitle = []
     }
   },
   created () {
     // this.getcategList(0, '', 1)
   },
   mounted () {
+    // window.addEventListener('scroll', this.scrollToTop)
     let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
     this.getcategList(0, '', 1)
     this.getSupplierList()
@@ -1985,6 +1951,9 @@ export default {
   .top-name{
     float: left;
     line-height: 32px;
+    width: 86px;
+    line-height: 22px;
+    text-align: right;
   }
   .check-box{
     max-width: 560px;
@@ -2042,6 +2011,18 @@ export default {
       z-index: 2;
       background-color: #f20;
     }
+    .del-file{
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 120px;
+      height: 26px;
+      line-height: 26px;
+      background: rgba(0,0,0,.4);
+      color: #fff;
+      cursor: pointer;
+      z-index: 4;
+    }
     .bg-glay-add{
       position: absolute;
       left: 0;
@@ -2068,6 +2049,14 @@ export default {
       z-index: 3;
     }
   }
+}
+.demo-spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+    from { transform: rotate(0deg);}
+    50%  { transform: rotate(180deg);}
+    to   { transform: rotate(360deg);}
 }
 .nav-top{
   text-align: center;
@@ -2438,8 +2427,8 @@ export default {
   font-style: normal;
   font-size: 16px;
   color: #666666;
-  margin: 6px 10px 20px 10px;
-  padding-left: 12px;
+  margin: 6px 10px 20px 0px;
+  padding-left: 0px;
 }
 .goods-info-content{
   .goods-info-ipt{
@@ -2532,5 +2521,8 @@ export default {
 }
 .w100{
   width: 100px;
+}
+/deep/ .ivu-card-body,.ivu-card-body{
+  display: none;
 }
 </style>

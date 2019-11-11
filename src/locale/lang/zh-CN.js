@@ -4,7 +4,7 @@ export default {
   dict: '基础管理',
   common: '数字字典管理',
   user: '用户管理',
-  sys: '系统配置',
+  sys: '系统管理',
   role: '角色管理',
   menu: '系统菜单',
   dept: '部门管理',

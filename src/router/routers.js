@@ -201,7 +201,7 @@ export const appRouter = [
     path: '/sys',
     name: 'sys',
     meta: {
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '系统管理',
       hideInMenu: true
     },
@@ -262,7 +262,7 @@ export const appRouter = [
     path: '/goodsManage',
     name: 'goodsManage',
     meta: {
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '商品管理',
       hideInMenu: true
     },
@@ -294,7 +294,7 @@ export const appRouter = [
     path: '/goodsNature',
     name: 'goodsNature',
     meta: {
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '商品属性管理',
       hideInMenu: true
     },
@@ -337,7 +337,7 @@ export const appRouter = [
     name: 'homeManage',
     meta: {
       hideInMenu: true,
-      icon: 'ios-stats',
+      icon: 'ios-menu',
       title: '首页'
     },
     component: Main,
@@ -347,7 +347,7 @@ export const appRouter = [
         name: 'bannerList',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: '',
           title: '首页banner'
         },
         component: () => import('@/view/home-manage/bannerList.vue')
@@ -357,141 +357,11 @@ export const appRouter = [
         name: 'iconList',
         meta: {
           hideInMenu: true,
-          icon: 'ios-stats',
+          icon: '',
           title: '首页图标配置'
         },
         component: () => import('@/view/home-manage/iconList.vue')
-      }
-    ]
-  },
-  {
-    path: '/member',
-    name: 'member',
-    meta: {
-      hideInMenu: true,
-      icon: 'ios-stats',
-      title: '会员管理'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'memberList',
-        name: 'memberList',
-        meta: {
-          hideInMenu: true,
-          icon: 'ios-stats',
-          title: '会员列表'
-        },
-        component: () => import('@/view/member/memberList.vue')
       },
-      {
-        path: 'memberDetail',
-        name: 'memberDetail',
-        meta: {
-          hideInMenu: true,
-          icon: 'ios-stats',
-          title: '会员详情'
-        },
-        component: () => import('@/view/member/memberDetail.vue')
-      }
-    ]
-  },
-  {
-    path: '/orderManage',
-    name: 'orderManage',
-    meta: {
-      hideInMenu: true,
-      icon: 'ios-stats',
-      title: '订单管理'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'orderList',
-        name: 'orderList',
-        meta: {
-          hideInMenu: true,
-          icon: 'ios-stats',
-          title: '商城订单'
-        },
-        component: () => import('@/view/order-manage/orderList.vue')
-      },
-      {
-        path: 'afterSaleOrder',
-        name: 'afterSaleOrder',
-        meta: {
-          hideInMenu: true,
-          icon: 'ios-stats',
-          title: '售后订单'
-        },
-        component: () => import('@/view/order-manage/afterSaleOrder.vue')
-      }
-    ]
-  },
-  {
-    path: '/financeManage',
-    name: 'financeManage',
-    meta: {
-      hideInMenu: true,
-      icon: 'ios-stats',
-      title: '财务管理'
-    },
-    component: Main,
-    children: [
-      {
-        name: 'payList',
-        path: 'payList',
-        meta: {
-          hideInMenu: true,
-          icon: 'ios-stats',
-          title: '交易流水'
-        },
-        component: () => import('@/view/finance-manage/payList.vue')
-      }
-    ]
-  },
-  {
-    path: '/supplierManager',
-    name: 'supplierManager',
-    meta: {
-      icon: 'ios-stats',
-      title: '供应商',
-      hideInMenu: true
-    },
-    component: Main,
-    children: [
-      {
-        path: 'supplier',
-        name: 'supplier',
-        meta: {
-          icon: 'ios-stats',
-          title: '供应商管理',
-          hideInMenu: true
-        },
-        component: () => import('@/view/supplier/supplier.vue')
-      },
-      {
-        path: 'addsupr',
-        name: 'addsupr',
-        meta: {
-          icon: '',
-          title: '供应商添加',
-          hideInMenu: true
-        },
-        component: () => import('@/view/supplier/add-supplier.vue')
-      }
-    ]
-  },
-  {
-    path: '/thematicManager',
-    name: 'thematicManager',
-    meta: {
-      icon: 'ios-stats',
-      title: '专题管理',
-      hideInMenu: true
-    },
-    component: Main,
-    children: [
       {
         path: 'thematicList',
         name: 'thematicList',
@@ -514,6 +384,156 @@ export const appRouter = [
       }
     ]
   },
+  {
+    path: '/member',
+    name: 'member',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-menu',
+      title: '会员管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'memberList',
+        name: 'memberList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-menu',
+          title: '会员列表'
+        },
+        component: () => import('@/view/member/memberList.vue')
+      },
+      {
+        path: 'memberDetail',
+        name: 'memberDetail',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-menu',
+          title: '会员详情'
+        },
+        component: () => import('@/view/member/memberDetail.vue')
+      }
+    ]
+  },
+  {
+    path: '/orderManage',
+    name: 'orderManage',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-menu',
+      title: '订单管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'orderList',
+        name: 'orderList',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '商城订单'
+        },
+        component: () => import('@/view/order-manage/orderList.vue')
+      },
+      {
+        path: 'afterSaleOrder',
+        name: 'afterSaleOrder',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '售后订单'
+        },
+        component: () => import('@/view/order-manage/afterSaleOrder.vue')
+      }
+    ]
+  },
+  {
+    path: '/financeManage',
+    name: 'financeManage',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-menu',
+      title: '财务管理'
+    },
+    component: Main,
+    children: [
+      {
+        name: 'payList',
+        path: 'payList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-menu',
+          title: '交易流水'
+        },
+        component: () => import('@/view/finance-manage/payList.vue')
+      }
+    ]
+  },
+  {
+    path: '/supplierManager',
+    name: 'supplierManager',
+    meta: {
+      icon: 'ios-menu',
+      title: '供应商',
+      hideInMenu: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'supplier',
+        name: 'supplier',
+        meta: {
+          icon: 'ios-menu',
+          title: '供应商管理',
+          hideInMenu: true
+        },
+        component: () => import('@/view/supplier/supplier.vue')
+      },
+      {
+        path: 'addsupr',
+        name: 'addsupr',
+        meta: {
+          icon: '',
+          title: '供应商添加',
+          hideInMenu: true
+        },
+        component: () => import('@/view/supplier/add-supplier.vue')
+      }
+    ]
+  },
+  // {
+  //   path: '/thematicManager',
+  //   name: 'thematicManager',
+  //   meta: {
+  //     icon: 'ios-menu',
+  //     title: '专题管理',
+  //     hideInMenu: true
+  //   },
+  //   component: Main,
+  //   children: [
+  //     {
+  //       path: 'thematicList',
+  //       name: 'thematicList',
+  //       meta: {
+  //         icon: '',
+  //         title: '专题活动列表',
+  //         hideInMenu: true
+  //       },
+  //       component: () => import('@/view/thematic-activities/thematicList.vue')
+  //     },
+  //     {
+  //       path: 'thematicPub',
+  //       name: 'thematicPub',
+  //       meta: {
+  //         icon: '',
+  //         title: '专题活动发布',
+  //         hideInMenu: true
+  //       },
+  //       component: () => import('@/view/thematic-activities/thematicPub.vue')
+  //     }
+  //   ]
+  // },
   {
     path: '/multilevel',
     name: 'multilevel',

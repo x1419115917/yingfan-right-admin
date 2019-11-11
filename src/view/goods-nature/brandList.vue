@@ -249,6 +249,7 @@ export default {
       this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res.data.content)
+        this.total = +res.data.content.total
         this.dataList = res.data.content.rows
       }
     },
@@ -485,6 +486,8 @@ export default {
     },
     addFn () {
       this.modal1 = true
+      this.imgShow1 = false
+      this.imgUrl = ''
       this.operationShow = false
       this.formValidate = {
         roleName: '',

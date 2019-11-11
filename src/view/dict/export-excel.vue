@@ -55,6 +55,8 @@ export default {
   },
   methods: {
     exportExcel () {
+      this.$Message.warning('该功能暂无开放')
+      return
       if (this.tableData.length) {
         this.exportLoading = true
         const params = {
