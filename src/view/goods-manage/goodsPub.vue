@@ -843,7 +843,21 @@ export default {
           )
         }
         return result
-      } else {
+      } else if (arr1.length === 0 && arr2.length === 0) {
+        result.push(
+          {
+            imageUrl: '',
+            imageShow: false,
+            code: '',
+            tcode: '',
+            stock: '',
+            retail: '',
+            wholesale: '',
+            trade: '',
+            brokerage: '',
+            integral: ''
+          }
+        )
         return result
       }
     }
@@ -889,6 +903,16 @@ export default {
       this.columnsList = [...this.columnsListUpdata]
     },
     specArrFor (arr) {
+      this.columnsList = []
+      if (arr && arr.length === 0) {
+        this.baseSpec = []
+        this.expandSpec = []
+        this.columnsList = [...this.columnsListUpdata]
+        this.expandSpec1 = []
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+        return
+      }
       this.baseSpec = []
       this.expandSpec = []
       arr.forEach(item => {
@@ -905,6 +929,10 @@ export default {
         this.dataList = this.Descates
       } else if (this.expandSpec && this.expandSpec.length == 1) {
         this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      } else {
+        this.expandSpec1 = []
         this.expandSpec2 = []
         this.dataList = this.Descates
       }
