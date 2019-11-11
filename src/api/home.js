@@ -16,7 +16,7 @@ export const doActiveList = data => {
     method: 'post'
   })
 }
-// 查询首页banner详细信息
+// 查询首页板块详情
 export const doBannerDetail = data => {
   return axios.request({
     url: '/homePge/operation/detail',

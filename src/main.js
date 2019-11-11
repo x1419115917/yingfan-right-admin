@@ -28,6 +28,11 @@ Vue.prototype.$format = ForMat
 /* eslint-disable */
 // if (process.env.NODE_ENV !== 'production') require('@/mock')
 
+//时间格式插件
+import moment from "vue-moment"
+Vue.use(moment);
+Vue.prototype.$Moment = moment;
+
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
