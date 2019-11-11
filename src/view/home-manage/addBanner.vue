@@ -60,8 +60,8 @@
           </RadioGroup>
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="handleSubmit('form')">保存</Button>
-          <Button @click="returnBanner" style="margin-left: 8px">返回</Button>
+          <Button size="large" type="primary" @click="handleSubmit('form')">保存</Button>
+          <Button size="large" @click="returnBanner" style="margin-left: 8px">返回</Button>
         </FormItem>
     </Form>
   </div>

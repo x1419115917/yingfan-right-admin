@@ -78,33 +78,44 @@
     <Row class="logistics">
       <Col span="12">
         <span>国内配送公司</span>
-        <Input v-model="form.company" :style="{ width: inpWidth}" placeholder="请输入物流公司" clearable disabled />
+        <Select :style="{ width: inpWidth}" clearable v-model="form.expressCode" placeholder="请输入物流公司" clearable :disabled="disabled">
+          <Option v-for="item in logisticsCompanyOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
       </Col>
       </Col>
       <Col span="12">
         <span>运单号</span>
-        <Input v-model="form.number" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable disabled />
+        <Input v-model="form.expressNumber" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable :disabled="disabled" />
       </Col>
     </Row>
     <div class="mark">
-      <Input v-model="form.markMsg" placeholder="请输入备注" disabled>
+      <Input v-model="markMsg" placeholder="请输入备注" :disabled="disabled">
         <span slot="prepend">客服备注</span>
       </Input>
+    </div>
+    <div class="btnGroup">
+      <template v-if="orderDetail.orderStatus === 1"><Button size="large" type="primary" @click="deliveryGood">发货</Button></template>
+      <template v-else><Button size="large" type="primary" @click="close">确定</Button></template>
+      <Button size="large" @click="close">取消</Button>
     </div>
   </div>
 </template>
 <script>
-import { doOrderDetail } from '@/api/order'
+import { doOrderDetail, doDeliveryGood } from '@/api/order'
+import { logisticsCompany } from './orderList.js'
 export default {
   name: 'orderDetail',
   data () {
     return {
+      disabled: false,
       inpWidth: '162px',
+      orderDetailId: null,
+      markMsg: null,
       orderDetail: {}, // 订单详情
       form: {
-        company: null, // 物流公司
-        number: null, // 运单号
-        markMsg: null // 客服备注
+        FLAG: 1,
+        expressCode: null, // 物流公司
+        expressNumber: null // 运单号
       },
       columns: [
         {
@@ -150,27 +161,58 @@ export default {
         case 0 : return '待付款'
         case 1 : return '待发货'
         case 2 : return '已发货'
-        case 3 : return ''
+        case 3 : return '已收货'
         case 4 : return '交易关闭'
+        case 5 : return '退款'
       }
+    },
+    // 发货
+    async deliveryGood () {
+      let data = Object.assign(this.form, { orderId: this.orderDetailId })
+      let res = await doDeliveryGood(data)
+      if (res.data.code === 0) {
+        this.$Message.success('操作成功！')
+        this.$emit('close')
+      }
+      console.log('发货参数' + JSON.stringify(data))
+    },
+    close () {
+      this.$emit('close')
     },
     async getOrderDetail () {
       let orderId = {
         FLAG: 1,
-        orderId: this.orderId
+        orderId: this.orderDetailId
       }
       let res = await doOrderDetail(orderId)
       if (res.data.code === 0) {
         this.orderDetail = res.data.content
         this.goodsList = res.data.content.suborderSkuItemList
+        if (this.orderDetail.orderStatus !== 0 || this.orderDetail.orderStatus !== 1) { // 已发货-显示物流公司信息等
+          this.form.expressCode = this.orderDetail.expressCode
+          this.form.expressNumber = this.orderDetail.expressNumber
+          this.disabled = true
+        } else {
+          this.form.expressCode = ''
+          this.form.expressNumber = ''
+          this.disabled = false
+        }
       }
+    }
+  },
+  computed: {
+    logisticsCompanyOpts () {
+      return logisticsCompany()
     }
   },
   watch: {
     orderId (val) {
-      this.orderId = val
+      this.orderDetailId = val
       this.getOrderDetail()
     }
+  },
+  created () {
+    this.orderDetailId = this.orderId
   }
 }
 </script>
@@ -200,6 +242,13 @@ export default {
     padding: 5px 0;
     font-weight: 600;
     font-size: 14px;
+  }
+  .btnGroup{
+    margin-top: 16px;
+    text-align: right;
+    button:nth-child(2){
+      margin-left: 16px;
+    }
   }
 }
 </style>

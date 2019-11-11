@@ -51,7 +51,7 @@
           <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
           <!--待发货-->
           <template v-if="row.orderStatus === 0">
-            <Button type="primary" size="small" style="margin-right: 5px" @click="handle">处理</Button>
+            <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">处理</Button>
           </template>
         </template>
       </Table>
@@ -64,7 +64,7 @@
         show-sizer
         @on-page-size-change="changePageSize"
         @on-change="pageChange"/>
-      <Modal v-model="modal" width="800">
+      <Modal v-model="modal" width="1000" class="afterOrderDetailModal">
         <after-order-detail :orderId="orderId"></after-order-detail>
       </Modal>
     </div>
@@ -176,10 +176,6 @@ export default {
     selectDate () {
       this.form.startTime = new Date(this.date[0]).valueOf()
       this.form.endTime = new Date(this.date[1]).valueOf()
-    },
-    // 发货
-    handle () {
-      this.$Message.warning('该功能暂未开放')
     },
     // 查询订单
     search () {

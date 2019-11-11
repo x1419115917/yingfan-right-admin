@@ -85,3 +85,36 @@ export function afterSale () {
     }
   ]
 }
+/* 物流公司 */
+export function logisticsCompany () {
+  return [
+    {
+      value: 'debangwuliu',
+      label: '德邦'
+    },
+    {
+      value: 'ems',
+      label: 'ems'
+    },
+    {
+      value: 'shentong',
+      label: '申通'
+    },
+    {
+      value: 'shunfeng',
+      label: '顺丰'
+    },
+    {
+      value: 'yuantong',
+      label: '圆通'
+    },
+    {
+      value: 'yunda',
+      label: '韵达'
+    },
+    {
+      value: 'zhongtong',
+      label: '中通'
+    }
+  ]
+}

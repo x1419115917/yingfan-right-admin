@@ -17,6 +17,14 @@ export const doOrderDetail = data => {
     method: 'post'
   })
 }
+// 发货
+export const doDeliveryGood = data => {
+  return axios.request({
+    url: '/order/operation/orderDelivered',
+    data,
+    method: 'post'
+  })
+}
 // 售后订单列表
 export const doAfterSaleOrderList = data => {
   return axios.request({
@@ -34,7 +42,7 @@ export const doAfterSaleOrderDetail = data => {
   })
 }
 // 修改售后订单状态
-export const doAfterSaleOrderStatus = data => {
+export const doSaledOrderStatus = data => {
   return axios.request({
     url: '/refund/operation/updateRefundStatus',
     data,

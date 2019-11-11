@@ -4,12 +4,12 @@
     <Card title="交易流水">
       <Row>
         <Col span="6">
-          <span>交易流水号</span>
-          <Input v-model="form.num" :style="{ width: inpWidth}" placeholder="请输入" clearable />
+          <span>订单号</span>
+          <Input v-model="form.orderId" :style="{ width: inpWidth}" placeholder="请输入订单号" clearable />
         </Col>
         <Col span="6">
-          <span>订单状态</span>
-          <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
+          <span>支付状态</span>
+          <Select v-model="form.status" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in orderStatusOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </Col>
@@ -23,19 +23,14 @@
     </Card>
     <div class="wrap">
       <Table :columns="columns" border :data="dataList" stripe>
-          <template slot-scope="{ row, index }" slot="payAmt"><span>¥{{ row.payAmt }}</span></template>
-          <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
-          <template slot-scope="{ row, index }" slot="action">
-            <!--待发货-->
-            <template v-if="row.orderStatus === 1">
-              <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
-              <Button type="primary" size="small" style="margin-right: 5px" @click="deliverGood">发货</Button>
-              <Button type="primary" size="small" @click="mark(index)">客服备注</Button>
-            </template>
-            <template v-else-if="row.orderStatus !== 1">
-              <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
-              <Button type="primary" size="small" @click="mark(index)">客服备注</Button>
-            </template>
+          <template slot-scope="{ row, index }" slot="transactionId">
+            <span v-if="row.transactionId">{{ row.transactionId }}</span>
+            <span v-else>-</span>
+          </template>
+          <template slot-scope="{ row, index }" slot="status"><span>{{ returnStatus(row.status) }}</span></template>
+          <template slot-scope="{ row, index }" slot="totalFee">
+            <span v-if="row.totalFee">¥{{ row.totalFee }}</span>
+            <span v-else>-</span>
           </template>
         </Table>
         <Page
@@ -51,6 +46,7 @@
   </div>
 </template>
 <script>
+import { doPayList } from '@/api/finance'
 import { orderStatus } from './financeManage'
 export default {
   name: 'payList',
@@ -62,19 +58,21 @@ export default {
       pageTotal: null,
       dataList: [], // 订单列表
       form: {
-        num: null,
-        orderStatus: null,
+        FLAG: 1,
+        orderId: null,
+        status: null,
         pageIndex: 1,
         pageSize: 10
       },
       columns: [
         {
           title: '交易流水号',
-          key: 'totalOrderId',
+          slot: 'transactionId',
           align: 'center'
         },
         {
           title: '订单号',
+          key: 'orderId',
           align: 'center'
         },
         {
@@ -84,24 +82,47 @@ export default {
         },
         {
           title: '交易金额（元）',
+          slot: 'totalFee',
           align: 'center'
         },
         {
           title: '交易状态',
+          slot: 'status',
           align: 'center'
         }
       ]
     }
   },
   methods: {
+    returnStatus (item) {
+      switch (item) {
+        case 0 : return '待支付'
+        case 1 : return '已支付'
+      }
+    },
     // 查询订单
     search () {
+      this.getPayList()
     },
     changePageSize (value) {
+      this.form.pageSize = value
+      this.getPayList()
     },
     pageChange (value) {
+      this.form.pageIndex = value
+      this.getPayList()
     },
-    download () {}
+    download () {},
+    async getPayList () {
+      let data = this.form
+      let res = await doPayList(data)
+      if (res.data.code === 0) {
+        this.dataList = res.data.content.rows
+        this.pageTotal = res.data.content.total
+      } else {
+        this.dataList.length = []
+      }
+    }
   },
   computed: {
     orderStatusOpts () {
@@ -109,6 +130,7 @@ export default {
     }
   },
   created () {
+    this.getPayList()
   }
 }
 </script>

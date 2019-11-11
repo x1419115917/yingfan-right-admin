@@ -1,7 +1,7 @@
 <!--订单管理-售后订单详情-->
 <template>
   <div class="afterSaleOrderDetail">
-    <div class="title">订单信息</div>
+    <div class="title">售后信息</div>
     <Row class="wrap">
       <Col :span="12">
         <Row>
@@ -50,41 +50,56 @@
       <template slot-scope="{ row }" slot="retailPrice">
         <span>¥{{ row.retailPrice }}</span>
       </template>
+      <template slot-scope="{ row }" slot="tradePrice">
+        <span>¥{{ row.tradePrice }}</span>
+      </template>
       <template slot-scope="{ row }" slot="money">
         <span>¥{{ row.num*row.retailPrice }}</span>
       </template>
     </Table>
-    <div class="title">物流信息</div>
-    <Row class="logistics">
-      <Col span="12">
-        <span>国内配送公司</span>
-        <Input v-model="form.company" :style="{ width: inpWidth}" placeholder="请输入物流公司" clearable disabled />
-      </Col>
-      </Col>
-      <Col span="12">
-        <span>运单号</span>
-        <Input v-model="form.number" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable disabled />
-      </Col>
-    </Row>
-    <div class="mark">
-      <Input v-model="form.markMsg" placeholder="请输入备注" disabled>
-        <span slot="prepend">客服备注</span>
-      </Input>
+    <div class="btn" v-if="orderDetail.orderStatus === 0">
+      <Button type="primary" size="large" @click="handle(2)">关闭退款</Button>
+      <Button type="success" size="large" @click="handle(1)">同意退款</Button>
+      <Button type="error" size="large" @click="handle(3)">拒绝退款</Button>
     </div>
+    <Modal
+      v-model="modal"
+      title="处理退款"
+      :ok-text="okText"
+      @on-ok="ok">
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <FormItem label="售后类型">-</FormItem>
+        <template v-if="editType === 3">
+          <FormItem label="退款方式">-</FormItem>
+        </template>
+        <FormItem label="退款金额"><span style="color: red;">¥{{ orderDetail.refundAmt }}</span></FormItem>
+        <template v-if="editType !== 1">
+          <FormItem label="原因" prop="auditConclusion">
+            <Input v-model="formValidate.auditConclusion" placeholder="请填写原因"></Input>
+          </FormItem>
+        </template>
+      </Form>
+    </Modal>
   </div>
 </template>
 <script>
-import { doAfterSaleOrderDetail } from '@/api/order'
+import { doAfterSaleOrderDetail, doSaledOrderStatus } from '@/api/order'
 export default {
   name: 'afterSaleOrderDetail',
   data () {
     return {
+      editType: '',
+      okText: '',
       inpWidth: '162px',
+      modal: false,
       orderDetail: {}, // 订单详情
-      form: {
-        company: null, // 物流公司
-        number: null, // 运单号
-        markMsg: null // 客服备注
+      formValidate: {
+        auditConclusion: ''
+      },
+      ruleValidate: {
+        auditConclusion: [
+          { required: true, message: '请填写原因', trigger: ['blur', 'change'] }
+        ]
       },
       columns: [
         {
@@ -107,11 +122,19 @@ export default {
           key: 'title'
         },
         {
-          title: '单价',
+          title: '零售价',
           slot: 'retailPrice'
         },
         {
-          title: '数量',
+          title: '批发价',
+          slot: 'tradePrice'
+        },
+        {
+          title: '最低批发量',
+          key: 'minWholesaleVolume'
+        },
+        {
+          title: '购买量',
           key: 'num'
         },
         {
@@ -124,6 +147,36 @@ export default {
   },
   props: ['orderId'],
   methods: {
+    handle (type) {
+      switch (type) {
+        case 1: this.okText = '同意退款'
+          break
+        case 2: this.okText = '关闭退款'
+          break
+        case 3: this.okText = '拒绝退款'
+          break
+      }
+      this.editType = type
+      this.modal = true
+    },
+    async ok () {
+      let obj = {
+        FLAG: 1,
+        orderStatus: this.editType,
+        auditConclusion: this.formValidate.auditConclusion,
+        subOrderId: this.orderId
+      }
+      console.log(JSON.stringify(obj))
+      // if(this.formValidate.auditConclusion === ''){
+      //   this.$Message.error('原因不能为空!')
+      //   return false
+      // } else {
+      let res = await doSaledOrderStatus(obj)
+      if (res.data.code === 0) {
+
+      }
+      // }
+    },
     returnAfterStatus (item) {
       switch (item) {
         case 0 : return '退款中'
@@ -175,8 +228,12 @@ export default {
 </script>
 <style lang="less" scoped>
 .afterSaleOrderDetail {
-  .mark {
+  .btn {
     margin-top: 16px;
+    text-align: center;
+    button:nth-child(2) {
+      margin: 0 16px;
+    }
   }
   .logistics {
     span {
