@@ -43,7 +43,7 @@
             <template slot-scope="{ row, index }" slot="action">
               <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
                 <i></i>
-                <span>详情</span>
+                <span v-has="'sys:memberBonusScore:query'">详情</span>
               </Button>
             </template>
           </Table>
@@ -68,6 +68,7 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { listUsersPage } from '@/api/base'
 export default {
   name: 'memberList',
@@ -127,7 +128,6 @@ export default {
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
-      delIndex: '',
       total: 0,
       tableLoading: false
     }
