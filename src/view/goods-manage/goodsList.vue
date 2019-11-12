@@ -36,7 +36,7 @@
             </div>
             <div class="td-line">
               <span class="name">供应商</span>
-              <Select class="w162 max-height" v-model="supplierID" filterable>
+              <Select class="w162 max-height" v-model="supplierId" filterable>
                   <Option v-for="item in supplierList" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
@@ -309,7 +309,7 @@ export default {
       title: '',
       brandId: '',
       brandArr: [],
-      supplierID: '',
+      supplierId: '',
       supplierList: [],
       isBurst: '',
       isNew: '',
@@ -449,6 +449,7 @@ export default {
         minStockNum: this.minStockNum ? parseInt(this.minStockNum) : '',
         categoryId: this.cid3 ? +this.cid3 : '',
         // minSupplyPrice: this.minSupplyPrice,
+        supplierId: this.supplierId,
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
         saleable: this.isupperShelf,
