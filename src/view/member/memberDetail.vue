@@ -97,7 +97,7 @@
   </div>
 </template>
 <script>
-import { listBonussPage, listScoresPage } from '@/api/base'
+import { listBonussPage, listScoresPage, listUserInvitesPage } from '@/api/base'
 export default {
   name: 'member-detail',
   data () {
@@ -232,9 +232,13 @@ export default {
         case 1:
           this.listScoresPage()
           break
+        case 2:
+          this.listUserInvitesPage()
+          break
       }
     },
     async listBonussPage () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         businessUserPhone: this.value,
@@ -242,6 +246,7 @@ export default {
         pageSize: this.pageSize
       }
       let res = await listBonussPage(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         console.log(res)
         this.total = +res.data.content.total
@@ -251,7 +256,27 @@ export default {
         })
       }
     },
+    async listUserInvitesPage () {
+      this.tableLoading = true
+      let data = {
+        FLAG: 1,
+        businessUserPhone: this.value,
+        pageIndex: this.pageNum,
+        pageSize: this.pageSize
+      }
+      let res = await listUserInvitesPage(data)
+      this.tableLoading = false
+      if (res.data.code === 0) {
+        this.total = +res.data.content.total
+        this.dataList3 = res.data.content.rows
+        // this.dataList2.forEach(item => {
+        //   item.businessType1 = item.businessType === 1 ? '购物获得积分' : '下级购物返积分'
+        //   item.status1 = item.status === 0 ? '冻结' : item.status === 1 ? '生效' : '失效'
+        // })
+      }
+    },
     async listScoresPage () {
+      this.tableLoading = true
       let data = {
         FLAG: 1,
         businessUserPhone: this.value,
@@ -259,6 +284,7 @@ export default {
         pageSize: this.pageSize
       }
       let res = await listBonussPage(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         this.total = +res.data.content.total
         this.dataList2 = res.data.content.rows

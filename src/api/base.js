@@ -73,3 +73,11 @@ export const listBonussPage = data => {
     method: 'post'
   })
 }
+// 团队成员
+export const listUserInvitesPage = data => {
+  return axios.request({
+    url: '/account/member/listUserInvitesPage',
+    data,
+    method: 'post'
+  })
+}
