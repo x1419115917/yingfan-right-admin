@@ -106,6 +106,10 @@ export default {
           key: 'activityName'
         },
         {
+          title: '起止时间',
+          key: 'startStopTime'
+        },
+        {
           title: '图片预览',
           key: 'pictureUrl',
           width: 160,
@@ -160,6 +164,9 @@ export default {
         console.log(res.data.content)
         this.total = +res.data.content.total
         this.dataList = res.data.content.rows
+        this.dataList.forEach(item => {
+          item.startStopTime = item.beginTime + ' - ' + item.endTime
+        })
       }
     },
     addFn () {
