@@ -43,7 +43,7 @@
             <template slot-scope="{ row, index }" slot="action">
               <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
                 <i></i>
-                <span v-has="'sys:memberBonusScore:query'">详情</span>
+                <span v-has="'sys:memberBonusScoreInvite:query'">详情</span>
               </Button>
             </template>
           </Table>

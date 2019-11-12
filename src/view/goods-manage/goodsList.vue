@@ -627,6 +627,8 @@ export default {
     },
     upperShelfFn (val) {
       this.isupperShelf = +val
+      this.pageNum = 1
+      this.pageSize = 10
       this.getPageList()
     },
     searchFn () {

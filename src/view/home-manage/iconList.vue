@@ -96,8 +96,7 @@ export default {
         },
         {
           title: '专题名称',
-          key: 'activityName',
-          width: 120
+          key: 'activityName'
         },
         {
           title: '图片预览',
@@ -119,10 +118,10 @@ export default {
             ])
           }
         },
-        {
-          title: '跳转链接',
-          key: 'pictureUrl'
-        },
+        // {
+        //   title: '跳转链接',
+        //   key: 'pictureUrl'
+        // },
         {
           title: '权限',
           key: 'sortOrder',
