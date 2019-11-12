@@ -48,10 +48,10 @@
         <template slot-scope="{ row, index }" slot="refundAmt"><span>¥{{ row.refundAmt }}</span></template>
         <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="action">
-          <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
+          <Button v-has="'sys:refundOrder:detail'" type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
           <!--待发货-->
           <template v-if="row.orderStatus === 0">
-            <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">处理</Button>
+            <Button v-has="'sys:refundOrder:edit'" type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">处理</Button>
           </template>
         </template>
       </Table>
@@ -71,11 +71,11 @@
   </div>
 </template>
 <script>
+import has from '@/directive/module/has.js'
 import { doAfterSaleOrderList } from '@/api/order'
 import { afterSale, type } from './orderList'
 import afterOrderDetail from './afterSaleOrderDetail'
 export default {
-  name: 'orderList',
   components: {
     afterOrderDetail
   },

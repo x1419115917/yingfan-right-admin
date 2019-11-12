@@ -5,6 +5,7 @@ module.exports = {
     '@vue/standard'
   ],
   rules: {
+    "no-unused-vars": 'off',
     // allow async-await
     'generator-star-spacing': 'off',
     // allow debugger during development
