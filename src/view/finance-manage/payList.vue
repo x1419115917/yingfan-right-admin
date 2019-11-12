@@ -100,7 +100,7 @@ export default {
     returnStatus (item) {
       switch (item) {
         case 0 : return '待支付'
-        case 1 : return '已支付'
+        case 1 : return '交易成功'
       }
     },
     // 查询订单

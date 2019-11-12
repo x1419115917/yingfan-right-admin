@@ -7,16 +7,14 @@
             <span>名称</span>
             <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入名称" clearable></Input>
           </Col>
-          <Col span="5">
+          <Col span="8">
             <span>展示位置</span>
             <Select v-model="form.plateRegion" placeholder="请选择展示位置" :style="{width: inpWidth}" clearable>
               <Option v-for="item in showDotOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
+            <Button style="margin-left:10px;" type="primary" @click="search">查询</Button>
           </Col>
-          <Col span="6">
-            <Button type="primary" style="margin-right: 5px" @click="search">查询</Button>
-          </Col>
-          <Col span="6" offset="1">
+          <Col span="6" offset="4">
             <Button class="addBtn" icon="ios-add" type="success" @click="operate('',2)" v-has="'sys:homePage:add'">新增</Button>
           </Col>
       </Row>
@@ -125,11 +123,8 @@ export default {
     returnPlateRegion (item) {
       switch (item) {
         case 0 : return '首页banner'
-          break
         case 1 : return '首页活动版块'
-          break
         case 2 : return '首页主题精选'
-          break
       }
     },
     search () {
