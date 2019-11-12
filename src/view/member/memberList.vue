@@ -274,7 +274,7 @@ export default {
   margin-top: 0;
 }
 .role-top-input{
-  float: right;
+  float: left;
 }
 .brand-list-modal{
   /deep/ .ivu-modal, .ivu-modal{
