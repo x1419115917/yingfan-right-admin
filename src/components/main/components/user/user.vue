@@ -1,8 +1,9 @@
 <template>
   <div class="user-avatar-dropdown">
     <Dropdown @on-click="handleClick">
-      <Badge :dot="!!messageUnreadCount">
-        <Avatar :src="userAvatar"/>
+      <Badge :dot="!!messageUnreadCount" class="avatar">
+        <!-- <Avatar :src="userAvatar"/> -->
+        <span class="user-name">{{userName}}</span>
       </Badge>
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
@@ -30,8 +31,17 @@ export default {
     messageUnreadCount: {
       type: Number,
       default: 0
+    },
+    userName: {
+      type: String,
+      default: 'admin'
     }
   },
+  // data() {
+  //   return {
+  //     userName: ''
+  //   }
+  // },
   methods: {
     ...mapActions([
       'handleLogOut'
