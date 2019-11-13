@@ -365,8 +365,6 @@ export default {
       // console.log('text', text)
       switch (text) {
         case '添加':
-          // this.formValidate.superiorMenu = data.text
-          // this.formValidate.parentId = data.id
           this.formValidate = {
             superiorMenu: data.text,
             parentId: data.id,
@@ -391,16 +389,6 @@ export default {
           this.editInfo = data
           this.modal1 = true
           this.operationShow = true
-          // this.formValidate = {
-          //   superiorMenu: data.parentId ==0 ? '根目录' : ,
-          //   parentId: data.parentId,
-          //   menuType: '',
-          //   menuName: '',
-          //   url: '',
-          //   roleSign: '',
-          //   sort: '',
-          //   icon: ''
-          // }
           break
       }
     },

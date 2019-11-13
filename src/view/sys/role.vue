@@ -128,41 +128,7 @@ export default {
       checkedIds: [],
       checkedId: '',
       menuIdsArr: [],
-      ztreesData: [
-        {
-          title: 'parent 1',
-          expand: true,
-          selected: true,
-          children: [
-            {
-              title: 'parent 1-1',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-1-1',
-                  disabled: true
-                },
-                {
-                  title: 'leaf 1-1-2'
-                }
-              ]
-            },
-            {
-              title: 'parent 1-2',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-2-1',
-                  checked: true
-                },
-                {
-                  title: 'leaf 1-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      ztreesData: [],
       formValidate: {
         roleName: '',
         roleDesc: '',
@@ -280,13 +246,30 @@ export default {
     },
     parentFn (arr, roleId) {
       arr.forEach((item, index) => {
-        if (item.id == roleId) {
-          this.$set(item, 'checked', true)
-        } else {
-          if (item.children) {
-            this.parentFn(item.children, roleId)
+        if (item.children && item.children.length === 0) {
+          if (item.id == roleId) {
+            this.$set(item, 'checked', true)
           }
         }
+        item.children.forEach((val, index) => {
+          if (val.children && val.children.length === 0) {
+            if (val.id == roleId) {
+              this.$set(val, 'checked', true)
+            }
+          }
+          val.children.forEach(ival => {
+            if (ival.id == roleId) {
+              this.$set(ival, 'checked', true)
+            }
+          })
+        })
+        // if (item.id == roleId) {
+        //   this.$set(item, 'checked', true)
+        // } else {
+        //   if (item.children) {
+        //     this.parentFn(item.children, roleId)
+        //   }
+        // }
       })
     },
     async roleUpdate () {
@@ -470,6 +453,9 @@ export default {
         this.selectedList = []
         this.getPageList()
       }
+    },
+    selectTree (data) {
+      console.log(data)
     },
     searchFn () {
       this.getPageList()
