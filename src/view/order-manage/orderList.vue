@@ -64,8 +64,8 @@
         show-sizer
         @on-page-size-change="changePageSize"
         @on-change="pageChange"/>
-      <Modal v-model="modal" width="800" class="hideFootModal">
-        <order-detail @close="modal = false" :orderId="orderId"></order-detail>
+      <Modal v-model="modal" width="800" class="hideFootModal orderDetailModal">
+        <order-detail @updateList="getOrderList" @close="modal = false" :orderId="orderId"></order-detail>
       </Modal>
     </div>
   </div>

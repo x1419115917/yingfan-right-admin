@@ -25,7 +25,7 @@
         </Col>
         <Col span="6">
           <span>供应商</span>
-          <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable disabled>
+          <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in afterSaleOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </Col>

@@ -75,19 +75,19 @@
       </template>
     </Table>
     <div class="title">物流信息</div>
-    <Row class="logistics">
-      <Col span="12">
-        <span>国内配送公司</span>
-        <Select :style="{ width: inpWidth}" clearable v-model="form.expressCode" placeholder="请输入物流公司" clearable :disabled="disabled">
-          <Option v-for="item in logisticsCompanyOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </Col>
-      </Col>
-      <Col span="12">
-        <span>运单号</span>
-        <Input v-model="form.expressNumber" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable :disabled="disabled" />
-      </Col>
-    </Row>
+      <Row class="logistics">
+        <Col span="12">
+          <span>国内配送公司</span>
+          <Select :style="{ width: inpWidth}" v-model="form.expressCode" placeholder="请输入物流公司" clearable :disabled="disabled">
+            <Option v-for="item in logisticsCompanyOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </Col>
+        </Col>
+        <Col span="12">
+          <span>运单号</span>
+          <Input class="expressNumber" v-model="form.expressNumber" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable :disabled="disabled" />
+        </Col>
+      </Row>
     <div class="mark">
       <Input v-model="markMsg" placeholder="请输入备注" :disabled="disabled">
         <span slot="prepend">客服备注</span>
@@ -173,8 +173,8 @@ export default {
       if (res.data.code === 0) {
         this.$Message.success('操作成功！')
         this.$emit('close')
+        this.$emit('updateList')
       }
-      console.log('发货参数' + JSON.stringify(data))
     },
     close () {
       this.$emit('close')
@@ -188,7 +188,7 @@ export default {
       if (res.data.code === 0) {
         this.orderDetail = res.data.content
         this.goodsList = res.data.content.suborderSkuItemList
-        if (this.orderDetail.orderStatus !== 0 || this.orderDetail.orderStatus !== 1) { // 已发货-显示物流公司信息等
+        if (this.orderDetail.orderStatus === 2) { // 已发货-显示物流公司信息等
           this.form.expressCode = this.orderDetail.expressCode
           this.form.expressNumber = this.orderDetail.expressNumber
           this.disabled = true
@@ -213,6 +213,9 @@ export default {
   },
   created () {
     this.orderDetailId = this.orderId
+    if (this.orderDetailId) {
+      this.getOrderDetail()
+    }
   }
 }
 </script>
