@@ -246,30 +246,13 @@ export default {
     },
     parentFn (arr, roleId) {
       arr.forEach((item, index) => {
-        if (item.children && item.children.length === 0) {
-          if (item.id == roleId) {
-            this.$set(item, 'checked', true)
+        if (item.children && item.children.length === 0 && item.id == roleId) {
+          this.$set(item, 'checked', true)
+        } else {
+          if (item.children) {
+            this.parentFn(item.children, roleId)
           }
         }
-        item.children.forEach((val, index) => {
-          if (val.children && val.children.length === 0) {
-            if (val.id == roleId) {
-              this.$set(val, 'checked', true)
-            }
-          }
-          val.children.forEach(ival => {
-            if (ival.id == roleId) {
-              this.$set(ival, 'checked', true)
-            }
-          })
-        })
-        // if (item.id == roleId) {
-        //   this.$set(item, 'checked', true)
-        // } else {
-        //   if (item.children) {
-        //     this.parentFn(item.children, roleId)
-        //   }
-        // }
       })
     },
     async roleUpdate () {
