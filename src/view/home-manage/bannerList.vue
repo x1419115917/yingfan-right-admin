@@ -20,7 +20,7 @@
       </Row>
     </Card>
     <div class="wrap">
-      <Table :columns="columns" border :data="activeList" stripe>
+      <Table :columns="columns" border :data="activeList" stripe :loading="tableLoading">
         <template slot-scope="{ row, index }" slot="plateRegion">{{ returnPlateRegion(row.plateRegion) }}</template>
         <template slot-scope="{ row, index }" slot="action">
           <Button type="primary" size="small" style="margin-right: 5px" @click="operate(row,0)">详情</Button>
@@ -83,6 +83,7 @@ export default {
       inpWidth: '200px',
       activeList: [],
       pageTotal: null,
+      tableLoading: false,
       deleteIds: {
         FLAG: 1,
         ids: []
@@ -170,7 +171,9 @@ export default {
       }
     },
     async getActiveList () {
+      this.tableLoading = true
       let res = await doBannerList(this.form)
+      this.tableLoading = false
       if (res.data.code === 0) {
         this.activeList = res.data.content.rows
         this.pageTotal = res.data.content.total

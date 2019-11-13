@@ -45,6 +45,7 @@
         <Row class="margin-top-10 bank-table-content">
       <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
       <div class="bank_table" style="position:relative;min-height: 200px;">
+        <Spin fix v-show="tableLoading"></Spin>
         <tree-grid
           :items='data'
           :columns='columns'
@@ -245,10 +246,12 @@ export default {
   components: { TreeGrid },
   methods: {
     async getPageList () {
+      this.tableLoading = true
       let data = {
         FLAG: 1
       }
       let res = await categoryTreeList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         this.data = [...res.data.content.children]
         this.forTreeCatg(this.data)

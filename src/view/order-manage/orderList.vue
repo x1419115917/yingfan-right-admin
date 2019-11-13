@@ -43,7 +43,7 @@
           v-for="(item,index) in orderStatusOpts"
           :value="item.value" :key="item.value" class="stateBtn">{{ item.label }}</span>
       </div>
-      <Table :columns="columns" border :data="dataList" stripe>
+      <Table :columns="columns" border :data="dataList" stripe :loading="tableLoading">
         <template slot-scope="{ row, index }" slot="payAmt"><span>¥{{ row.payAmt }}</span></template>
         <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="action">
@@ -88,6 +88,7 @@ export default {
       date: [], // 选择日期
       pageTotal: null,
       orderId: null, // 订单id
+      tableLoading: false,
       form: {
         FLAG: 1,
         startTime: null, // 开始时间
@@ -171,8 +172,10 @@ export default {
       this.$Message.warning('该功能暂未开放')
     },
     async getOrderList () {
+      this.tableLoading = true
       let data = this.form
       let res = await doOrderList(data)
+      this.tableLoading = false
       if (res.data.code === 0) {
         if (res.data.content.rows && res.data.content.rows.length > 0) {
           this.dataList = [...res.data.content.rows]

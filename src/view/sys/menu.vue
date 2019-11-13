@@ -36,6 +36,7 @@
     <Row class="margin-top-10 bank-table-content">
       <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
       <div class="bank_table" style="position:relative;min-height: 200px;">
+        <Spin fix v-show="tableLoading"></Spin>
         <tree-grid
           :items='data'
           :columns='columns'
