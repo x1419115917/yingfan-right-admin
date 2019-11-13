@@ -37,7 +37,7 @@
                             <input type="checkbox" :value="item.id" v-model="checkGroup" @click="handleCheckClick(item,$event,index)">
                         </label>
                         <div v-if="column.type === 'action'" style="text-align:center">
-                            <i-button class="btn btn-group" :type="action.type" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)' :key="action.text" :style="item.levelNo && item.levelNo == 3 && action.text == '添加类目'  ? 'display:none;' : '' ">{{action.text}}</i-button>
+                            <i-button class="btn btn-group" :type="action.type" v-has="action.power" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)' :key="action.text" :style="item.levelNo && item.levelNo == 3 && action.text == '添加类目'  ? 'display:none;' : '' ">{{action.text}}</i-button>
                         </div>
                         <label @click="toggle(index,item)" v-if="!column.type">
                             <span v-if='snum==iconRow()'>

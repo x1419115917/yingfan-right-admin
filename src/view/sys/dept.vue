@@ -164,15 +164,18 @@ export default {
           actions: [
             {
               type: 'primary',
-              text: '编辑'
+              text: '编辑',
+              power: 'system:sysDept:edit'
             },
             {
               type: 'error',
-              text: '删除'
+              text: '删除',
+              power: 'system:sysDept:remove'
             },
             {
               type: 'success',
-              text: '添加'
+              text: '添加',
+              power: 'system:sysDept:add'
             }
           ],
           width: '150'

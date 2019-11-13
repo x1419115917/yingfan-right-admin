@@ -204,15 +204,18 @@ export default {
           actions: [
             {
               type: 'primary',
-              text: '编辑'
+              text: '编辑',
+              power: 'sys:category:edit'
             },
             {
               type: 'error',
-              text: '删除'
+              text: '删除',
+              power: 'sys:category:remove'
             },
             {
               type: 'success',
-              text: '添加类目'
+              text: '添加类目',
+              power: 'sys:category:add'
             }
           ],
           width: '180'
