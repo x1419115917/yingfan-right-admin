@@ -7,17 +7,13 @@
           <span>订单号</span>
           <Input v-model="form.orderId" :style="{ width: inpWidth}" placeholder="请输入订单号" clearable />
         </Col>
-        <Col span="6">
+        <Col span="18">
           <span>支付状态</span>
           <Select v-model="form.status" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in orderStatusOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
-        </Col>
-        <Col span="6">
-          <div class="btn">
-            <Button type="primary" style="margin-right: 5px" @click="search">查询</Button>
-            <Button type="primary" @click="download">数据下载</Button>
-          </div>
+          <Button type="primary" style="margin: 0 10px" @click="search">查询</Button>
+          <Button type="primary" @click="download">数据下载</Button>
         </Col>
       </Row>
     </Card>

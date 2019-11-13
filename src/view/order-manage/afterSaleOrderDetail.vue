@@ -1,6 +1,14 @@
 <!--订单管理-售后订单详情-->
 <template>
   <div class="afterSaleOrderDetail">
+  <Steps style="width: 126%;" :current="current" :status="status">
+      <Step title="提交申请" icon="ios-create"></Step>
+      <Step title="客服审核" icon="md-contacts"></Step>
+      <Step v-if="orderDetail.orderStatus === 0" title="退款成功" icon="md-checkmark-circle"></Step>
+      <Step v-else-if="orderDetail.orderStatus === 1" title="退款成功" icon="md-checkmark-circle"></Step>
+      <Step v-else-if="orderDetail.orderStatus === 2" title="退款关闭" icon="md-alert"></Step>
+      <Step v-else-if="orderDetail.orderStatus === 3" title="拒绝退款" icon="md-close-circle"></Step>
+  </Steps>
     <div class="title">售后信息</div>
     <Row class="wrap">
       <Col :span="12">
@@ -88,6 +96,8 @@ export default {
   name: 'afterSaleOrderDetail',
   data () {
     return {
+      status: 'wait',
+      current: 1,
       editType: '',
       okText: '',
       inpWidth: '162px',
@@ -180,10 +190,18 @@ export default {
     },
     returnAfterStatus (item) {
       switch (item) {
-        case 0 : return '退款中'
-        case 1 : return '退款成功'
-        case 2 : return '退款关闭'
-        case 3 : return '拒绝退款'
+        case 0 : this.current = 1
+          this.status = 'process'
+          return '退款中'
+        case 1 : this.current = 2
+          this.status = 'finish'
+          return '退款成功'
+        case 2 : this.current = 2
+          this.status = 'error'
+          return '退款关闭'
+        case 3 : this.current = 2
+          this.status = 'error'
+          return '拒绝退款'
       }
     },
     // 订单状态
