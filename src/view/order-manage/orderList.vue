@@ -180,11 +180,9 @@ export default {
         if (res.data.content.rows && res.data.content.rows.length > 0) {
           this.dataList = [...res.data.content.rows]
         } else {
-          this.dataList = [{ ...res.data.content }]
+          this.dataList = []
         }
         this.pageTotal = res.data.content.total
-      } else {
-        this.dataList = []
       }
     }
   },

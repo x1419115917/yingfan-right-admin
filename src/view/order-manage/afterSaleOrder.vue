@@ -22,18 +22,10 @@
           <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in afterSaleOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
-        </Col>
-        <Col span="6">
-          <span>供应商</span>
-          <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
-            <Option v-for="item in afterSaleOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
+          <Button type="primary" style="margin: 0 10px" @click="search">查询</Button>
+          <Button type="primary" @click="download">数据下载</Button>
         </Col>
       </Row>
-      <div class="btn">
-        <Button type="primary" style="margin-right: 5px" @click="search">查询</Button>
-        <Button type="primary" @click="download">数据下载</Button>
-      </div>
     </Card>
     <div class="wrap">
       <div class="state">
@@ -252,10 +244,6 @@ export default {
         color: #6699CC;
       }
     }
-  }
-  .btn {
-    margin-top: 16px;
-    text-align: right;
   }
   .ivu-card-body {
     .ivu-col {

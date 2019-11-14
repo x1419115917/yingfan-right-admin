@@ -112,7 +112,7 @@ export default {
       this.getPayList()
     },
     download () {
-      this.$Message.warning('该功能暂未开放')
+      // this.$Message.warning('该功能暂未开放')
     },
     async getPayList () {
       let data = this.form
