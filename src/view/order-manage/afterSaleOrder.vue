@@ -73,6 +73,7 @@
 <script>
 import has from '@/directive/module/has.js'
 import { doAfterSaleOrderList } from '@/api/order'
+import { supplierList } from '@/api/supplier'
 import { afterSale, type } from './orderList'
 import afterOrderDetail from './afterSaleOrderDetail'
 export default {
@@ -210,6 +211,19 @@ export default {
     }
   },
   created () {
+    // async getSupplierList () {
+    //   let data = {
+    //     FLAG: 1,
+    //     pageIndex: this.pageNum,
+    //     pageSize: this.pageSize,
+    //     name: this.value
+    //   }
+    //   let res = await supplierList(data)
+    //   if (res.data.code === 0) {
+    //     // this.dataList = res.data.content.rows
+    //     // this.total = +res.data.content.total
+    //   }
+    // },
     this.getOrderList()
   }
 }
