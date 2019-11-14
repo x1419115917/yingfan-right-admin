@@ -22,18 +22,10 @@
           <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in orderStatusOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
-        </Col>
-        <Col span="6">
-          <span>售后状态</span>
-          <Select v-model="form.afterSale" :style="{ width: inpWidth}" disabled clearable>
-            <Option v-for="item in afterSaleOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
+          <Button type="primary" style="margin: 0 10px" @click="search">查询</Button>
+          <Button type="primary" @click="download">数据下载</Button>
         </Col>
       </Row>
-      <div class="btn">
-        <Button type="primary" style="margin-right: 5px" @click="search">查询</Button>
-        <Button type="primary" @click="download">数据下载</Button>
-      </div>
     </Card>
     <div class="wrap">
       <div class="state">
@@ -72,7 +64,7 @@
 </template>
 <script>
 import { doOrderList } from '@/api/order'
-import { orderStatus, afterSale, type } from './orderList'
+import { orderStatus, type } from './orderList'
 import orderDetail from './orderDetail'
 export default {
   name: 'orderList',
@@ -135,6 +127,7 @@ export default {
         case 2 : return '已发货'
         case 3 : return '交易完成'
         case 4 : return '交易关闭'
+        case 5 : return '退款'
       }
     },
     changePageSize (value) {
@@ -190,9 +183,6 @@ export default {
     orderStatusOpts () {
       return orderStatus()
     },
-    afterSaleOpts () {
-      return afterSale()
-    },
     typeOpts () {
       return type()
     }
@@ -226,10 +216,6 @@ export default {
         color: #6699CC;
       }
     }
-  }
-  .btn {
-    margin-top: 16px;
-    text-align: right;
   }
   .ivu-card-body {
     .ivu-col {
