@@ -52,45 +52,45 @@
         </div>
     </Row>
     <Modal v-model="modal1" class="smsModel" :title="operationShow? '编辑菜单': '新增菜单'"  width="640" @on-cancel="cancelModal1">
-			<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
         <FormItem label="上级菜单:" prop="roleName">
-					<Input v-model="formValidate.superiorMenu"  disabled></Input>
-				</FormItem>
+          <Input v-model="formValidate.superiorMenu" disabled></Input>
+        </FormItem>
         <FormItem label="上级菜单:" prop="roleName">
-					<RadioGroup v-model="formValidate.menuType">
+          <RadioGroup v-model="formValidate.menuType">
             <Radio label="0">目录</Radio>
             <Radio label="1">菜单</Radio>
             <Radio label="2">按钮</Radio>
           </RadioGroup>
-				</FormItem>
-				<FormItem label="菜单名称:" prop="menuName">
-					<Input v-model="formValidate.menuName" placeholder="请输入菜单名称"></Input>
-				</FormItem>
+        </FormItem>
+        <FormItem label="菜单名称:" prop="menuName">
+          <Input v-model="formValidate.menuName" placeholder="请输入菜单名称"></Input>
+        </FormItem>
         <FormItem label="链接地址:" prop="url">
-					<Input v-model="formValidate.url" placeholder="请输入链接地址"></Input>
-				</FormItem>
-				<FormItem label="权限标识:" prop="roleSign">
-					<Input v-model="formValidate.roleSign" placeholder="请输入权限标识"></Input>
-				</FormItem>
+          <Input v-model="formValidate.url" placeholder="请输入链接地址"></Input>
+        </FormItem>
+        <FormItem label="权限标识:" prop="roleSign">
+          <Input v-model="formValidate.roleSign" placeholder="请输入权限标识"></Input>
+        </FormItem>
         <FormItem label="排序号:" prop="sort">
-					<Input type="number" v-model="formValidate.sort" placeholder="请输入排序号"></Input>
-				</FormItem>
+          <Input type="number" v-model="formValidate.sort" placeholder="请输入排序号"></Input>
+        </FormItem>
         <FormItem label="是否展示:" prop="showMenu">
-					<RadioGroup v-model="formValidate.showMenu">
+          <RadioGroup v-model="formValidate.showMenu">
             <Radio label="1">是</Radio>
             <Radio label="0">否</Radio>
           </RadioGroup>
-				</FormItem>
+        </FormItem>
         <FormItem label="图标:" prop="icon">
-					<Input v-model="formValidate.icon" placeholder="请输入图标" style="width: 220px;"></Input>
+          <Input v-model="formValidate.icon" placeholder="请输入图标" style="width: 220px;"></Input>
           <Button type="warning" style="margin-left: 10px;" @click="openIconModal">选择图标</Button>
-				</FormItem>
-			</Form>
-			<div slot="footer">
-				<Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
-				<Button size="large" @click="operationMenu" type="primary">确定</Button>
-			</div>
-		</Modal>
+          </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button size="large" @click="cancelModal1" class="cancel" style="margin-right: 10px">取消</Button>
+        <Button size="large" @click="operationMenu" type="primary">确定</Button>
+      </div>
+    </Modal>
     <Modal v-model="modal2" class="smsModel iconsd-modal" :title="'选择图标'"  width="640" @on-cancel="cancelModal2">
       <div class="icons-list" :label-width="90">
         <span class="icon" v-for="(item, index) in icons" :key="index" @click="chooseIcon(index)">
@@ -98,15 +98,15 @@
         </span>
       </div>
       <div slot="footer" style="display: none;"></div>
-		</Modal>
+    </Modal>
     <Modal
-				width="20"
-				v-model="delModal"
-				@on-ok="delMenu"
-				:closable="false"
-				class-name="vertical-center-modal">
-			<p>确定删除？</p>
-		</Modal>
+      width="20"
+      v-model="delModal"
+      @on-ok="delMenu"
+      :closable="false"
+      class-name="vertical-center-modal">
+        <p>确定删除？</p>
+      </Modal>
   </div>
 </template>
 <script>
@@ -201,15 +201,18 @@ export default {
           actions: [
             {
               type: 'primary',
-              text: '编辑'
+              text: '编辑',
+              power: 'sys:menu:edit'
             },
             {
               type: 'error',
-              text: '删除'
+              text: '删除',
+              power: 'sys:menu:remove'
             },
             {
               type: 'success',
-              text: '添加'
+              text: '添加',
+              power: 'sys:menu:add'
             }
           ],
           width: '150'
@@ -230,7 +233,6 @@ export default {
       editInfo: '',
       pageNum: 1,
       pageSize: 100,
-      delIndex: '',
       total: 0,
       loading: false, // 分割线
       uploadLoading: false,
@@ -267,7 +269,7 @@ export default {
     },
     forDataRow (arr) {
       arr.forEach(item => {
-        item.type = ((item.type == 0) ? '目录' : (item.type == 1) ? '菜单' : '按钮')
+        item.type = ((item.type === 0) ? '目录' : (item.type === 1) ? '菜单' : '按钮')
         if (item.children) {
           this.forDataRow(item.children)
         }
@@ -307,7 +309,7 @@ export default {
     },
     parentFn (arr, roleId) {
       arr.forEach((item, index) => {
-        if (item.id == roleId) {
+        if (item.id === roleId) {
           this.$set(item, 'checked', true)
         } else {
           if (item.children) {
