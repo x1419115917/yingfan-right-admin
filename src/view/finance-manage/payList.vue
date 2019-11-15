@@ -49,8 +49,6 @@ import { doPayList } from '@/api/finance'
 import { orderStatus } from './financeManage'
 export default {
   name: 'payList',
-  components: {
-  },
   data () {
     return {
       inpWidth: '162px',

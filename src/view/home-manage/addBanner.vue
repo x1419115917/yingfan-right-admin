@@ -38,7 +38,7 @@
                 <Button type="primary" class="upload-img">上传图片</Button>
                 <input type="file" class="img-ipt"
                   ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
-                  <span class="tips-upload">(1125*高度不限，jpg、gif，小于500k)</span>
+                  <span class="tips-upload">(1125*高度不限，<br />jpg、gif，小于500k)</span>
               </div>
             </div>
             </template>
@@ -175,14 +175,6 @@ export default {
       this.form.plaDets.push(obj)
     },
     async handleSubmit (name) {
-      // this.$refs[name].validate((valid) => {
-      //     if (valid) {
-      //       this.$Message.success('1111!')
-      //     } else {
-      //       this.$Message.error('操作失败!')
-      //     }
-      // })
-
       if (this.editType === 1) { // 编辑
         let data = Object.assign(this.form, { FLAG: 1, id: this.activeMsg.id })
         let res = await doEditHomeBanner(data)
@@ -315,6 +307,7 @@ export default {
         .tips-upload{
           font-size: 12px;
           color: #999;
+          text-align: left;
           position: absolute;
           top: 40px;
           line-height: 16px;
