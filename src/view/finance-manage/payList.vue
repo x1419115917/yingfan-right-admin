@@ -121,7 +121,7 @@ export default {
         this.dataList = res.data.content.rows
         this.pageTotal = res.data.content.total
       } else {
-        this.dataList.length = []
+        this.dataList = []
       }
     }
   },
