@@ -34,8 +34,10 @@ export default {
     addEvents () {
       this.editor.codemirror.on('change', () => {
         let value = this.editor.value()
-        if (this.localCache) localStorage.markdownContent = value
+        if (this.localCache) {
+          localStorage.markdownContent =
         this.$emit('input', value)
+        }
         this.$emit('on-change', value)
       })
       this.editor.codemirror.on('focus', () => {

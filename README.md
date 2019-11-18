@@ -43,6 +43,7 @@ iView Admin is a front-end management background integration solution. It based 
     - split-pane
 - Form
     - The article published
+    - lowe the power
     - Workflow
 - Table
     - Drag-and-drop sort
