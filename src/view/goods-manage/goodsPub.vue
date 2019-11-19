@@ -2018,7 +2018,7 @@ export default {
 }
 .spce-right{
   float: left;
-  width: 600px;
+  width: 920px;
 }
 .check-box[data-v-5c127369] {
     max-width: 560px;
