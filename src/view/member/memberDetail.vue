@@ -197,11 +197,11 @@ export default {
         {
           title: '序号',
           width: 120,
-          key: 'id'
+          key: 'beInviteUserId'
         },
         {
           title: '成员手机号',
-          key: 'phone'
+          key: 'beInviteUserPhone'
         },
         {
           title: '注册时间',
