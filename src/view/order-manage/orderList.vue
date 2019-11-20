@@ -11,13 +11,13 @@
             @on-change="selectDate"
             placeholder="年/月/日" ></DatePicker>
         </Col>
-        <Col span="6">
+        <Col span="8">
           <Select style="width: 100px; margin-right: 6px;" clearable>
             <Option v-for="item in typeOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           <Input v-model="form.type" :style="{ width: inpWidth}" placeholder="请输入" />
         </Col>
-        <Col span="6">
+        <Col span="10">
           <span>订单状态</span>
           <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in orderStatusOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
