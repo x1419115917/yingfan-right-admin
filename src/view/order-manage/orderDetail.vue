@@ -6,7 +6,7 @@
       <Col :span="12">
         <Row>
           <Col :span="10">订单号</Col>
-          <Col :span="14">{{ orderDetail.totalOrderId }}</Col>
+          <Col :span="14">{{ orderDetail.id }}</Col>
           <Col :span="10">订单状态</Col>
           <Col :span="14">{{ returnOrderStatus(orderDetail.orderStatus)}}</Col>
           <Col :span="10">供应商</Col>
