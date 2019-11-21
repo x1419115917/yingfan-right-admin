@@ -241,6 +241,7 @@ export default {
       this.tableLoading = true
       let data = {
         FLAG: 1,
+        userId: this.memberId,
         businessUserPhone: this.value,
         pageIndex: this.pageNum,
         pageSize: this.pageSize
@@ -261,6 +262,7 @@ export default {
       let data = {
         FLAG: 1,
         businessUserPhone: this.value,
+        inviteUserId: this.memberId,
         pageIndex: this.pageNum,
         pageSize: this.pageSize
       }
@@ -280,6 +282,7 @@ export default {
       let data = {
         FLAG: 1,
         businessUserPhone: this.value,
+        userId: this.memberId,
         pageIndex: this.pageNum,
         pageSize: this.pageSize
       }
