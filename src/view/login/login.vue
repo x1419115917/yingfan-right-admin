@@ -47,9 +47,7 @@ import Cookies from 'js-cookie'
 import { mapActions } from 'vuex'
 import router from '@/router'
 import { initRouter, appRouter, routers } from '@/router/routers'
-import {
-  getMenuByRouter
-} from '@/libs/util'
+import { getMenuByRouter } from '@/libs/util'
 export default {
   components: {
     LoginForm
@@ -73,8 +71,6 @@ export default {
         passWord: password
       }
       let res = await login(data)
-      console.log(res)
-      console.log(this.$config.homeName)
       if (res.data.code === 0) {
         Cookies.set('access_token', res.data.content.token)
         Cookies.set('userId', res.data.content.userId)

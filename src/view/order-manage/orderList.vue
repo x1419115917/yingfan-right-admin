@@ -93,7 +93,7 @@ export default {
       columns: [
         {
           title: '订单号',
-          key: 'totalOrderId',
+          key: 'id',
           align: 'center'
         },
         {
