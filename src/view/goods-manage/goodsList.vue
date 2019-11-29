@@ -607,6 +607,13 @@ export default {
       this.selectedList.forEach(item => {
         ids.push(item.id)
       })
+      if (ids && ids.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择商品再进行操作'
+        })
+        return
+      }
       this.saleableFn(ids, saleableStatus, 'SPU')
     },
     grounding (row) {
