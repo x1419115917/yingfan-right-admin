@@ -80,7 +80,7 @@ class HttpRequest {
       } else if (data.code === 100001 || data.code === 100003 || data.code === 100005) {
         Modal.warning({
           title: '提示',
-          content: 'token 已失效，请重新登录',
+          content: '登录信息已失效，请重新登录',
           onOk: () => {
             Cookies.remove('access_token')
             Cookies.remove('userId')

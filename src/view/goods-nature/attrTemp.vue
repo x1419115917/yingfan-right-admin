@@ -481,7 +481,7 @@ export default {
             })
             return
           }
-          if (this.expandSpecs && this.expandSpecs.length >= 2) {
+          if (this.formValidate.status == 0 && this.expandSpecs && this.expandSpecs.length >= 2) {
             this.$Modal.warning({
               title: '提示',
               content: '规格属性不能多于两个'
