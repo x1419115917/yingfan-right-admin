@@ -521,16 +521,6 @@ export const appRouter = [
           hideInMenu: true
         },
         component: () => import('@/view/supplierWeb/supplier.vue')
-      },
-      {
-        path: 'suprDetail',
-        name: 'suprDetail',
-        meta: {
-          icon: '',
-          title: '供应商详情',
-          hideInMenu: true
-        },
-        component: () => import('@/view/supplierWeb/add-supplier.vue')
       }
     ]
   },

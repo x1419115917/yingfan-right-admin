@@ -26,13 +26,13 @@
       <div class="bank_table" style="position:relative;">
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
             <FormItem label="供应商名称:" prop="name">
-              <Input v-model="formValidate.name" placeholder="请输入供应商名称"></Input>
+              <Input v-model="formValidate.name" placeholder="请输入供应商名称" :maxlength="35"></Input>
             </FormItem>
             <FormItem label="联系人:" prop="operator">
-              <Input v-model="formValidate.operator" placeholder="请输入联系人"></Input>
+              <Input v-model="formValidate.operator" placeholder="请输入联系人" :maxlength="5"></Input>
             </FormItem>
             <FormItem label="手机号码:" prop="phone">
-              <Input v-model="formValidate.phone" placeholder="请输入手机号码"></Input>
+              <Input v-model="formValidate.phone" placeholder="请输入手机号码" :maxlength="11"></Input>
             </FormItem>
             <div class="deloy-pro">
               <div class="deloy-left">
@@ -161,6 +161,15 @@ import { editSupplier, categList, listBrands, saveSupplier, updateSupplier } fro
 export default {
   name: 'add-supplier',
   data () {
+    let checkphone = (rule, value, callback) => {
+      if (value == '') {
+        callback(new Error('请输入手机号'))
+      } else if (!this.isCellPhone(value)) { // 引入methods中封装的检查手机格式的方法
+        callback(new Error('请输入正确的手机号!'))
+      } else {
+        callback()
+      }
+    }
     return {
       brandListcheck: [],
       brandListArr: [],
@@ -189,13 +198,15 @@ export default {
       },
       ruleValidate: {
         name: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '请输入供应商名称', trigger: 'blur' },
+          { min: 2, max: 35, message: '长度在 2 到 35 个字符', trigger: 'blur' }
         ],
         operator: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '请输入联系人', trigger: 'blur' },
+          { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, validator: checkphone, trigger: 'blur' }
         ]
       },
       roleName: '',
@@ -291,6 +302,14 @@ export default {
         this.checkSelId = this.clist3[i].id
         this.listBrands(this.clist3[i].id)
         this.selObj = { ...this.clist3[i] }
+      }
+    },
+    // 检查手机号
+    isCellPhone (val) {
+      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
+        return false
+      } else {
+        return true
       }
     },
     opearSave () {
