@@ -12,7 +12,7 @@
           <div class="role-top-input">
             <div class="td-line">
               <span class="name">是否已联系：</span>
-              <Select class="w162 max-height" v-model="isContact" filterable>
+              <Select class="w162 max-height" v-model="isContact">
                   <Option v-for="item in contact" :value="item.label" :key="item.label">{{ item.value }}</Option>
               </Select>
             </div>
