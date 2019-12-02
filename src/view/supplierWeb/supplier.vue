@@ -47,14 +47,14 @@
             @on-selection-change="selected"
           >
             <template slot-scope="{ row, index }" slot="contact">
-              <span :class="{'red-color': detailObj.isCommunicate === 0}">{{row.isCommunicate === 0 ? '未联系' : '已联系'}}</span>
+              <span :class="{'red-color': row.isCommunicate === 0 }">{{row.isCommunicate === 0 ? '未联系' : '已联系'}}</span>
             </template>
             <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="look(index)" v-has="'sys:supplier:edit'">
+              <Button class="btn-item preview-btn" type="text" size="small" @click="look(index)">
                 <i></i>
                 <span>查看</span>
               </Button>
-              <Button v-show="row.isCommunicate === 0" class="btn-item del-btn" type="text" size="small" @click="contactFn(index)" v-has="'sys:supplier:remove'">
+              <Button v-show="row.isCommunicate === 0" class="btn-item del-btn" type="text" size="small" @click="contactFn(index)">
                 <i></i>
                 <span>联系</span>
               </Button>
@@ -388,6 +388,9 @@ export default {
     display: inline-block;
     border: 1px solid #e6e6e6;
   }
+}
+.red-color{
+  color: #ff0036;
 }
 .set-top{
   padding: 10px;
