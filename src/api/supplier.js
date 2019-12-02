@@ -100,3 +100,27 @@ export const updateSupplier = data => {
     method: 'post'
   })
 }
+// 线下供应商列表
+export const listOfflineSuppliersPage = data => {
+  return axios.request({
+    url: '/account/supplier/listOfflineSuppliersPage',
+    data,
+    method: 'post'
+  })
+}
+// 据ID查询线下供应商详情
+export const getOfflineSupplier = data => {
+  return axios.request({
+    url: '/account/supplier/getOfflineSupplier',
+    data,
+    method: 'post'
+  })
+}
+// 已和线下供应商沟通过
+export const communicatedOfflineSupplier = data => {
+  return axios.request({
+    url: '/account/supplier/communicatedOfflineSupplier',
+    data,
+    method: 'post'
+  })
+}

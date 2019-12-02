@@ -502,6 +502,38 @@ export const appRouter = [
       }
     ]
   },
+  {
+    path: '/supplierList',
+    name: 'supplierList',
+    meta: {
+      icon: 'ios-menu',
+      title: '供应商(官网)',
+      hideInMenu: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'supplierWeb',
+        name: 'supplierWeb',
+        meta: {
+          icon: 'ios-menu',
+          title: '供应商列表(官网)',
+          hideInMenu: true
+        },
+        component: () => import('@/view/supplierWeb/supplier.vue')
+      },
+      {
+        path: 'suprDetail',
+        name: 'suprDetail',
+        meta: {
+          icon: '',
+          title: '供应商详情',
+          hideInMenu: true
+        },
+        component: () => import('@/view/supplierWeb/add-supplier.vue')
+      }
+    ]
+  },
   // {
   //   path: '/thematicManager',
   //   name: 'thematicManager',

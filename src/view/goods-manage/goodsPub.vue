@@ -80,11 +80,11 @@
           </Row>
           <Row class="tb-line tb-line-item">
             <Col span="3" class="name"><span>*</span>商品标题：</Col>
-            <Col span="21"><Input v-model="goodsTitle" placeholder="请输入商品标题" /></Col>
+            <Col span="21"><Input v-model="goodsTitle" placeholder="请输入商品标题" :maxlength="30" /></Col>
           </Row>
           <Row class="tb-line tb-line-item">
             <Col span="3" class="name">商品副标题：</Col>
-            <Col span="21"><Input class="" v-model="subTitle" placeholder="输入商品副标题"  /></Col>
+            <Col span="21"><Input class="" v-model="subTitle" placeholder="输入商品副标题" :maxlength="50"  /></Col>
           </Row>
           <Row class="tb-line tb-line-item">
             <Col span="3" class="name"><span>*</span>品牌：</Col>
