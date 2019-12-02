@@ -691,6 +691,19 @@ export default {
   text-align: right;
   color: rgba(51, 51, 51, 0.8);
 }
+.deloy-left{
+  span{
+    &::before{
+      content: '*';
+      display: inline-block;
+      margin-right: 4px;
+      line-height: 1;
+      font-family: SimSun;
+      font-size: 12px;
+      color: #ed4014;
+    }
+  }
+}
 .list-group{
   height: 200px;
   overflow: auto;
