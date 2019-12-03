@@ -85,7 +85,7 @@ export default {
       bannerDetail: '',
       inpWidth: '200px',
       form: {
-        plateRegion: '0',
+        plateRegion: '0', // 展示位置
         showMode: '0', // 展示模式
         plateName: '', // 活动名称
         plaDets: [{ // 活动图片列表
@@ -236,6 +236,7 @@ export default {
         this.getBannerDetail(obj)
       } else {
         this.form = {
+          plateRegion: '0',
           showMode: '0',
           plateName: '',
           plaDets: [{
