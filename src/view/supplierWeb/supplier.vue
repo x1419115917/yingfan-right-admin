@@ -209,6 +209,11 @@ export default {
       if (res.data.code === 0) {
         console.log(res.data.content)
         this.dataList = res.data.content.rows
+        this.dataList.forEach(item => {
+          if (item.isCommunicate === 1) {
+            item._disabled = true
+          }
+        })
         this.total = +res.data.content.total
       }
     },
