@@ -123,7 +123,7 @@ export default {
         //   key: 'pictureUrl'
         // },
         {
-          title: '权限',
+          title: '权重',
           key: 'sortOrder',
           width: 100
         },
