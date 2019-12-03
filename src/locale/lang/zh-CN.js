@@ -12,7 +12,7 @@ export default {
   goodsPub: '商品发布',
   goodsList: '商品列表',
   orderManage: '订单管理',
-  supplierWeb: '供应商列表(官网申请)',
+  supplierWeb: '供应商(官网申请)',
   orderList: '商城订单',
   afterSaleOrder: '售后订单',
   financeManage: '财务管理',
