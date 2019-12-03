@@ -85,7 +85,7 @@ export default {
       bannerDetail: '',
       inpWidth: '200px',
       form: {
-        plateRegion: '0', // 模块区域
+        plateRegion: '0',
         showMode: '0', // 展示模式
         plateName: '', // 活动名称
         plaDets: [{ // 活动图片列表
@@ -231,13 +231,11 @@ export default {
       if (this.activeMsg) {
         let obj = {
           FLAG: 1,
-          id: this.activeMsg.id,
-          plateRegion: this.activeMsg.plateRegion
+          id: this.activeMsg.id
         }
         this.getBannerDetail(obj)
       } else {
         this.form = {
-          plateRegion: '0',
           showMode: '0',
           plateName: '',
           plaDets: [{
@@ -255,8 +253,7 @@ export default {
     if (this.activeMsg) {
       let obj = {
         FLAG: 1,
-        id: this.activeMsg.id,
-        plateRegion: this.activeMsg.plateRegion
+        id: this.activeMsg.id
       }
       this.getBannerDetail(obj)
     }
