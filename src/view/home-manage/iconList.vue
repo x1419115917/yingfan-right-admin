@@ -280,11 +280,10 @@ export default {
     }
   },
   created () {
-    this.getPageList()
-    this.getActivityList()
   },
   mounted () {
-
+    this.getPageList()
+    this.getActivityList()
   }
 }
 </script>
