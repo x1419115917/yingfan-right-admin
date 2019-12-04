@@ -477,6 +477,7 @@ export default {
         this.dataList.forEach((item) => {
           item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
         })
+        this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
         // if (this.actNavs && this.actNavs.length) {
         //   this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
         // }
@@ -490,20 +491,18 @@ export default {
       }
       let res = await activityDetail(data)
       if (res.data.code === 0) {
-        console.log(res)
+        console.log('res', res)
         let data = res.data.content
         this.activityName = data.activityName
         this.imgShow = true
         this.pictureUrl = data.pictureUrl
         this.beginTime = data.beginTime
         this.endTime = data.endTime
+        // console.log('data.actNavs1', data.actNavs)
         data.actNavs.forEach(item => {
           item.isShow = item.isShow !== 0
-          item.navDets.forEach(val => {
-            item.navDets.push(val)
-          })
         })
-        console.log('data.actNavs', data.actNavs)
+        // console.log('data.actNavs2', data.actNavs)
         this.actNavs = data.actNavs
       }
     },
