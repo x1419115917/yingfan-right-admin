@@ -29,6 +29,10 @@
                     <Col span="6" class="active-imgbox">
                       <img v-show="!imgShow" class="active-imgurl" src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191031/fd9b8888-a8c1-4ed4-80c5-166a4d45ea97/20191031183109.png" alt="">
                       <img v-show="imgShow" class="active-imgurl" :src="pictureUrl" />
+                      <Spin fix class="loading-box" v-show="loadingBox">
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>上传中</div>
+                      </Spin>
                     </Col>
                     <Col span="18">
                       <div class="upload-img-box">
@@ -378,6 +382,7 @@ export default {
       goodsTitle: '',
       activityName: '',
       imgShow: false,
+      loadingBox: false,
       pictureUrl: '',
       modalsel: '',
       modalList: [
@@ -563,6 +568,7 @@ export default {
     // 上传图片
     async fileUplaod (e) {
       let file = e.target.files[0]
+      this.loadingBox = true
       if (!/\/(?:jpg|jpeg|png|gif)/i.test(file.type)) {
         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
         this.$refs.filezm.value = ''
@@ -573,6 +579,7 @@ export default {
         tag: 2
       }
       let res = await singleUpload(data)
+      this.loadingBox = false
       if (res.data.code === 0) {
         console.log(res)
         this.imgShow = true
@@ -743,7 +750,10 @@ export default {
       this.clist2 = []
       this.clist3 = []
       this.goodsTitle = ''
-      this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
+      this.pageNum = 1
+      this.pageSize = 10
+      this.getPageList()
+      // this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
     },
     // 保存选中商品
     saveGoods () {
@@ -874,6 +884,9 @@ export default {
 /deep/ .ivu-table,.ivu-table{
   height: 300px;
   overflow-y: auto;
+}
+.active-imgbox{
+  position: relative;
 }
 .modal-item{
   width: 100%;
