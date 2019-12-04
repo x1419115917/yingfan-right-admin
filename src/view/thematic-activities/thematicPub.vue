@@ -567,10 +567,11 @@ export default {
     },
     // 上传图片
     async fileUplaod (e) {
-      let file = e.target.files[0]
       this.loadingBox = true
+      let file = e.target.files[0]
       if (!/\/(?:jpg|jpeg|png|gif)/i.test(file.type)) {
         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+        this.loadingBox = false
         this.$refs.filezm.value = ''
         return
       }
