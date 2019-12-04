@@ -26,7 +26,7 @@
             </RadioGroup>
         </FormItem>
         <FormItem label="活动名称" prop="plateName">
-          <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
+          <Input v-model="form.plateName" :maxlength="maxlength" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
         </FormItem>
         <FormItem label="图片">
           <Table max-height="400" border :columns="imgColumns" :data="form.plaDets">
@@ -82,6 +82,7 @@ export default {
       }
     }
     return {
+      maxlength: 5,
       bannerDetail: '',
       inpWidth: '200px',
       form: {
@@ -175,21 +176,36 @@ export default {
       this.form.plaDets.push(obj)
     },
     async handleSubmit (name) {
-      if (this.editType === 1) { // 编辑
-        let data = Object.assign(this.form, { FLAG: 1, id: this.activeMsg.id })
-        let res = await doEditHomeBanner(data)
-        if (res.data.code === 0) {
-          this.$Message.success('操作成功!')
-          this.$emit('close')
-          this.$emit('updateList')
-        }
-      } else if (this.editType === 2) { // 新增
-        let data = Object.assign(this.form, { FLAG: 1 })
-        let res = await doAddHomeBanner(data)
-        if (res.data.code === 0) {
-          this.$Message.success('操作成功!')
-          this.$emit('close')
-          this.$emit('updateList')
+      if (!this.form.plateName) {
+        this.$Message.warning('请输入活动名称')
+      } else {
+        if (this.editType === 1) { // 编辑
+          let data = Object.assign(this.form, { FLAG: 1, id: this.activeMsg.id })
+          let res = await doEditHomeBanner(data)
+          if (res.data.code === 0) {
+            this.$Message.success('操作成功!')
+            this.$emit('close')
+            this.$emit('updateList')
+          }
+        } else if (this.editType === 2) { // 新增
+          let data = Object.assign(this.form, { FLAG: 1 })
+          let res = await doAddHomeBanner(data)
+          if (res.data.code === 0) {
+            this.$Message.success('操作成功!')
+            this.form = {
+              plateRegion: '0',
+              showMode: '0',
+              plateName: '',
+              plaDets: [{
+                activityId: '',
+                pictureUrl: '',
+                sortOrder: ''
+              }],
+              isShow: '0'
+            }
+            this.$emit('close')
+            this.$emit('updateList')
+          }
         }
       }
     },
