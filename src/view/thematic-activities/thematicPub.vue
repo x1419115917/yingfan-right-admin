@@ -46,9 +46,9 @@
               <Row class="content-item">
                 <Col class="table-left lh70" span="4">起止时间</Col>
                 <Col class="table-right lh70" span="20">
-                  <DatePicker v-model="beginTime" type="datetime" @on-change="changeStartTime" placeholder="开始日期" style="width: 208px"></DatePicker>
+                  <DatePicker v-model="beginTime" type="datetime" @on-change="changeStartTime" :options="options1" placeholder="开始日期" style="width: 208px"></DatePicker>
                   <span style="margin:0 5px;" class="span-table">——</span>
-                  <DatePicker v-model="endTime" type="datetime" @on-change="endDate" placeholder="结束日期" placement="bottom-end" style="width: 208px"></DatePicker>
+                  <DatePicker v-model="endTime" type="datetime" @on-change="endDate" placeholder="结束日期" :options="options1" placement="bottom-end" style="width: 208px"></DatePicker>
                 </Col>
               </Row>
             </div>
@@ -369,6 +369,11 @@ export default {
       clist1: [],
       clist2: [],
       clist3: [],
+      options1: { // 禁用已经过去的日期时间
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
       modal1: false,
       goodsTitle: '',
       activityName: '',
