@@ -741,7 +741,7 @@ export default {
       this.beginTime = ''
       this.maxStockNum = ''
       this.minStockNum = ''
-      this.supplierID = ''
+      this.supplierId = ''
       this.isupperShelf = 1
       this.cid1 = ''
       this.cid2 = ''
