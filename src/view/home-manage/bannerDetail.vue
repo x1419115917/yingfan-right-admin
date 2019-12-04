@@ -2,7 +2,7 @@
 <template>
   <div class="bannerDetail">
     <div class="wrap">
-      <Table :columns="columns" border :data="activeList" stripe>
+      <Table max-height="400" :columns="columns" border :data="activeList" stripe>
         <template slot-scope="{ row }" slot="activityName">{{ row.activityName }}</template>
         <template slot-scope="{ row }" slot="pictureUrl">
           <div class="img">
