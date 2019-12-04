@@ -731,6 +731,13 @@ export default {
     // 打开商品列表弹出
     addGoodsModal () {
       this.modal1 = true
+      this.brandId = ''
+      this.cid1 = ''
+      this.cid2 = ''
+      this.cid3 = ''
+      this.clist2 = []
+      this.clist3 = []
+      this.goodsTitle = ''
       this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
     },
     // 保存选中商品
