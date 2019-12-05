@@ -1336,6 +1336,11 @@ export default {
         }
       }
     },
+    back () {
+      let target = document.querySelector('.content-wrapper')
+      const sTop = target.scrollTop
+      scrollTop(target, 500, 0, 0)
+    },
     // 添加属性
     radioChange () {
       if (this.formValidate.status == 0) {
@@ -1643,6 +1648,7 @@ export default {
       console.log(id)
     },
     changeNav (val) {
+      this.back()
       let imageUrl = this.goodsImgList.filter(item => {
         return item.imgUrl != ''
       })
@@ -1701,6 +1707,7 @@ export default {
       }
     },
     navSave (val) {
+      this.back()
       let imageUrl = this.goodsImgList.filter(item => {
         return item.imgUrl != ''
       })
