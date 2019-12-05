@@ -326,7 +326,6 @@
   </div>
 </template>
 <script>
-import { menuTree, saveRole, roleDetail, roleUpdate, roleremove, batchRemove } from '@/api/sys'
 import { listBrandsPage, singleUpload, specList, saveSpec } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
 import { saveGoods, goodsDetail, updateGoods } from '@/api/goods'
@@ -339,7 +338,6 @@ export default {
   data () {
     return {
       vsShowNav: 0,
-      quillUpdateImg: false,
       params: { tag: 0 },
       brandsId: '',
       brandsIds: '',
@@ -378,8 +376,6 @@ export default {
         }
       ], // 商品图片列表
       attrListArr: [],
-      treeData1: [],
-      ztreesData: [],
       formValidate: {
         status: '',
         natures: '',
@@ -446,10 +442,7 @@ export default {
       value3: '',
       modal1: false,
       operationShow: false,
-      checkedIds: [],
-      checkedId: '',
-      roleName: '',
-      goodsObj: {
+      goodsObj: { // 商品obj
         supply: '',
         stock: '',
         retail: '',
@@ -458,7 +451,7 @@ export default {
         brokerage: '',
         integral: ''
       },
-      integralList: [
+      integralList: [ // 应分比例
         {
           label: '30%',
           value: '30'
@@ -472,7 +465,7 @@ export default {
           value: '100'
         }
       ],
-      columnsListOriginal: [
+      columnsListOriginal: [ // 商品初始化表格表头字段
         {
           title: '图片',
           // key: 'images',
@@ -655,7 +648,7 @@ export default {
         }
       ],
       columnsList: [],
-      dataList: [
+      dataList: [ // 商品初始化表格填写字段
         {
           imageUrl: '',
           imageShow: false,
@@ -670,12 +663,7 @@ export default {
           integral: ''
         }
       ],
-      userIdCreate: '',
       skusList: [],
-      roleSign: '',
-      dataDel: [],
-      addShow: false,
-      sendContractBut: false,
       validateType: false,
       selectedList: [],
       contractInfo: '',
@@ -692,9 +680,9 @@ export default {
     }
   },
   components: {
-    'v-editor': editors
+    'v-editor': editors // 富文本组件
   },
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter (to, from, next) { // 路由载入页面处理
     next(vm => {
       let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
       vm.getcategList(0, '', 1)
@@ -704,7 +692,7 @@ export default {
       } else {
         vm.BrandsList = brand
       }
-      // 因为当钩子执行前，组件实例还没被创建
+      // 因为当钩子执行前，组件实例还没被创建，编辑
       if (vm.$route.query.type === 'edit') {
         vm.vsShowNav = 0
         vm.goodsTitle = ''
@@ -742,6 +730,7 @@ export default {
         console.log('vm.$route', vm.$route)
         vm.goodsDetail(vm.$route.query.id)
       }
+      // 新增清空
       if (vm.$route.query.type !== 'edit') {
         vm.vsShowNav = 0
         vm.type = ''
@@ -797,6 +786,7 @@ export default {
     })
   },
   computed: {
+    // 表格表头字段更新
     columnsListUpdata: function () {
       let columnsList = [...this.columnsListOriginal]
       console.log('cloumb654', this.columnsListOriginal)
@@ -811,6 +801,7 @@ export default {
       console.log('columnsList-edit', columnsList)
       return columnsList
     },
+    // 表格字段更新
     Descates: function () {
       let arr1 = this.expandSpec1
       let arr2 = this.expandSpec2
@@ -881,7 +872,7 @@ export default {
     }
   },
   methods: {
-    async getSupplierList () {
+    async getSupplierList () { // 获取供应商数据
       let data = {
         FLAG: 1,
         pageIndex: 1,
@@ -893,7 +884,7 @@ export default {
         this.supplierListArr = res.data.content.rows
       }
     },
-    expandSpecFor (arr, skusList) {
+    expandSpecFor (arr, skusList) { // 扩展字段搭配
       if (arr && arr.length == 2) {
         this.expandSpec1 = [...arr[0].specVals]
         this.expandSpec2 = [...arr[1].specVals]
@@ -924,7 +915,7 @@ export default {
       })
       this.columnsList = [...this.columnsListUpdata]
     },
-    specArrFor (arr) {
+    specArrFor (arr) { // 循环属性
       this.columnsList = []
       if (arr && arr.length === 0) {
         this.baseSpec = []
@@ -976,7 +967,7 @@ export default {
       }
       this.columnsList = [...this.columnsListUpdata]
     },
-    clearGoodsObj () {
+    clearGoodsObj () { // 清空商品obj
       this.goodsObj = {
         supply: '',
         stock: '',
@@ -1147,7 +1138,7 @@ export default {
         }
       }
     },
-    validateTable () {
+    validateTable () { // 校验表格字段
       this.validateType = false
       this.dataList.forEach((item, index) => {
         if (item.imageUrl == '') {
@@ -1403,28 +1394,12 @@ export default {
         e.target.value = ''
       }
     },
+    // 清空商品图片
     delFile (val) {
       this.goodsImgList[val].imgShow = false
       this.goodsImgList[val].loading = false
       this.goodsImgList[val].imgUrl = ''
       this.$refs.filezm1.value = ''
-      switch (val) {
-        case 0:
-          this.$refs.filezm1.value = ''
-          break
-        case 1:
-          this.$refs.filezm2.value = ''
-          break
-        case 2:
-          this.$refs.filezm3.value = ''
-          break
-        case 3:
-          this.$refs.filezm4.value = ''
-          break
-        case 4:
-          this.$refs.filezm5.value = ''
-          break
-      }
     },
     // 上传图片
     async filezmFn (e, val) {
@@ -1452,6 +1427,7 @@ export default {
       }
       console.log(this.goodsImgList)
     },
+    // 富文本编辑器内容
     _getContext (ctx) {
       // console.log(ctx)
       this.ctx = ctx.html
@@ -1481,6 +1457,7 @@ export default {
       let specListArrs = []
       this.getSpecList()
     },
+    // 获取商品详情数据处理
     async goodsDetail (id) {
       let res = await goodsDetail(id)
       if (res.data.code === 0) {
@@ -1536,6 +1513,7 @@ export default {
         // console.log('ctx-edit',this.ctx)
       }
     },
+    // 分类类目接口处理
     async getcategList (parentId, i, val) {
       let data = {
         FLAG: 1,
@@ -1640,6 +1618,7 @@ export default {
           break
       }
     },
+    // 获取品牌数据
     async getlistBrandsPage () {
       let data = {
         FLAG: 1,
@@ -1655,8 +1634,8 @@ export default {
     selClistBrand (id) {
       console.log(id)
     },
+    // 改变导航判断
     changeNav (val) {
-      this.back()
       let imageUrl = this.goodsImgList.filter(item => {
         return item.imgUrl != ''
       })
@@ -1665,6 +1644,7 @@ export default {
           this.vsShowNav = 0
           break
         case 1:
+          this.back()
           if (this.supplierId != '') {
             this.vsShowNav = 1
           } else {
@@ -1675,6 +1655,7 @@ export default {
           }
           break
         case 2:
+          this.back()
           if (this.cur3 == '') {
             this.$Modal.warning({
               title: '提示',
@@ -1715,7 +1696,6 @@ export default {
       }
     },
     navSave (val) {
-      this.back()
       let imageUrl = this.goodsImgList.filter(item => {
         return item.imgUrl != ''
       })
@@ -1729,8 +1709,10 @@ export default {
               content: '请选择供应商'
             })
           }
+          this.back()
           break
         case 2:
+          this.back()
           if (this.cur3 == '') {
             this.$Modal.warning({
               title: '提示',
@@ -1778,88 +1760,11 @@ export default {
           break
       }
     },
-    async roleDetail (id) {
-      let res = await roleDetail(id)
-      if (res.data.code === 0) {
-        this.formValidate = {
-          roleName: res.data.content.roleName,
-          roleDesc: res.data.content.remark,
-          roleSign: res.data.content.roleSign,
-          power: ''
-        }
-        this.menuIds = res.data.content.menuIds
-        if (this.menuIds && this.menuIds.length > 0) {
-          this.forIds(this.menuIds)
-        }
-      }
-    },
-    forIds (arr) {
-      let zTreeData = [...this.ztreesData]
-      for (let i = 0; i < arr.length; i++) {
-        this.parentFn(zTreeData, arr[i])
-      }
-      this.ztreesData = [...zTreeData]
-    },
-    parentFn (arr, roleId) {
-      arr.forEach((item, index) => {
-        if (item.id == roleId) {
-          this.$set(item, 'checked', true)
-        } else {
-          if (item.children) {
-            this.parentFn(item.children, roleId)
-          }
-        }
-      })
-    },
-    async roleUpdate () {
-      let menuIds = this.checkedIds
-      if (menuIds && menuIds.length === 0) {
-        this.$Modal.warning({
-          title: '提示',
-          content: '请选择菜单权限'
-        })
-        return
-      }
-      let data = {
-        FLAG: 1,
-        menuIds: menuIds,
-        roleId: this.checkedId,
-        remark: this.formValidate.roleDesc,
-        roleName: this.formValidate.roleName,
-        roleSign: this.formValidate.roleSign
-      }
-      let res = await roleUpdate(data)
-      if (res.data.code === 0) {
-        console.log(res)
-        this.modal1 = false
-        this.$Modal.success({
-          title: '提示',
-          content: '编辑成功'
-        })
-        this.checkedId = ''
-        this.checkedIds = []
-        this.formValidate = {
-          roleName: '',
-          roleDesc: '',
-          roleSign: '',
-          power: ''
-        }
-        this.getPageList()
-      }
-    },
     addFn () {
       this.modal1 = true
-      this.operationShow = false
-      this.formValidate = {
-        roleName: '',
-        roleDesc: '',
-        roleSign: '',
-        power: ''
-      }
     },
     operationRole () {
       if (this.operationShow) {
-        // this.roleUpdate()
       } else {
         this.saveSepcs()
       }
@@ -1931,12 +1836,6 @@ export default {
       //   operateType: this.formValidate.natures,
       //   specVals: specVals
       // }
-    },
-    edit (i) {
-      this.modal1 = true
-      this.operationShow = true
-      this.checkedId = this.dataList[i].roleId
-      this.roleDetail(this.dataList[i].roleId)
     },
     // 取消
     cancelModal1 () {
