@@ -1645,7 +1645,7 @@ export default {
           break
         case 1:
           this.back()
-          if (this.supplierId != '') {
+          if (this.supplierId != '' && this.supplierId != undefined) {
             this.vsShowNav = 1
           } else {
             this.$Modal.warning({
@@ -1701,7 +1701,7 @@ export default {
       })
       switch (val) {
         case 1:
-          if (this.supplierId != '') {
+          if (this.supplierId != '' && this.supplierId != undefined) {
             this.vsShowNav = 1
           } else {
             this.$Modal.warning({
