@@ -66,6 +66,7 @@ import bannerDetail from './bannerDetail'
 import addBanner from './addBanner'
 import { showDot } from './homeManage.js'
 import { doActiveList, doBannerList, doRemoveHomeBanner } from '@/api/home'
+import Bus from '@/assets/js/bus.js'
 export default {
   name: 'bannerList',
   components: {
@@ -152,6 +153,7 @@ export default {
         case 2: this.modalTitle = '新增'
           this.modalWid = '1000'
           this.activeMsg = ''
+          Bus.$emit('clear')
           break
       }
       this.modalWid = '1000'

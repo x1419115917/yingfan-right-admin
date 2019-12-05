@@ -5,7 +5,7 @@
       <Row>
         <Col span="6">
           <span>订单号</span>
-          <Input v-model="form.orderId" :style="{ width: inpWidth}" placeholder="请输入订单号" clearable />
+          <Input v-model="form.businessId" :style="{ width: inpWidth}" placeholder="请输入订单号" clearable />
         </Col>
         <Col span="18">
           <span>支付状态</span>
@@ -23,12 +23,12 @@
             <span v-if="row.transactionId">{{ row.transactionId }}</span>
             <span v-else>-</span>
           </template>
-          <template slot-scope="{ row, index }" slot="createTime">
-            {{ $moment(row.createTime).format("YYYY-MM-DD HH:mm:ss")}}
+          <template slot-scope="{ row, index }" slot="timeEnd">
+            {{ $moment(row.timeEnd).format("YYYY-MM-DD HH:mm:ss")}}
           </template>
           <template slot-scope="{ row, index }" slot="status"><span>{{ returnStatus(row.status) }}</span></template>
-          <template slot-scope="{ row, index }" slot="totalFee">
-            <span v-if="row.totalFee">¥{{ row.totalFee }}</span>
+          <template slot-scope="{ row, index }" slot="payFee">
+            <span v-if="row.payFee">¥{{ row.payFee }}</span>
             <span v-else>-</span>
           </template>
         </Table>
@@ -56,7 +56,7 @@ export default {
       dataList: [], // 订单列表
       form: {
         FLAG: 1,
-        orderId: null,
+        businessId: null,
         status: null,
         pageIndex: 1,
         pageSize: 10
@@ -69,17 +69,17 @@ export default {
         },
         {
           title: '订单号',
-          key: 'orderId',
+          key: 'businessId',
           align: 'center'
         },
         {
           title: '支付时间',
           align: 'center',
-          slot: 'createTime'
+          slot: 'timeEnd'
         },
         {
           title: '交易金额（元）',
-          slot: 'totalFee',
+          slot: 'payFee',
           align: 'center'
         },
         {

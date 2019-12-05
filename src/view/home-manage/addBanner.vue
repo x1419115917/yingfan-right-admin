@@ -11,8 +11,11 @@
         </FormItem>
         <FormItem label="展示模式" prop="showMode">
             <RadioGroup v-model="form.showMode" @on-change="selectMode">
-              <Radio label="0">单图模式</Radio>
+              <template v-if="form.plateRegion == '0'">
+                <Radio label="6">轮播图模式</Radio>
+              </template>
               <template v-if="form.plateRegion !== '0'">
+                <Radio label="0">单图模式</Radio>
                 <Radio label="1">一行两图模式</Radio>
                 <Radio label="2">一行三图模式</Radio>
                 <template v-if="form.plateRegion === '2'">
@@ -29,18 +32,30 @@
           <Input v-model="form.plateName" :maxlength="maxlength" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
         </FormItem>
         <FormItem label="图片">
-          <Table max-height="400" border :columns="imgColumns" :data="form.plaDets">
+          <Table max-height="400" border :columns="form.plateRegion === '0' ? imgColumns1 : imgColumns" :data="form.plaDets">
             <template slot-scope="{ row,index }" slot="uploadImg">
-            <div class="imgWrap">
-              <img class="noImg" v-show="!form.plaDets[index].pictureUrl" src="@/assets/images/noImg.png">
-              <img :src="form.plaDets[index].pictureUrl" class="img-box1" v-show="form.plaDets[index].pictureUrl">
-              <div class="btn-upload">
-                <Button type="primary" class="upload-img">上传图片</Button>
-                <input type="file" class="img-ipt"
-                  ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
-                  <span class="tips-upload">(1125*高度不限，<br />jpg、gif，小于500k)</span>
+              <div class="imgWrap">
+                <img class="noImg" v-show="!form.plaDets[index].pictureUrl" src="@/assets/images/noImg.png">
+                <img :src="form.plaDets[index].pictureUrl" class="img-box1" v-show="form.plaDets[index].pictureUrl">
+                <div class="btn-upload">
+                  <Button type="primary" class="upload-img">上传图片</Button>
+                  <input type="file" class="img-ipt"
+                    ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
+                    <span class="tips-upload">(1125*高度不限，<br />jpg、gif，小于500k)</span>
+                </div>
               </div>
-            </div>
+              <!--<template v-if="form.plateRegion === '0'">
+                <span style="color:#ed4014;margin-right: 4px;">*</span>状态：<RadioGroup v-model="form.plaDets[index].isShow">
+                  <Radio label="0">显示</Radio>
+                  <Radio label="1">隐藏</Radio>
+                </RadioGroup>
+              </template>-->
+            </template>
+            <template slot-scope="{ row,index }" slot="isShow">
+              <RadioGroup v-model="form.plaDets[index].isShow">
+                <Radio label="0">显示</Radio>
+                <Radio label="1">隐藏</Radio>
+              </RadioGroup>
             </template>
             <template slot-scope="{ row,index }" slot="activityId">
               <Select v-model="form.plaDets[index].activityId" placeholder="请选择活动" :style="{width: inpWidth}" clearable>
@@ -69,6 +84,7 @@
 <script>
 import { doActiveList, doAddHomeBanner, doBannerDetail, doEditHomeBanner } from '@/api/home'
 import { singleUpload } from '@/api/nature'
+import Bus from '@/assets/js/bus.js'
 export default {
   name: 'addBanner',
   data () {
@@ -87,7 +103,7 @@ export default {
       inpWidth: '200px',
       form: {
         plateRegion: '0', // 展示位置
-        showMode: '0', // 展示模式
+        showMode: '6', // 展示模式
         plateName: '', // 活动名称
         plaDets: [{ // 活动图片列表
           activityId: '',
@@ -102,6 +118,29 @@ export default {
           title: '图片',
           align: 'center',
           slot: 'uploadImg'
+        },
+        {
+          title: '选择活动',
+          align: 'center',
+          slot: 'activityId'
+        },
+        {
+          title: '权重',
+          align: 'center',
+          slot: 'sortOrder'
+        }
+      ],
+      imgColumns1: [
+        {
+          title: '图片',
+          align: 'center',
+          slot: 'uploadImg'
+        },
+        {
+          title: '状态',
+          align: 'center',
+          width: 100,
+          slot: 'isShow'
         },
         {
           title: '选择活动',
@@ -144,7 +183,12 @@ export default {
       }
     },
     selectPlateRegion () {
-      this.form.showMode = '0'
+      if (this.form.plateRegion === '0') { // 首页banner时，默认轮播图模式
+        this.form.showMode = '6'
+      } else {
+        this.form.showMode = '0'
+      }
+      this.selectMode(this.form.showMode)
     },
     selectMode (value) {
       this.form.plaDets.length = 0
@@ -161,6 +205,8 @@ export default {
         case '4': count = 3
           break
         case '5': count = 4
+          break
+        case '6': count = 5 // 轮播图模式
           break
       }
       for (let i = 0; i < count; i++) {
@@ -179,6 +225,16 @@ export default {
       if (!this.form.plateName) {
         this.$Message.warning('请输入活动名称')
       } else {
+        // 新增或编辑banner时，获取banner列表
+        if (this.form.plateRegion === '0') {
+          let banner = []
+          this.form.plaDets.forEach((val, index) => {
+            if (val.pictureUrl) {
+              banner.push(val)
+            }
+          })
+          this.form.plaDets = banner
+        }
         if (this.editType === 1) { // 编辑
           let data = Object.assign(this.form, { FLAG: 1, id: this.activeMsg.id })
           let res = await doEditHomeBanner(data)
@@ -194,7 +250,7 @@ export default {
             this.$Message.success('操作成功!')
             this.form = {
               plateRegion: '0',
-              showMode: '0',
+              showMode: '6',
               plateName: '',
               plaDets: [{
                 activityId: '',
@@ -203,6 +259,7 @@ export default {
               }],
               isShow: '0'
             }
+            this.selectMode('6')
             this.$emit('close')
             this.$emit('updateList')
           }
@@ -223,9 +280,18 @@ export default {
         let plaDets = []
         for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
           delete this.bannerDetail.plaDets[i].id
+          this.bannerDetail.plaDets[i].isShow = this.bannerDetail.plaDets[i].isShow.toString()
           plaDets.push(this.bannerDetail.plaDets[i])
         }
         this.form.plaDets = plaDets
+        if (this.form.plateRegion === '0') {
+          let num = parseInt(this.form.plaDets.length)
+          if (num < 5) {
+            for (let i = 0; i < (5 - num); i++) {
+              this.pushObj()
+            }
+          }
+        }
       }
     },
     async getActiveList () {
@@ -253,7 +319,7 @@ export default {
       } else {
         this.form = {
           plateRegion: '0',
-          showMode: '0',
+          showMode: '6',
           plateName: '',
           plaDets: [{
             activityId: '',
@@ -262,11 +328,30 @@ export default {
           }],
           isShow: '0'
         }
+        this.selectMode('6')
       }
     }
   },
+  mounted () {
+    // 清空信息
+    Bus.$on('clear', () => {
+      this.form = {
+        plateRegion: '0',
+        showMode: '6',
+        plateName: '',
+        plaDets: [{
+          activityId: '',
+          pictureUrl: '',
+          sortOrder: ''
+        }],
+        isShow: '0'
+      }
+      this.selectMode('6')
+    })
+  },
   created () {
     this.getActiveList()
+    this.selectMode('6')
     if (this.activeMsg) {
       let obj = {
         FLAG: 1,
