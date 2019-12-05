@@ -115,7 +115,7 @@ import { treeList, menuTree, saveMenu, detailMenu, updateMenu, removeMenu } from
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 import { icons } from './menu'
 export default {
-  name: 'menu',
+  name: 'menuName',
   data () {
     return {
       value: '',
