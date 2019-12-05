@@ -696,6 +696,14 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
+      let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
+      vm.getcategList(0, '', 1)
+      vm.getSupplierList()
+      if (brand && brand.length === 0) {
+        vm.getlistBrandsPage()
+      } else {
+        vm.BrandsList = brand
+      }
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.$route.query.type === 'edit') {
         vm.vsShowNav = 0
