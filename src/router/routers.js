@@ -445,6 +445,48 @@ export const appRouter = [
           title: '售后订单'
         },
         component: () => import('@/view/order-manage/afterSaleOrder.vue')
+      },
+      {
+        path: 'returnAddress',
+        name: 'returnAddress',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '退货地址'
+        },
+        component: () => import('@/view/order-manage/returnAddress.vue')
+      }
+    ]
+  },
+  {
+    path: '/infunManage',
+    name: 'infunManage',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-menu',
+      title: '应分收益明细'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'infunList',
+        name: 'infunList',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '应分列表'
+        },
+        component: () => import('@/view/infun-manage/infunList.vue')
+      },
+      {
+        path: 'inComeList',
+        name: 'inComeList',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '收益列表'
+        },
+        component: () => import('@/view/infun-manage/inComeList.vue')
       }
     ]
   },
@@ -521,104 +563,6 @@ export const appRouter = [
           hideInMenu: true
         },
         component: () => import('@/view/supplierWeb/supplier.vue')
-      }
-    ]
-  },
-  // {
-  //   path: '/thematicManager',
-  //   name: 'thematicManager',
-  //   meta: {
-  //     icon: 'ios-menu',
-  //     title: '专题管理',
-  //     hideInMenu: true
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'thematicList',
-  //       name: 'thematicList',
-  //       meta: {
-  //         icon: '',
-  //         title: '专题活动列表',
-  //         hideInMenu: true
-  //       },
-  //       component: () => import('@/view/thematic-activities/thematicList.vue')
-  //     },
-  //     {
-  //       path: 'thematicPub',
-  //       name: 'thematicPub',
-  //       meta: {
-  //         icon: '',
-  //         title: '专题活动发布',
-  //         hideInMenu: true
-  //       },
-  //       component: () => import('@/view/thematic-activities/thematicPub.vue')
-  //     }
-  //   ]
-  // },
-  {
-    path: '/multilevel',
-    name: 'multilevel',
-    meta: {
-      icon: 'md-menu',
-      title: '多级菜单',
-      hideInMenu: true
-    },
-    component: Main,
-    children: [
-      {
-        path: 'level_2_1',
-        name: 'level_2_1',
-        meta: {
-          icon: 'md-funnel',
-          title: '二级-1',
-          hideInMenu: true
-        },
-        component: () => import('@/view/multilevel/level-2-1.vue')
-      },
-      {
-        path: 'level_2_2',
-        name: 'level_2_2',
-        meta: {
-          access: ['super_admin'],
-          icon: 'md-funnel',
-          showAlways: true,
-          hideInMenu: true,
-          title: '二级-2'
-        },
-        component: parentView,
-        children: [
-          {
-            path: 'level_2_2_1',
-            name: 'level_2_2_1',
-            meta: {
-              icon: 'md-funnel',
-              title: '三级',
-              hideInMenu: true
-            },
-            component: () => import('@/view/multilevel/level-2-2/level-2-2-1.vue')
-          },
-          {
-            path: 'level_2_2_2',
-            name: 'level_2_2_2',
-            meta: {
-              icon: 'md-funnel',
-              title: '三级',
-              hideInMenu: true
-            },
-            component: () => import('@/view/multilevel/level-2-2/level-2-2-2.vue')
-          }
-        ]
-      },
-      {
-        path: 'level_2_3',
-        name: 'level_2_3',
-        meta: {
-          icon: 'md-funnel',
-          title: '二级-3',
-          hideInMenu: true
-        },
-        component: () => import('@/view/multilevel/level-2-3.vue')
       }
     ]
   }
