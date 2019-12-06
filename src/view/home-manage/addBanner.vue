@@ -41,7 +41,15 @@
                   <Button type="primary" class="upload-img">上传图片</Button>
                   <input type="file" class="img-ipt"
                     ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
-                    <span class="tips-upload">(1125*高度不限，<br />jpg、gif，小于500k)</span>
+                    <span v-if="form.plateRegion === '0'" class="tips-upload">690*300</span>
+                    <span v-else-if="form.plateRegion === '1' && form.showMode === '0'" class="tips-upload">690*160</span>
+                    <span v-else-if="form.plateRegion === '1' && form.showMode === '1'" class="tips-upload">340*400</span>
+                    <span v-else-if="form.plateRegion === '1' && form.showMode === '4'" class="tips-upload">左边1张:340*196<br />右边2张:340*196</span>
+                    <span v-else-if="form.plateRegion === '1' && form.showMode === '5'" class="tips-upload">340*196</span>
+                    <span v-else-if="form.plateRegion === '2' && form.showMode === '0'" class="tips-upload">690*160</span>
+                    <span v-else-if="form.plateRegion === '2' && form.showMode === '1'" class="tips-upload">340*160</span>
+                    <span v-else-if="form.plateRegion === '2' && form.showMode === '2'" class="tips-upload">224*300</span>
+                    <span v-else-if="form.plateRegion === '2' && form.showMode === '3'" class="tips-upload">165*165</span>
                 </div>
               </div>
               <!--<template v-if="form.plateRegion === '0'">
