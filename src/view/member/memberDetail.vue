@@ -105,7 +105,7 @@ export default {
       value: '',
       imgShow1: '',
       imgUrl: '',
-      navList: ['销售奖励', '积分奖励', '团队成员'],
+      navList: ['销售奖励', '应分奖励', '团队成员'],
       type: this.$route.query.type,
       memberId: this.$route.query.id,
       currentNav: 0,
@@ -128,7 +128,7 @@ export default {
           key: 'bonus'
         },
         {
-          title: '累计积分',
+          title: '累计应分',
           key: 'score'
         }
       ],
@@ -180,11 +180,11 @@ export default {
           key: 'payAmt'
         },
         {
-          title: '积分金额',
+          title: '应分金额',
           key: 'score'
         },
         {
-          title: '积分类型',
+          title: '应分类型',
           key: 'businessType1'
         },
         {
@@ -204,7 +204,15 @@ export default {
           key: 'beInviteUserPhone'
         },
         {
+          title: '会员等级',
+          key: 'beInviteUserPhone'
+        },
+        {
           title: '注册时间',
+          key: 'createTime'
+        },
+        {
+          title: '升级时间',
           key: 'createTime'
         }
       ],
@@ -272,7 +280,7 @@ export default {
         this.total = +res.data.content.total
         this.dataList3 = res.data.content.rows
         // this.dataList2.forEach(item => {
-        //   item.businessType1 = item.businessType === 1 ? '购物获得积分' : '下级购物返积分'
+        //   item.businessType1 = item.businessType === 1 ? '购物获得应分' : '下级购物返应分'
         //   item.status1 = item.status === 0 ? '冻结' : item.status === 1 ? '生效' : '失效'
         // })
       }
@@ -292,7 +300,7 @@ export default {
         this.total = +res.data.content.total
         this.dataList2 = res.data.content.rows
         this.dataList2.forEach(item => {
-          item.businessType1 = item.businessType === 1 ? '购物获得积分' : '下级购物返积分'
+          item.businessType1 = item.businessType === 1 ? '购物获得应分' : '下级购物返应分'
           item.status1 = item.status === 0 ? '冻结' : item.status === 1 ? '生效' : '失效'
         })
       }

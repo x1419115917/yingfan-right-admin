@@ -103,6 +103,16 @@ export default {
           width: 180
         },
         {
+          title: '升级时间',
+          key: 'createTime',
+          width: 180
+        },
+        {
+          title: '会员等级',
+          key: 'createTime',
+          width: 180
+        },
+        {
           title: '推荐人手机号',
           key: 'invitePhone'
         },
@@ -111,7 +121,7 @@ export default {
           key: 'bonus'
         },
         {
-          title: '积分',
+          title: '应分',
           key: 'score'
         },
         {

@@ -413,6 +413,16 @@ export const appRouter = [
           title: '会员详情'
         },
         component: () => import('@/view/member/memberDetail.vue')
+      },
+      {
+        path: 'memberUpgrade',
+        name: 'memberUpgrade',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-menu',
+          title: '会员升级'
+        },
+        component: () => import('@/view/member/memberUpgrade.vue')
       }
     ]
   },

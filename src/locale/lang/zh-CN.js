@@ -10,6 +10,7 @@ export default {
   dept: '部门管理',
   goodsManage: '商品管理',
   goodsPub: '商品发布',
+  memberUpgrade: '会员升级',
   goodsList: '商品列表',
   orderManage: '订单管理',
   supplierWeb: '供应商(官网申请)',
