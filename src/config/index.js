@@ -18,7 +18,7 @@ export default {
    */
   baseUrl: {
     // dev: 'https://www.easy-mock.com/mock/5add9213ce4d0e69998a6f51/iview-admin/',
-    dev: 'http://120.79.191.75:9203/',
+    dev: 'http://192.168.1.234:9203/',
     // dev: 'http://192.168.1.13:9203/',
     pro: 'http://120.79.191.75:9203/'
   },

@@ -241,7 +241,7 @@
           <Row class="tb-title tb-line-item2 tb-line5">
             <h5 class="name">商品价格<span class="sub-name"> 【sku图片尺寸：180*180，宽高比例：1：1，小于200k】</span></h5>
           </Row>
-          <!-- <Row class="tb-line tb-line3 tb-line5">
+          <Row class="tb-line tb-line3 tb-line5">
             <Col span="2" class="goods-info-left">商品奖励：</Col>
             <Col span="22" class="goods-info-content text-left">
               <RadioGroup v-model="rewardState" @on-change="changeRewardState">
@@ -253,12 +253,12 @@
           <Row class="tb-line tb-line3 tb-line5">
             <Col span="2" class="goods-info-left">应分兑换：</Col>
             <Col span="22" class="goods-info-content text-left">
-              <RadioGroup v-model="pointExchangeState">
+              <RadioGroup v-model="pointExchangeState" @on-change="pointExchangeStateFn">
                 <Radio label="1">支持</Radio>
                 <Radio label="0">不支持</Radio>
               </RadioGroup>
             </Col>
-          </Row> -->
+          </Row>
           <div class="tb-line tb-line3">
               <Row style="margin-bottom: 20px;">
                 <Col span="2" class="goods-info-left">批量填充：</Col>
@@ -269,7 +269,7 @@
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="最低批发量"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
                   <!-- v-show="rewardState == 1" -->
-                  <span class="goods-info-ipt">
+                  <span class="goods-info-ipt" v-show="rewardState == 1">
                     佣金比例: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
                   </span>
                   <span class="goods-info-ipt">
@@ -297,13 +297,13 @@
                             id="ad21" v-show="row.imageShow">
                       </div>
                     </template>
-                    <!-- <template slot-scope="{ row, index }" slot="intredeem">
+                    <template slot-scope="{ row, index }" slot="intredeem">
                       <div class="intredeem-name">
                         <Input v-model="row.exchangePoints" placeholder="" style="width: 60px" /> 积分
                         <span>+</span>
                         <Input v-model="row.exchangePrice" placeholder="" style="width: 60px" /> 金额
                       </div>
-                    </template> -->
+                    </template>
                   </Table>
               </Row>
           </div>
@@ -682,13 +682,14 @@ export default {
               }
             })
           }
+        },
+        {
+          title: '应分兑换',
+          // key: 'redeem',
+          slotType: 'intredeem',
+          width: 250,
+          slot: 'intredeem'
         }
-        // {
-        //   title: '应分兑换',
-        //   // key: 'redeem',
-        //   width: 250,
-        //   slot: 'intredeem'
-        // },
       ],
       columnsListTable: [],
       columnsList: [],
@@ -704,7 +705,9 @@ export default {
           wholesale: '',
           trade: '',
           brokerage: '',
-          integral: ''
+          integral: '',
+          exchangePoints: '',
+          exchangePrice: ''
         }
       ],
       skusList: [],
@@ -840,10 +843,8 @@ export default {
       let columnsList = [...this.columnsListOriginal]
       // if(this.rewardState == 0) {
       //   columnsList = columnsList.filter(item => item.key != 'brokerage')
-      // } else {
-      //   columnsList = [...this.columnsListOriginal]
       // }
-      console.log('cloumb654', this.columnsListOriginal)
+      // console.log('cloumb654', this.columnsListOriginal)
       let expandSpec = this.expandSpec
       expandSpec.forEach((item, index) => {
         columnsList.splice(index, 0, {
@@ -880,7 +881,9 @@ export default {
                 wholesale: '',
                 trade: '',
                 brokerage: '',
-                integral: ''
+                integral: '',
+                exchangePoints: '',
+                exchangePrice: ''
               }
             )
           }
@@ -901,7 +904,9 @@ export default {
               wholesale: '',
               trade: '',
               brokerage: '',
-              integral: ''
+              integral: '',
+              exchangePoints: '',
+              exchangePrice: ''
             }
           )
         }
@@ -918,7 +923,9 @@ export default {
             wholesale: '',
             trade: '',
             brokerage: '',
-            integral: ''
+            integral: '',
+            exchangePoints: '',
+            exchangePrice: ''
           }
         )
         return result
@@ -1010,6 +1017,17 @@ export default {
       let columnsListOriginal = [...this.columnsListUpdata]
       if (this.rewardState == 0) {
         columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage')
+      } else {
+        columnsListOriginal = [...this.columnsListUpdata]
+      }
+      this.columnsList = columnsListOriginal
+    },
+    // 应分支持不支持
+    pointExchangeStateFn () {
+      let columnsListOriginal = [...this.columnsListUpdata]
+      // slotType: 'intredeem',
+      if (this.pointExchangeState == 0) {
+        columnsListOriginal = columnsListOriginal.filter(item => item.slotType != 'intredeem')
       } else {
         columnsListOriginal = [...this.columnsListUpdata]
       }
