@@ -238,11 +238,29 @@
               </div>
             </div>
           </div>
-           <Row class="tb-title tb-line-item2">
+          <Row class="tb-title tb-line-item2 tb-line5">
             <h5 class="name">商品价格<span class="sub-name"> 【sku图片尺寸：180*180，宽高比例：1：1，小于200k】</span></h5>
           </Row>
+          <!-- <Row class="tb-line tb-line3 tb-line5">
+            <Col span="2" class="goods-info-left">商品奖励：</Col>
+            <Col span="22" class="goods-info-content text-left">
+              <RadioGroup v-model="rewardState" @on-change="changeRewardState">
+                <Radio label="1">支持</Radio>
+                <Radio label="0">不支持</Radio>
+              </RadioGroup>
+            </Col>
+          </Row>
+          <Row class="tb-line tb-line3 tb-line5">
+            <Col span="2" class="goods-info-left">应分兑换：</Col>
+            <Col span="22" class="goods-info-content text-left">
+              <RadioGroup v-model="pointExchangeState">
+                <Radio label="1">支持</Radio>
+                <Radio label="0">不支持</Radio>
+              </RadioGroup>
+            </Col>
+          </Row> -->
           <div class="tb-line tb-line3">
-              <Row style="margin-bottom: 30px;">
+              <Row style="margin-bottom: 20px;">
                 <Col span="2" class="goods-info-left">批量填充：</Col>
                 <Col span="22" class="goods-info-content text-left">
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.supply" placeholder="输入供货价"  />
@@ -250,11 +268,12 @@
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.retail" placeholder="输入零售价"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.wholesale" placeholder="最低批发量"  />
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
+                  <!-- v-show="rewardState == 1" -->
                   <span class="goods-info-ipt">
                     佣金比例: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
                   </span>
                   <span class="goods-info-ipt">
-                    积分返还:
+                    应分返还:
                     <Select class="w80" v-model="goodsObj.integral" filterable>
                       <Option v-for="item in integralList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
@@ -277,8 +296,14 @@
                         <img :src="row.imageUrl" class="img-table"
                             id="ad21" v-show="row.imageShow">
                       </div>
-
                     </template>
+                    <!-- <template slot-scope="{ row, index }" slot="intredeem">
+                      <div class="intredeem-name">
+                        <Input v-model="row.exchangePoints" placeholder="" style="width: 60px" /> 积分
+                        <span>+</span>
+                        <Input v-model="row.exchangePrice" placeholder="" style="width: 60px" /> 金额
+                      </div>
+                    </template> -->
                   </Table>
               </Row>
           </div>
@@ -339,6 +364,7 @@ export default {
     return {
       vsShowNav: 0,
       params: { tag: 0 },
+      value: '111',
       brandsId: '',
       brandsIds: '',
       speaval: '',
@@ -442,6 +468,8 @@ export default {
       value3: '',
       modal1: false,
       operationShow: false,
+      rewardState: '0', // 商品奖励状态：0-不支持；1支持
+      pointExchangeState: '0', // 积分兑换状态：0-不支持；1支持
       goodsObj: { // 商品obj
         supply: '',
         stock: '',
@@ -475,6 +503,7 @@ export default {
         {
           title: '商家编码',
           key: 'code',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -492,6 +521,7 @@ export default {
         {
           title: '商品条形码',
           key: 'tcode',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -512,6 +542,7 @@ export default {
         {
           title: '供货价(元)',
           key: 'supply',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -528,25 +559,9 @@ export default {
           }
         },
         {
-          title: '可售卖库存',
-          key: 'stock',
-          render: (h, params) => {
-            var vm = this
-            return h('Input', {
-              props: {
-                value: vm.dataList[params.index].stock
-              },
-              on: {
-                'on-change' (event) {
-                  vm.dataList[params.index].stock = event.target.value
-                }
-              }
-            })
-          }
-        },
-        {
           title: '零售价(元)',
           key: 'retail',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -562,8 +577,27 @@ export default {
           }
         },
         {
+          title: '可售卖库存',
+          key: 'stock',
+          width: 150,
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].stock
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].stock = event.target.value
+                }
+              }
+            })
+          }
+        },
+        {
           title: '最低批发量',
           key: 'wholesale',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -598,6 +632,7 @@ export default {
         {
           title: '批发价(元)',
           key: 'trade',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -615,6 +650,7 @@ export default {
         {
           title: '佣金比例(%)',
           key: 'brokerage',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -630,8 +666,9 @@ export default {
           }
         },
         {
-          title: '积分返还(%)',
+          title: '应分返还(%)',
           key: 'integral',
+          width: 150,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -646,7 +683,14 @@ export default {
             })
           }
         }
+        // {
+        //   title: '应分兑换',
+        //   // key: 'redeem',
+        //   width: 250,
+        //   slot: 'intredeem'
+        // },
       ],
+      columnsListTable: [],
       columnsList: [],
       dataList: [ // 商品初始化表格填写字段
         {
@@ -785,17 +829,27 @@ export default {
       }
     })
   },
+  watch: {
+    rewardState (val) {
+      this.rewardState = val
+    }
+  },
   computed: {
     // 表格表头字段更新
     columnsListUpdata: function () {
       let columnsList = [...this.columnsListOriginal]
+      // if(this.rewardState == 0) {
+      //   columnsList = columnsList.filter(item => item.key != 'brokerage')
+      // } else {
+      //   columnsList = [...this.columnsListOriginal]
+      // }
       console.log('cloumb654', this.columnsListOriginal)
       let expandSpec = this.expandSpec
       expandSpec.forEach((item, index) => {
         columnsList.splice(index, 0, {
           title: item.specName,
           key: `guige${index}`,
-          width: 100
+          width: 120
         })
       })
       console.log('columnsList-edit', columnsList)
@@ -950,6 +1004,16 @@ export default {
         this.dataList = this.Descates
       }
       this.columnsList = [...this.columnsListUpdata]
+    },
+    // 商品奖励支持不支持改变
+    changeRewardState () {
+      let columnsListOriginal = [...this.columnsListUpdata]
+      if (this.rewardState == 0) {
+        columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage')
+      } else {
+        columnsListOriginal = [...this.columnsListUpdata]
+      }
+      this.columnsList = columnsListOriginal
     },
     expandSpecForEach (arr) {
       if (arr && arr.length == 2) {
@@ -1121,7 +1185,7 @@ export default {
           skus: skus,
           specTemplate: this.expandSpec,
           spuId: '',
-          subTitle: this.subtitle,
+          subTitle: this.subTitle,
           supplierId: this.supplierId,
           title: this.goodsTitle
         }
@@ -1284,7 +1348,7 @@ export default {
           skus: skus,
           specTemplate: this.expandSpec,
           spuId: this.goodsId,
-          subTitle: this.subtitle,
+          subTitle: this.subTitle,
           supplierId: this.supplierId,
           title: this.goodsTitle
         }
@@ -1463,6 +1527,9 @@ export default {
       if (res.data.code === 0) {
         let spuInfo = res.data.content.spu
         let skuInfo = res.data.content.sku
+        // if(){
+
+        // }
         this.skusList = skuInfo.skus
         // console.log('res.data12', res.data)
         this.supplierId = spuInfo.supplierId
@@ -1558,8 +1625,9 @@ export default {
       obj.showEdit = false
       obj.specVals.push(val)
       this.$set(this.expandSpec, index, obj)
-      console.log('index3210', index)
-      console.log('this.expandSpec-edit-edit2', this.expandSpec)
+      // console.log('index3210', index)
+      // console.log('this.expandSpec-edit-edit2', this.expandSpec)
+      this.expandSpec[index].editVal = ''
       if (this.type !== 'edit') {
         this.expandSpecForEach(this.expandSpec)
       } else {
@@ -1907,6 +1975,13 @@ export default {
   margin-right: 10px;
   color: #333;
 }
+.intredeem-name{
+  span{
+    display: inline-block;
+    margin: 0 5px;
+    font-size: 16px;
+  }
+}
 .tb-top-item{
   overflow: hidden;
   .top-name{
@@ -2134,6 +2209,11 @@ export default {
       }
     }
   }
+  .tb-line5{
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+  }
   .tb-line2{
     position: relative;
     ::before{
@@ -2210,7 +2290,7 @@ export default {
     h5{
       width: 100%;
       font-size: 14px;
-      margin-bottom: 26px;
+      margin-bottom: 5px;
       color: #333;
     }
     .title-h5{
@@ -2471,6 +2551,9 @@ export default {
     font-size: 12px;
     color: #999;
   }
+}
+.showrewarp{
+  display: none;
 }
 .title-span-tips{
   font-size: 12px;
