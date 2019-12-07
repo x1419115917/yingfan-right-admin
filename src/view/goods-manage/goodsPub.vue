@@ -497,13 +497,13 @@ export default {
         {
           title: '图片',
           // key: 'images',
-          width: 80,
+          minWidth: 80,
           slot: 'images'
         },
         {
           title: '商家编码',
           key: 'code',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -521,7 +521,7 @@ export default {
         {
           title: '商品条形码',
           key: 'tcode',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -542,7 +542,7 @@ export default {
         {
           title: '供货价(元)',
           key: 'supply',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -561,7 +561,7 @@ export default {
         {
           title: '零售价(元)',
           key: 'retail',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -579,7 +579,7 @@ export default {
         {
           title: '可售卖库存',
           key: 'stock',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -597,7 +597,7 @@ export default {
         {
           title: '最低批发量',
           key: 'wholesale',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -632,7 +632,7 @@ export default {
         {
           title: '批发价(元)',
           key: 'trade',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -650,7 +650,7 @@ export default {
         {
           title: '佣金比例(%)',
           key: 'brokerage',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -668,7 +668,7 @@ export default {
         {
           title: '应分返还(%)',
           key: 'integral',
-          width: 150,
+          minWidth: 120,
           render: (h, params) => {
             var vm = this
             return h('Input', {
@@ -850,16 +850,12 @@ export default {
     // 表格表头字段更新
     columnsListUpdata: function () {
       let columnsList = [...this.columnsListOriginal]
-      // if(this.rewardState == 0) {
-      //   columnsList = columnsList.filter(item => item.key != 'brokerage')
-      // }
-      // console.log('cloumb654', this.columnsListOriginal)
       let expandSpec = this.expandSpec
       expandSpec.forEach((item, index) => {
         columnsList.splice(index, 0, {
           title: item.specName,
           key: `guige${index}`,
-          width: 120
+          minWidth: 120
         })
       })
       console.log('columnsList-edit', columnsList)
@@ -981,16 +977,20 @@ export default {
         this.dataList[index].trade = skusList[index].tradePrice
         this.dataList[index].brokerage = skusList[index].commissionRate
         this.dataList[index].integral = skusList[index].pointRate
+        this.dataList[index].exchangePoints = skusList[index].exchangePoints
+        this.dataList[index].exchangePrice = skusList[index].exchangePrice
         // this.dataList[index].exchangePoints = skusList[index].exchangePoints
       })
-      this.columnsList = [...this.columnsListUpdata]
+      // this.columnsList = [...this.columnsListUpdata]
+      this.initExchangeFn()
     },
     specArrFor (arr) { // 循环属性
       this.columnsList = []
       if (arr && arr.length === 0) {
         this.baseSpec = []
         this.expandSpec = []
-        this.columnsList = [...this.columnsListUpdata]
+        // this.columnsList = [...this.columnsListUpdata]
+        this.initExchangeFn()
         this.expandSpec1 = []
         this.expandSpec2 = []
         this.dataList = this.Descates
@@ -1019,35 +1019,47 @@ export default {
         this.expandSpec2 = []
         this.dataList = this.Descates
       }
-      this.columnsList = [...this.columnsListUpdata]
+      // this.columnsList = [...this.columnsListUpdata]
+      this.initExchangeFn()
     },
     // 商品奖励支持不支持改变
     changeRewardState () {
       let columnsListOriginal = [...this.columnsListUpdata]
-      if (this.rewardState == 0) {
-        if (this.pointExchangeState == 0) {
-          columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
-        } else {
-          columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage')
-        }
-      } else {
-        columnsListOriginal = [...this.columnsListUpdata]
-      }
+      // 三元运算判断
+      columnsListOriginal = this.rewardState == 0 ? this.pointExchangeState == 0
+        ? columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
+        : columnsListOriginal.filter(item => item.key != 'brokerage')
+        : this.pointExchangeState == 0
+          ? columnsListOriginal.filter(item => item.slotType != 'intredeem')
+          : [...this.columnsListUpdata]
+      // 重新赋值
       this.columnsList = columnsListOriginal
     },
     // 应分支持不支持
     pointExchangeStateFn () {
       let columnsListOriginal = [...this.columnsListUpdata]
-      // slotType: 'intredeem',
-      if (this.pointExchangeState == 0) {
-        if (this.rewardState == 0) {
-          columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
-        } else {
-          columnsListOriginal = columnsListOriginal.filter(item => item.slotType != 'intredeem')
-        }
-      } else {
-        columnsListOriginal = [...this.columnsListUpdata]
-      }
+      // 三元运算判断
+      columnsListOriginal = this.pointExchangeState == 0 ? this.rewardState == 0
+        ? columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
+        : columnsListOriginal.filter(item => item.slotType != 'intredeem')
+        : this.rewardState == 0
+          ? columnsListOriginal.filter(item => item.slotType != 'brokerage')
+          : [...this.columnsListUpdata]
+      // 重新赋值
+      this.columnsList = columnsListOriginal
+    },
+    // 初始化不支持佣金比例和应分兑换
+    initExchangeFn () {
+      let columnsListOriginal = [...this.columnsListUpdata]
+      // 初始化都不支持
+      // columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
+      columnsListOriginal = this.pointExchangeState == 0 ? this.rewardState == 0
+        ? columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
+        : columnsListOriginal.filter(item => item.slotType != 'intredeem')
+        : this.rewardState == 0
+          ? columnsListOriginal.filter(item => item.slotType != 'brokerage')
+          : [...this.columnsListUpdata]
+      // 重新赋值
       this.columnsList = columnsListOriginal
     },
     expandSpecForEach (arr) {
@@ -1064,7 +1076,8 @@ export default {
         this.expandSpec2 = []
         this.dataList = this.Descates
       }
-      this.columnsList = [...this.columnsListUpdata]
+      // this.columnsList = [...this.columnsListUpdata]
+      this.initExchangeFn()
     },
     clearGoodsObj () { // 清空商品obj
       this.goodsObj = {
@@ -1200,7 +1213,9 @@ export default {
             skuSpecs: skuSpecs,
             stockNum: item.stock,
             supplyPrice: item.supply,
-            tradePrice: item.trade
+            tradePrice: item.trade,
+            exchangePoints: item.exchangePoints,
+            exchangePrice: item.exchangePrice
           })
         })
         let data = {
@@ -1211,6 +1226,8 @@ export default {
           cid2: this.cur2,
           cid3: this.cur3,
           description: this.ctx,
+          rewardState: this.rewardState, // 佣金比例是否支持
+          pointExchangeState: this.pointExchangeState, // 应分是否支持
           enableWholesale: 0,
           imageList: imgList,
           isNew: this.newGoods,
@@ -1361,7 +1378,9 @@ export default {
           skuSpecs: skuSpecs,
           stockNum: item.stock,
           supplyPrice: item.supply,
-          tradePrice: item.trade
+          tradePrice: item.trade,
+          exchangePoints: item.exchangePoints,
+          exchangePrice: item.exchangePrice
         })
       })
       this.validateTable()
@@ -1374,6 +1393,8 @@ export default {
           cid2: this.cur2,
           cid3: this.cur3,
           description: this.ctx,
+          rewardState: this.rewardState, // 佣金比例是否支持
+          pointExchangeState: this.pointExchangeState, // 应分是否支持
           enableWholesale: 0,
           imageList: imgList,
           isNew: this.newGoods,
@@ -1570,6 +1591,8 @@ export default {
         this.supplierId = spuInfo.supplierId
         let imageList = JSON.parse(spuInfo.images)
         this.goodsTitle = spuInfo.title
+        this.rewardState = spuInfo.rewardState.toString() // 佣金比例是否支持
+        this.pointExchangeState = spuInfo.pointExchangeState.toString() // 应分是否支持
         this.subTitle = spuInfo.subTitle
         this.brandsId = spuInfo.brandId
         this.ctx = spuInfo.description

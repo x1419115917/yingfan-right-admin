@@ -591,6 +591,13 @@ export default {
       this.selectedListSku.forEach(item => {
         ids.push(item.skuId)
       })
+      if (ids.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择数据再进行操作'
+        })
+        return
+      }
       this.saleableFn(ids, saleableStatus, 'SKU')
     },
     skuUpper (i) {
@@ -599,6 +606,13 @@ export default {
       this.selectedListSku.forEach(item => {
         ids.push(item.skuId)
       })
+      if (ids.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择数据再进行操作'
+        })
+        return
+      }
       this.saleableFn(ids, saleableStatus, 'SKU')
     },
     gunderFn (i) {
