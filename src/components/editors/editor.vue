@@ -19,8 +19,12 @@
       :on-error="uploadError"
       :before-upload="beforeUpload">
     </Upload>
+    <Spin fix v-show="quillUpdateImg">
+        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+        <div>上传中...</div>
+    </Spin>
     <!--富文本编辑器组件-->
-    <Row :loading="quillUpdateImg" style="position: relative;">
+    <Row style="position: relative;">
       <quill-editor class="editor"
         v-model="detailContent"
         ref="myQuillEditor"
@@ -234,5 +238,21 @@ export default {
 		.ql-container.ql-snow,.ql-toolbar.ql-snow{
 			border-color: #FF0000;
 		}
-	}
+  }
+  .editor-wrapper{
+    position: relative;
+  }
+  .demo-spin-icon-load{
+      animation: ani-demo-spin 1s linear infinite;
+  }
+  @keyframes ani-demo-spin {
+      from { transform: rotate(0deg);}
+      50%  { transform: rotate(180deg);}
+      to   { transform: rotate(360deg);}
+  }
+  .demo-spin-col{
+      height: 100px;
+      position: relative;
+      border: 1px solid #eee;
+  }
 </style>

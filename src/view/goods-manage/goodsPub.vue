@@ -739,6 +739,15 @@ export default {
       } else {
         vm.BrandsList = brand
       }
+      vm.goodsObj = { // 商品批量填充obj
+        supply: '',
+        stock: '',
+        retail: '',
+        wholesale: '',
+        trade: '',
+        brokerage: '',
+        integral: ''
+      }
       // 因为当钩子执行前，组件实例还没被创建，编辑
       if (vm.$route.query.type === 'edit') {
         vm.vsShowNav = 0
@@ -1016,7 +1025,11 @@ export default {
     changeRewardState () {
       let columnsListOriginal = [...this.columnsListUpdata]
       if (this.rewardState == 0) {
-        columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage')
+        if (this.pointExchangeState == 0) {
+          columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
+        } else {
+          columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage')
+        }
       } else {
         columnsListOriginal = [...this.columnsListUpdata]
       }
@@ -1027,7 +1040,11 @@ export default {
       let columnsListOriginal = [...this.columnsListUpdata]
       // slotType: 'intredeem',
       if (this.pointExchangeState == 0) {
-        columnsListOriginal = columnsListOriginal.filter(item => item.slotType != 'intredeem')
+        if (this.rewardState == 0) {
+          columnsListOriginal = columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
+        } else {
+          columnsListOriginal = columnsListOriginal.filter(item => item.slotType != 'intredeem')
+        }
       } else {
         columnsListOriginal = [...this.columnsListUpdata]
       }
