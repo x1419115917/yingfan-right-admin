@@ -1515,6 +1515,37 @@ export default {
         this.validateType = true
       }
     },
+    // 校验
+    validateStr (str, type = '', scope) {
+      let reg1 = /^\d+$/
+      let reg = /^\d+(\.\d{1,2})?$/
+      if (str == '' || str == undefined) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请填写完整信息'
+        })
+        this.validateType = true
+        // console.log('validateType', this.validateType)
+      } else if (type === 'number') {
+        if (!reg.test(str)) {
+          this.$Modal.warning({
+            title: '提示',
+            content: '请输入数字格式'
+          })
+          this.validateType = true
+          return
+        }
+        if (scope && scope === 'range') {
+          if (!/^([1-9]\d{0,1}|100|NA)$/.test(str)) {
+            this.$Modal.warning({
+              title: '提示',
+              content: '(%)只能输入1-100的正整数'
+            })
+            this.validateType = true
+          }
+        }
+      }
+    },
     back () {
       let target = document.querySelector('.content-wrapper')
       const sTop = target.scrollTop
