@@ -58,7 +58,14 @@
                         <div class="con-left">图1内容：</div>
                         <div class="con-right">
                           <div class="goods-img"><img src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191129/ecbaea6c-72f9-4e23-ad42-1616b853f114/7df84c9e7327c55271b1b6fe6e67ba95.jpg" alt=""></div>
+                          <div class="goods-info">
+                            <div class="title">爱德华卡号爱德华卡号爱德华卡号爱德华卡号</div>
+                            <div class="detail"><span class="price">￥10.00</span> <span class="salekc">可售库存564</span> </div>
+                          </div>
                         </div>
+                      </div>
+                      <div class="write-con">
+
                       </div>
                     </Col>
                   </Row>
@@ -558,6 +565,27 @@ export default {
           img{
             width: 100%;
             height: 100%;
+          }
+        }
+        .goods-info{
+          line-height: 20px;
+          margin-left: 6px;
+          & > .title{
+            max-width: 450px;
+            color: #2D8cF0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .detail span{
+            display: inline-block;
+            &.price{
+              font-weight: bold;
+            }
+            &.salekc{
+              margin-left: 3px;
+              color: #666;
+            }
           }
         }
         .add-goods{

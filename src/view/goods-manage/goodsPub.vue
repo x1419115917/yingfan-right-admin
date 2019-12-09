@@ -1271,17 +1271,14 @@ export default {
           })
           this.validateType = true
         }
-        // this.validateStr(item.imageUrl) 'number', 'int' , 'range'
         this.validateStrNew(item.code)
         this.validateStrNew(item.tcode)
-        // console.log('item.stock',item.stock)
-        // console.log('item.wholesale',item.wholesale)
         this.validateStrNew(item.stock, 'number', 'int')
         this.validateStrNew(item.retail, 'number')
         this.validateStrNew(item.supply, 'number')
         this.validateStrNew(item.wholesale, 'number', 'int')
         this.validateStrNew(item.trade, 'number')
-        this.validateStrNew(item.supply, 'number')
+        console.log('item.exchangePrice', item.exchangePrice)
         if (this.pointExchangeState == 1) {
           this.validateStrNew(item.exchangePoints, 'number')
           if (item.exchangePoints <= 0) {
@@ -1294,12 +1291,10 @@ export default {
           }
           this.validateStrNew(item.exchangePrice, 'number')
         }
-        console.log('item.brokerage', item.exchangePoints)
         if (this.rewardState == 1) {
           this.validateStrNew(item.brokerage, 'number', 'int', 'range')
         }
         this.validateStrNew(item.integral, 'number', 'int', 'range')
-        // this.validateType = false
       })
       console.log('this.validateType', this.validateType)
     },
@@ -1474,10 +1469,10 @@ export default {
     },
     // 校验是否为空值
     isEmpty (str) {
-      if (str == '' || str == undefined) {
+      if (typeof str === 'undefined' || str === '') {
         this.$Modal.warning({
           title: '提示',
-          content: '请填写完整信息'
+          content: '请填写完整信息，不能为空'
         })
         this.validateType = true
       }
