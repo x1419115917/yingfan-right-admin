@@ -112,6 +112,27 @@ class HttpRequest {
         // }
       }
       addErrorLog(errorInfo)
+      if (window.location.pathname !== '/login') {
+        Modal.warning({
+          title: '提示',
+          content: '登录信息已失效，请重新登录',
+          onOk: () => {
+            Cookies.remove('access_token')
+            Cookies.remove('userId')
+            Cookies.remove('username')
+            sessionStorage.removeItem('menus')
+            router.replace({
+              path: '/login'
+            })
+            window.location.href = '/login'
+          }
+        })
+      } else {
+        Modal.warning({
+          title: '提示',
+          content: '服务内部错误'
+        })
+      }
       return Promise.reject(error)
     })
   }
