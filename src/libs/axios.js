@@ -115,7 +115,7 @@ class HttpRequest {
       if (window.location.pathname !== '/login') {
         Modal.warning({
           title: '提示',
-          content: '登录信息已失效，请重新登录',
+          content: '服务内部错误',
           onOk: () => {
             Cookies.remove('access_token')
             Cookies.remove('userId')
