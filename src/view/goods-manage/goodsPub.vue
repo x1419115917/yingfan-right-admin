@@ -1352,7 +1352,7 @@ export default {
           if (item.specVals && item.specVals.length > 0) {
             attrTemplate.push({
               attrName: item.specName,
-              attrType: item.specType,
+              attrType: item.operateType,
               attrValues: item.specVals,
               datas: item.specVals
             })
