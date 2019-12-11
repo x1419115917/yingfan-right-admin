@@ -5,7 +5,7 @@
           <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
           <div class="logo-con" :class="{'logon-con-height': !collapsed}">
             <img v-show="!collapsed" :src="minLogo" key="max-logo" />
-            <h1 v-show="!collapsed" class="title-text">应悦汇管理系统</h1>
+            <h1 v-show="!collapsed" class="title-text">应范管理系统</h1>
             <img v-show="collapsed" :src="minLogo" key="min-logo" />
           </div>
         </side-menu>

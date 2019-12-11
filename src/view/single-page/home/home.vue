@@ -1,10 +1,10 @@
 <template>
   <div>
     <!-- <div>
-      <h3 style="font-size: 24px;">应悦汇管理后台</h3>
+      <h3 style="font-size: 24px;">应范管理后台</h3>
       <ul class="ul-list">
-        <li>应悦汇成立于2000,专注文化传播</li>
-        <li>应悦汇主流电商平台</li>
+        <li>应范成立于2000,专注文化传播</li>
+        <li>应范主流电商平台</li>
       </ul>
     </div> -->
     <Row :gutter="20">

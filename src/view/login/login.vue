@@ -8,7 +8,7 @@
         <Col span="6">
           <div class="col-sm-7 left-login-text">
             <h3>美粤文化</h3>
-            <h5>欢迎使用 应悦汇管理系统</h5>
+            <h5>欢迎使用 应范管理系统</h5>
             <ul class="list">
               <li><Icon type="md-arrow-round-forward" />供应商管理</li>
               <li><Icon type="md-arrow-round-forward" />商品管理</li>
@@ -23,7 +23,7 @@
            <div class="col-sm-7 login-con">
             <div icon="log-in" title="欢迎登录" :bordered="false">
               <h3 class="text-center">用户登录</h3>
-              <h5 class="text-center">欢迎登录美粤文化后台管理系统</h5>
+              <h5 class="text-center">欢迎登录应范后台管理系统</h5>
               <div class="form-con">
                 <login-form @on-success-valid="handleSubmit"></login-form>
                 <!-- <p class="login-tip">输入任意用户名和密码即可</p> -->
