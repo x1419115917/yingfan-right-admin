@@ -60,12 +60,9 @@
                           <div class="goods-img"><img src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191129/ecbaea6c-72f9-4e23-ad42-1616b853f114/7df84c9e7327c55271b1b6fe6e67ba95.jpg" alt=""></div>
                           <div class="goods-info">
                             <div class="title">爱德华卡号爱德华卡号爱德华卡号爱德华卡号</div>
-                            <div class="detail"><span class="price">￥10.00</span> <span class="salekc">可售库存564</span> </div>
+                            <div class="detail"><span class="salekc">活动价：</span><span class="price">￥10.00</span>  </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="write-con">
-
                       </div>
                     </Col>
                   </Row>
@@ -81,6 +78,9 @@
         </div>
       </Row>
     </div>
+    <Modal v-model="modal0" class="smsActiveModel" title="添加活动商品"  width="1200" :mask-closable="false">
+      <member-active></member-active>
+    </Modal>
     <Modal v-model="modal1" class="smsModel" title="添加商品"  width="940" @on-cancel="cancelModal">
      <div class="edit-skubox">
         <Row class="edit-sku-search">
@@ -140,15 +140,18 @@ import { listGoodsPage } from '@/api/goods'
 import { supplierList, categList } from '@/api/supplier'
 import { listBrandsPage } from '@/api/nature'
 import { arrayTiff, arrayChecked, date2string } from '@/libs/util'
+import memberActive from './memberActive.vue'
 export default {
   name: 'member-upgrade',
   components: {
-    'v-editor': editors
+    'v-editor': editors,
+    memberActive
   },
   data () {
     return {
       ctx: '',
       modalsel: '0',
+      modal0: false,
       modal1: false,
       modalLists: [
         {
@@ -583,7 +586,7 @@ export default {
               font-weight: bold;
             }
             &.salekc{
-              margin-left: 3px;
+              margin-right: 3px;
               color: #666;
             }
           }
@@ -670,5 +673,9 @@ export default {
 }
 .hide{
   display: block;
+}
+.smsActiveModel /deep/ .ivu-modal-footer,.smsModel .ivu-modal-footer{
+  padding: 0;
+  display: none;
 }
 </style>
