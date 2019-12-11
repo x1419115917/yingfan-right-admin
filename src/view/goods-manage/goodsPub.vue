@@ -973,14 +973,14 @@ export default {
         this.dataList[index].supply = skusList[index].supplyPrice
         this.dataList[index].stock = skusList[index].stockNum
         this.dataList[index].retail = skusList[index].retailPrice
-        this.dataList[index].wholesale = this.rewardState == 0 ? '' : skusList[index].minWholesaleVolume
+        this.dataList[index].wholesale = skusList[index].minWholesaleVolume
         this.dataList[index].trade = skusList[index].tradePrice
-        this.dataList[index].brokerage = skusList[index].commissionRate
+        this.dataList[index].brokerage = this.rewardState == 0 ? '' : skusList[index].commissionRate
         this.dataList[index].integral = skusList[index].pointRate
         this.dataList[index].exchangePoints = this.pointExchangeState == 0 ? '' : skusList[index].exchangePoints
         this.dataList[index].exchangePrice = this.pointExchangeState == 0 ? '' : skusList[index].exchangePrice
       })
-      // this.columnsList = [...this.columnsListUpdata]
+      // this.columnsList = [...this.columnsListUpdata] this.rewardState == 0 ? '' :
       this.initExchangeFn()
     },
     specArrFor (arr) { // 循环属性
