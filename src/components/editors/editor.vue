@@ -14,8 +14,11 @@
       name="file"
       :data="params"
       :headers="header"
+      :format="['jpg','jpeg','png']"
+      :max-size="2048"
       :show-file-list="false"
       :on-success="uploadSuccess"
+      :on-exceeded-size="handleMaxSize"
       :on-error="uploadError"
       :before-upload="beforeUpload">
     </Upload>
@@ -166,6 +169,13 @@ export default {
       }
       // loading动画消失
       this.quillUpdateImg = false
+    },
+    handleMaxSize (file) {
+      this.quillUpdateImg = false
+      this.$Notice.warning({
+        title: '提示',
+        desc: '文件  ' + file.name + ' 不能大于2M.'
+      })
     },
     // 富文本图片上传失败
     uploadError () {
