@@ -28,30 +28,10 @@ module.exports = {
       .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
       .set('_c', resolve('src/components'))
   },
-  // configureWebpack: config => {
-  //   // 线上环境去掉打印信息
-  //   if (process.env.NODE_ENV === 'production') {
-  //     config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
-  //   }
-  // },
-  configureWebpack: {
-    module: {
-      rules: [
-        {
-          test: /\.m?js$/,
-          include: [
-            resolve('src'),
-            resolve('test'),
-            resolve('node_modules')
-          ],
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env']
-            }
-          }
-        }
-      ]
+  configureWebpack: config => {
+    // 线上环境去掉打印信息
+    if (process.env.NODE_ENV === 'production') {
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
     }
   },
   // 设为false打包时不生成.map文件
