@@ -38,6 +38,7 @@
       <Table :columns="columns" border :data="dataList" stripe :loading="tableLoading">
         <template slot-scope="{ row, index }" slot="payAmt"><span>¥{{ row.payAmt }}</span></template>
         <template slot-scope="{ row, index }" slot="refundAmt"><span>¥{{ row.refundAmt }}</span></template>
+        <template slot-scope="{ row, index }" slot="applyStatus"><span>{{ returnPayStatus(row.applyStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="action">
           <Button v-has="'sys:refundOrder:detail'" type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
@@ -56,7 +57,7 @@
         show-sizer
         @on-page-size-change="changePageSize"
         @on-change="pageChange"/>
-      <Modal v-model="modal" width="1000" class="afterOrderDetailModal">
+      <Modal v-model="modal" width="1000" :footer-hide="true">
         <after-order-detail @close="modal = false" @updateList="getOrderList" :orderId="orderId"></after-order-detail>
       </Modal>
     </div>
@@ -128,6 +129,11 @@ export default {
           key: 'refundTime'
         },
         {
+          title: '退款方式',
+          align: 'center',
+          slot: 'applyStatus'
+        },
+        {
           title: '订单状态',
           align: 'center',
           slot: 'orderStatus'
@@ -141,6 +147,13 @@ export default {
     }
   },
   methods: {
+    returnPayStatus (item) {
+      switch (item) {
+        case 0 : return '待发货'
+        case 1 : return '未收到货,仅退款'
+        case 2 : return '已收到货,退货退款'
+      }
+    },
     returnOrderStatus (item) {
       switch (item) {
         case 0 : return '退款中'

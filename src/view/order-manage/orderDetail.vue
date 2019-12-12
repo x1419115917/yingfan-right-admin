@@ -13,6 +13,16 @@
           <Col :span="14">-</Col>
           <Col :span="10">下单时间</Col>
           <Col :span="14">{{ orderDetail.createTime }}</Col>
+          <Col :span="10">余额支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.balancePay }}</template>
+            <template v-else>-</template>
+          </Col>
+          <Col :span="10">收益支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.earnPay }}</template>
+            <template v-else>-</template>
+          </Col>
         </Row>
       </Col>
       <Col :span="12">
@@ -26,6 +36,16 @@
           <Col :span="10">付款时间</Col>
           <Col :span="14">
             <template v-if="orderDetail.payTime">{{ orderDetail.payTime }}</template>
+            <template v-else>-</template>
+          </Col>
+          <Col :span="10">积分支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.integralPay }}</template>
+            <template v-else>-</template>
+          </Col>
+          <Col :span="10">在线支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.onlinePay }}</template>
             <template v-else>-</template>
           </Col>
         </Row>
@@ -75,19 +95,18 @@
       </template>
     </Table>
     <div class="title">物流信息</div>
-      <Row class="logistics">
-        <Col span="12">
-          <span>国内配送公司</span>
-          <Select :style="{ width: inpWidth}" v-model="form.expressCode" placeholder="请输入物流公司" clearable :disabled="disabled">
-            <Option v-for="item in logisticsCompanyOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
-        </Col>
-        </Col>
-        <Col span="12">
-          <span>运单号</span>
-          <Input class="expressNumber" v-model="form.expressNumber" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable :disabled="disabled" />
-        </Col>
-      </Row>
+    <Row class="logistics">
+      <Col span="12">
+        <span>国内配送公司</span>
+        <Select :style="{ width: inpWidth}" v-model="form.expressCode" placeholder="请输入物流公司" clearable :disabled="disabled">
+          <Option v-for="item in logisticsCompanyOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
+      </Col>
+      <Col span="12">
+        <span>运单号</span>
+        <Input class="expressNumber" v-model="form.expressNumber" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable :disabled="disabled" />
+      </Col>
+    </Row>
     <div class="mark">
       <Input v-model="markMsg" placeholder="请输入备注" :disabled="disabled">
         <span slot="prepend">客服备注</span>

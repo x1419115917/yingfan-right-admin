@@ -37,6 +37,7 @@
       </div>
       <Table :columns="columns" border :data="dataList" stripe :loading="tableLoading">
         <template slot-scope="{ row, index }" slot="payAmt"><span>¥{{ row.payAmt }}</span></template>
+        <template slot-scope="{ row, index }" slot="orderType"><span>{{ returnOrderType(row.orderType) }}</span></template>
         <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="action">
           <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
@@ -97,6 +98,11 @@ export default {
           align: 'center'
         },
         {
+          title: '订单类型',
+          align: 'center',
+          slot: 'orderType'
+        },
+        {
           title: '订单金额',
           align: 'center',
           slot: 'payAmt'
@@ -120,6 +126,13 @@ export default {
     }
   },
   methods: {
+    returnOrderType (item) {
+      switch (item) {
+        case 0 : return '普通'
+        case 1 : return '众筹'
+        case 2 : return '升级'
+      }
+    },
     returnOrderStatus (item) {
       switch (item) {
         case 0 : return '待付款'

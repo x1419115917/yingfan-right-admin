@@ -52,12 +52,6 @@
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '3'" class="tips-upload">165*165</span>
                 </div>
               </div>
-              <!--<template v-if="form.plateRegion === '0'">
-                <span style="color:#ed4014;margin-right: 4px;">*</span>状态：<RadioGroup v-model="form.plaDets[index].isShow">
-                  <Radio label="0">显示</Radio>
-                  <Radio label="1">隐藏</Radio>
-                </RadioGroup>
-              </template>-->
             </template>
             <template slot-scope="{ row,index }" slot="isShow">
               <RadioGroup v-model="form.plaDets[index].isShow">
@@ -82,7 +76,7 @@
             <Radio label="1">隐藏</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem>
+        <FormItem class="btnGroup">
           <Button size="large" type="primary" @click="handleSubmit('form')">保存</Button>
           <Button size="large" @click="returnBanner" style="margin-left: 8px">返回</Button>
         </FormItem>
@@ -373,6 +367,9 @@ export default {
 <style lang="less" scoped>
 .add {
   .ivu-form {
+    .btnGroup {
+      text-align: right;
+    }
     .ivu-form-item {
       .ivu-table-wrapper {
         overflow: visible;

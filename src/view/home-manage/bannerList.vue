@@ -45,8 +45,8 @@
       <p>删除后无法恢复，确定删除？</p>
     </Modal>
     <Modal
-      class="detailModal"
       :width='modalWid'
+      :footer-hide="true"
       v-model="detailModal"
       :title="modalTitle">
       <!--活动详情-->

@@ -62,30 +62,20 @@ width: 80px;
         margin-right: 10px;
     }
 }
-//首页-增加/编辑弹窗
-.detailModal {
-    .ivu-modal-footer {
-        display: none;
+//modal自定义按钮
+.handleModalBtn {
+    .btnGroup {
+        text-align: right;
+        button {
+            &:last-child{
+                margin-left: 20px;
+            }
+        }
     }
 }
-//售后订单-订单详情弹窗
-.afterOrderDetailModal {
-    .ivu-modal-footer {
-        display: none;
-    }
-}
+
 .hideFootModal {
     .ivu-modal-footer {
         display: none;
-    }
-}
-.orderDetailModal {
-    .ivu-select-selected-value {
-        color: #515a6e;
-    }
-    .expressNumber{
-        input{
-            color: #515a6e;
-        }
     }
 }

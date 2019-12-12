@@ -497,6 +497,15 @@ export const appRouter = [
           title: '收益列表'
         },
         component: () => import('@/view/infun-manage/inComeList.vue')
+      }, {
+        path: 'cashOut',
+        name: 'cashOut',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '余额提现'
+        },
+        component: () => import('@/view/infun-manage/cashOut.vue')
       }
     ]
   },

@@ -1,11 +1,15 @@
-<!--应分管理-收益列表-->
+<!--应分管理-余额提现-->
 <template>
-  <div class="inComeList">
-    <Card title="收益列表">
+  <div class="cashOut">
+    <Card title="余额提现">
       <Row>
         <Col span="6">
           <span>手机号</span>
-          <Input v-model="form.businessUserPhone" :style="{ width: inpWidth}" placeholder="请输入手机号" clearable />
+          <Input v-model="form.number" :style="{ width: inpWidth}" placeholder="请输入手机号" clearable />
+        </Col>
+        <Col span="6">
+          <span>订单号</span>
+          <Input v-model="form.number" :style="{ width: inpWidth}" placeholder="请输入订单号" clearable />
         </Col>
         <Col span="6">
           <span>时间</span>
@@ -15,9 +19,9 @@
             @on-change="selectDate"
             placeholder="年/月/日" ></DatePicker>
         </Col>
-        <Col span="12">
+        <Col span="6">
           <span>收益类型</span>
-          <Select v-model="form.businessType" :style="{ width: inpWidth}" clearable>
+          <Select v-model="form.number" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in inComeTypeOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           <Button type="primary" style="margin: 0 10px" @click="search">查询</Button>
@@ -26,7 +30,18 @@
     </Card>
     <div class="wrap">
         <Table :columns="columns" border :data="dataList" stripe>
-          <template slot-scope="{ row, index }" slot="businessType"><span>{{ returnBusinessType(row.businessType) }}</span></template>
+          <template slot-scope="{ row, index }" slot="transactionId">
+            <span v-if="row.transactionId">{{ row.transactionId }}</span>
+            <span v-else>-</span>
+          </template>
+          <template slot-scope="{ row, index }" slot="timeEnd">
+            {{ $moment(row.timeEnd).format("YYYY-MM-DD HH:mm:ss")}}
+          </template>
+          <template slot-scope="{ row, index }" slot="status"><span>{{ returnStatus(row.status) }}</span></template>
+          <template slot-scope="{ row, index }" slot="payFee">
+            <span v-if="row.payFee">¥{{ row.payFee }}</span>
+            <span v-else>-</span>
+          </template>
         </Table>
         <Page
           :current="form.pageNum"
@@ -41,10 +56,10 @@
   </div>
 </template>
 <script>
-import { doInFunBonussList } from '@/api/infun'
-import { infunType, inComeType } from './infunManage.js'
+// import { doPayList } from '@/api/finance'
+import { inComeType } from './infunManage.js'
 export default {
-  name: 'infunList',
+  name: 'cashOut',
   data () {
     return {
       inpWidth: '162px',
@@ -53,92 +68,72 @@ export default {
       date: [], // 选择日期
       form: {
         FLAG: 1,
-        businessUserPhone: '', // 手机号
-        businessType: '',
-        createTimeBegin: null, // 开始时间
-        createTimeEnd: null, // 结束时间
+        startTime: null, // 开始时间
+        endTime: null, // 结束时间
+        number: null,
         pageIndex: 1,
         pageSize: 10
       },
       columns: [
         {
           title: '绑定手机号',
-          key: 'phone',
+          key: 'number',
           align: 'center'
         },
         {
           title: '收益类型',
-          slot: 'businessType',
+          key: 'businessId',
           align: 'center'
         },
         {
           title: '获取时间',
           align: 'center',
-          key: 'createTime'
+          slot: 'timeEnd'
         },
         {
           title: '收益',
-          key: 'bonus',
+          slot: 'payFee',
           align: 'center'
         }
       ]
     }
   },
   methods: {
-    returnBusinessType (item) {
-      switch (item) {
-        case 1: return '分享收益'
-        case 2: return '邀新收益'
-        case 3: return '应分兑换收益'
-        case 4: return '退款'
-      }
-    },
     selectDate () {
-      this.form.createTimeBegin = this.$moment(new Date(this.date[0])).format('YYYY-MM-DD')
-      this.form.createTimeEnd = this.$moment(new Date(this.date[1])).format('YYYY-MM-DD')
+      this.form.startTime = new Date(this.date[0]).valueOf()
+      this.form.endTime = new Date(this.date[1]).valueOf()
     },
     // 查询
     search () {
-      this.getInFunBonussList()
     },
     changePageSize (value) {
-      this.form.pageSize = value
-      this.getInFunBonussList()
+      // this.form.pageSize = value
     },
     pageChange (value) {
-      this.form.pageIndex = value
-      this.getInFunBonussList()
-    },
-    async getInFunBonussList () {
-      let data = this.form
-      if (this.form.createTimeBegin === 'Invalid date') {
-        this.form.createTimeBegin = null
-        this.form.createTimeEnd = null
-      }
-      let res = await doInFunBonussList(data)
-      if (res.data.code === 0) {
-        this.dataList = res.data.content.rows
-        this.pageTotal = res.data.content.total
-      } else {
-        this.dataList = []
-      }
+      // this.form.pageIndex = value
     }
+    // async getPayList () {
+    //   let data = this.form
+    //   let res = await doPayList(data)
+    //   if (res.data.code === 0) {
+    //     this.dataList = res.data.content.rows
+    //     this.pageTotal = res.data.content.total
+    //   } else {
+    //     this.dataList = []
+    //   }
+    // }
   },
   computed: {
-    infunTypeOpts () {
-      return infunType()
-    },
     inComeTypeOpts () {
       return inComeType()
     }
   },
   created () {
-    this.getInFunBonussList()
   }
 }
 </script>
 <style lang="less" scoped>
-.inComeList {
+.cashOut {
   .wrap {
     margin-top: 10px;
     padding: 14px;

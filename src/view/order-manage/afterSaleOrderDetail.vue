@@ -2,12 +2,12 @@
 <template>
   <div class="afterSaleOrderDetail">
   <Steps style="width: 126%;" :current="current" :status="status">
-      <Step title="提交申请" icon="ios-create"></Step>
-      <Step title="客服审核" icon="md-contacts"></Step>
-      <Step v-if="orderDetail.orderStatus === 0" title="退款成功" icon="md-checkmark-circle"></Step>
-      <Step v-else-if="orderDetail.orderStatus === 1" title="退款成功" icon="md-checkmark-circle"></Step>
-      <Step v-else-if="orderDetail.orderStatus === 2" title="退款关闭" icon="md-alert"></Step>
-      <Step v-else-if="orderDetail.orderStatus === 3" title="拒绝退款" icon="md-close-circle"></Step>
+    <Step title="提交申请" icon="ios-create"></Step>
+    <Step title="客服审核" icon="md-contacts"></Step>
+    <Step v-if="orderDetail.orderStatus === 0" title="退款成功" icon="md-checkmark-circle"></Step>
+    <Step v-else-if="orderDetail.orderStatus === 1" title="退款成功" icon="md-checkmark-circle"></Step>
+    <Step v-else-if="orderDetail.orderStatus === 2" title="退款关闭" icon="md-alert"></Step>
+    <Step v-else-if="orderDetail.orderStatus === 3" title="拒绝退款" icon="md-close-circle"></Step>
   </Steps>
     <div class="title">售后信息</div>
     <Row class="wrap">
@@ -25,6 +25,16 @@
           <Col :span="14" class="money">-</Col>
           <Col :span="10">用户说明</Col>
           <Col :span="14">-</Col>
+          <Col :span="10">余额支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.balancePay }}</template>
+            <template v-else>-</template>
+          </Col>
+          <Col :span="10">收益支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.earnPay }}</template>
+            <template v-else>-</template>
+          </Col>
         </Row>
       </Col>
       <Col :span="12">
@@ -42,6 +52,16 @@
           <Col :span="14" class="money">¥{{ orderDetail.payAmt }}</Col>
           <Col :span="10">税费</Col>
           <Col :span="14" class="money">-</Col>
+          <Col :span="10">积分支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.integralPay }}</template>
+            <template v-else>-</template>
+          </Col>
+          <Col :span="10">在线支付</Col>
+          <Col :span="14" class="money">
+            <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.onlinePay }}</template>
+            <template v-else>-</template>
+          </Col>
         </Row>
       </Col>
     </Row>
@@ -72,20 +92,21 @@
     </div>
     <Modal
       v-model="modal"
-      title="处理退款"
-      :ok-text="okText"
-      @on-ok="ok">
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-        <FormItem label="售后类型">-</FormItem>
-        <template v-if="editType === 3">
-          <FormItem label="退款方式">-</FormItem>
-        </template>
+      class="handleModalBtn"
+      :footer-hide="true"
+      title="处理退款">
+      <Form ref="handleForm" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <FormItem label="退款方式"><span>{{ returnPayStatus(orderDetail.applyStatus) }}</span></FormItem>
         <FormItem label="退款金额"><span style="color: red;">¥{{ orderDetail.refundAmt }}</span></FormItem>
         <template v-if="editType !== 1">
           <FormItem label="原因" prop="auditConclusion">
             <Input v-model="formValidate.auditConclusion" placeholder="请填写原因"></Input>
           </FormItem>
         </template>
+        <FormItem class="btnGroup">
+          <Button :type="btnType" size="large" @click="ok">{{ okText }}</Button>
+          <Button size="large" @click="modal = false">取消</Button>
+        </FormItem>
       </Form>
     </Modal>
   </div>
@@ -100,6 +121,7 @@ export default {
       current: 1,
       editType: '',
       okText: '',
+      btnType: 'primary',
       inpWidth: '162px',
       modal: false,
       orderDetail: {}, // 订单详情
@@ -157,13 +179,24 @@ export default {
   },
   props: ['orderId'],
   methods: {
+    returnPayStatus (item) {
+      switch (item) {
+        case 0 : return '待发货'
+        case 1 : return '未收到货,仅退款'
+        case 2 : return '已收到货,退货退款'
+      }
+    },
     handle (type) {
+      this.formValidate.auditConclusion = ''
       switch (type) {
         case 1: this.okText = '同意退款'
+          this.btnType = 'success'
           break
         case 2: this.okText = '关闭退款'
+          this.btnType = 'primary'
           break
         case 3: this.okText = '拒绝退款'
+          this.btnType = 'error'
           break
       }
       this.editType = type
@@ -177,7 +210,8 @@ export default {
         subOrderId: this.orderId
       }
       if (this.formValidate.auditConclusion === '' && this.editType !== 1) {
-        this.$Message.error('原因不能为空!')
+        this.$Message.warning('原因不能为空!')
+        return false
       } else {
         let res = await doSaledOrderStatus(data)
         if (res.data.code === 0) {
