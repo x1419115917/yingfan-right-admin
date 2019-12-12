@@ -28,12 +28,12 @@ module.exports = {
       .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
       .set('_c', resolve('src/components'))
   },
-  configureWebpack: config => {
-    // 线上环境去掉打印信息
-    if (process.env.NODE_ENV === 'production') {
-      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
-    }
-  },
+  // configureWebpack: config => {
+  //   // 线上环境去掉打印信息
+  //   if (process.env.NODE_ENV === 'production') {
+  //     config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+  //   }
+  // },
   configureWebpack: {
     module: {
       rules: [
