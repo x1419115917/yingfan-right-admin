@@ -12,7 +12,7 @@ import {
 
   localRead
 } from '@/libs/util'
-import { saveErrorLogger } from '@/api/data'
+// import { saveErrorLogger } from '@/api/data'
 import router from '@/router'
 import { routers, appRouter } from '@/router/routers'
 import config from '@/config'
@@ -89,19 +89,19 @@ export default {
     }
   },
   actions: {
-    addErrorLog ({ commit, rootState }, info) {
-      if (!window.location.href.includes('error_logger_page')) commit('setHasReadErrorLoggerStatus', false)
-      const { user: { token, userId, userName } } = rootState
-      let data = {
-        ...info,
-        time: Date.parse(new Date()),
-        token,
-        userId,
-        userName
-      }
-      saveErrorLogger(info).then(() => {
-        commit('addError', data)
-      })
-    }
+    // addErrorLog ({ commit, rootState }, info) {
+    //   if (!window.location.href.includes('error_logger_page')) commit('setHasReadErrorLoggerStatus', false)
+    //   const { user: { token, userId, userName } } = rootState
+    //   let data = {
+    //     ...info,
+    //     time: Date.parse(new Date()),
+    //     token,
+    //     userId,
+    //     userName
+    //   }
+    //   saveErrorLogger(info).then(() => {
+    //     commit('addError', data)
+    //   })
+    // }
   }
 }
