@@ -111,7 +111,7 @@ class HttpRequest {
         //   request: { responseURL: config.url }
         // }
       }
-      addErrorLog(errorInfo)
+      // addErrorLog(errorInfo)
       if (window.location.pathname !== '/login') {
         Modal.warning({
           title: '提示',

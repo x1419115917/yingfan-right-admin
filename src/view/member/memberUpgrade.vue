@@ -48,13 +48,13 @@
                       <img v-show="false" src="" alt="">
                     </Col>
                     <Col span="14" class="modal-right">
-                      <div class="content" v-show="item.goodsShow">
+                      <div class="content" v-show="!item.goodsShow">
                         <div class="con-left">图1内容：</div>
                         <div class="con-right">
                           <span class="add-goods" @click="addGoodsSigle">添加商品</span>
                         </div>
                       </div>
-                      <div class="content" v-show="!item.goodsShow">
+                      <div class="content" v-show="item.goodsShow">
                         <div class="con-left">图1内容：</div>
                         <div class="con-right">
                           <div class="goods-img"><img src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191129/ecbaea6c-72f9-4e23-ad42-1616b853f114/7df84c9e7327c55271b1b6fe6e67ba95.jpg" alt=""></div>
@@ -81,71 +81,23 @@
     <Modal v-model="modal0" class="smsActiveModel" title="添加活动商品"  width="1200" :mask-closable="false">
       <member-active></member-active>
     </Modal>
-    <Modal v-model="modal1" class="smsModel" title="添加商品"  width="940" @on-cancel="cancelModal">
-     <div class="edit-skubox">
-        <Row class="edit-sku-search">
-          <div class="goods-search-item">
-            <span class="name">品牌</span>
-            <Select class="w162" v-model="brandId" filterable>
-                <Option v-for="item in brandArr" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-          </div>
-          <div class="goods-search-item">
-            <span class="name">类目分类</span>
-            <Select class="w132" v-model="cid1" filterable style="margin-right:6px" @on-change="selClist1">
-                <Option v-for="item in clist1" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-            <Select class="w132" v-model="cid2" filterable style="margin-right:6px" @on-change="selClist2">
-                <Option v-for="item in clist2" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-            <Select class="w132" v-model="cid3" filterable @on-change="selClist3">
-                <Option v-for="item in clist3" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-          </div>
-          <div class="goods-search-item">
-            <span class="name">商品标题</span>
-            <Input class="w162" placeholder="商品标题" v-model="goodsTitle" />
-          </div>
-          <div class="goods-search-item">
-            <Button type="warning" ghost class="sku-btn" style="margin-right: 8px;" @click="clearInputList">重置</Button>
-            <Button type="info" ghost class="sku-btn" @click="searchPageList">查询</Button>
-          </div>
-        </Row>
-        <Table ref="selection" class="table-height" @on-selection-change="selectedSku" :columns="columnsList" :data="dataList" border>
-        </Table>
-        <div class="pages">
-          <Page
-            :current="pageNum"
-            :page-size="pageSize"
-            :total="total"
-            show-total
-            show-elevator
-            show-sizer
-            @on-page-size-change="changePageSize"
-            @on-change="pageChange"
-          />
-        </div>
-     </div>
-			<div slot="footer">
-				<Button size="large" @click="cancelModal" type="warning" class="cancel" style="margin-right: 10px">取消</Button>
-				<Button size="large" @click="saveGoods" type="primary">保存</Button>
-			</div>
+    <Modal v-model="modal1" class="smsAddModel" title="添加商品"  width="940" :mask-closable="false">
+      <member-chosses @cancelModal="cancelModal" :modal1="modal1" @saveGoods="saveGoods"></member-chosses>
 		</Modal>
   </div>
 </template>
 <script>
 import editors from '@/components/editors/editor'
 import { singleUpload } from '@/api/base'
-import { listGoodsPage } from '@/api/goods'
-import { supplierList, categList } from '@/api/supplier'
-import { listBrandsPage } from '@/api/nature'
 import { arrayTiff, arrayChecked, date2string } from '@/libs/util'
 import memberActive from './memberActive.vue'
+import memberChosses from './memberChosses.vue'
 export default {
   name: 'member-upgrade',
   components: {
     'v-editor': editors,
-    memberActive
+    memberActive,
+    memberChosses
   },
   data () {
     return {
@@ -167,68 +119,8 @@ export default {
           stock: ''
         }
       ],
-      modalList: [{ id: '0', value: '模板A' }],
-      brandId: '',
-      brandArr: [],
-      goodsTitle: '',
-      cid1: '',
-      cid2: '',
-      cid3: '',
-      clist1: [],
-      clist2: [],
-      clist3: [],
-      columnsList: [
-        // {
-        //   type: 'selection',
-        //   width: 60,
-        //   align: 'center'
-        // },
-        {
-          title: '选中',
-          align: 'center',
-          width: 60,
-          key: 'checkBox', // disabled
-          render: (h, params) => {
-            return h('div', [
-              h('Checkbox', {
-                props: {
-                  value: params.row.checkBox,
-                  disabled: params.row.disabled
-                },
-                on: {
-                  'on-change': (e) => {
-                    // console.log(e)
-                    this.dataList.forEach((items) => { // 先取消所有对象的勾选，checkBox设置为false
-                      this.$set(items, 'checkBox', false)
-                    })
-                    this.dataList[params.index].checkBox = e // 再将勾选的对象的checkBox设置为true
-                  }
-                }
-              })
-            ])
-          }
-        },
-        {
-          title: '商品ID',
-          width: 120,
-          key: 'id'
-        },
-        {
-          title: '商品标题',
-          key: 'title'
-        },
-        {
-          title: '品牌',
-          key: 'brandName',
-          width: 240
-        }
-      ],
-      dataList: [],
-      pageNum: 1,
-      pageSize: 10,
-      delIndex: '',
-      total: 0,
-      tableLoading: false
+      modalList: [{ id: '0', value: '模板A' }]
+
     }
   },
   computed: {
@@ -243,90 +135,6 @@ export default {
     }
   },
   methods: {
-    async getPageList () {
-      let data = {
-        FLAG: 1,
-        brandId: this.brandId,
-        categoryId: this.cid3 ? +this.cid3 : '',
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize,
-        title: this.goodsTitle
-      }
-      let res = await listGoodsPage(data)
-      if (res.data.code === 0) {
-        console.log(res.data.content)
-        this.dataList = res.data.content.rows
-        this.total = +res.data.content.total
-        this.dataList.forEach((item) => {
-          item.catg = (item.cid1 ? item.cid1.categoryName : '') + (item.cid2 ? ' > ' + item.cid2.categoryName : '') + (item.cid3 ? ' > ' + item.cid3.categoryName : '')
-        })
-        // this.dataList = arrayChecked(this.dataList, this.actNavs[this.navIndex].navDets)
-      }
-    },
-    async getSupplierList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: 1,
-        pageSize: 100
-      }
-      let res = await supplierList(data)
-      if (res.data.code === 0) {
-        this.supplierListArr = res.data.content.rows
-      }
-    },
-    // 品牌数据
-    async getlistBrandsPage () {
-      let data = {
-        FLAG: 1,
-        pageIndex: 1,
-        pageSize: 200
-      }
-      let res = await listBrandsPage(data)
-      if (res.data.code === 0) {
-        this.brandArr = res.data.content.rows
-      }
-    },
-    // 获取分类
-    async getcategList (parentId, i, val) {
-      let data = {
-        FLAG: 1,
-        parentId: parentId
-      }
-      let res = await categList(data)
-      if (res.data.code === 0) {
-        let data = res.data.content
-        if (data && data.length > 0) {
-          let levelNo = data[0].level
-          switch (levelNo) {
-            case 1:
-              this.clist1 = data
-              this.clist2 = []
-              this.clist3 = []
-              break
-            case 2:
-              this.clist2 = data
-              this.clist3 = []
-              break
-            case 3:
-              this.clist3 = data
-              break
-          }
-        }
-      }
-    },
-    addGoodsSigle () {
-      this.modal1 = true
-      this.brandId = ''
-      this.cid1 = ''
-      this.cid2 = ''
-      this.cid3 = ''
-      this.clist2 = []
-      this.clist3 = []
-      this.goodsTitle = ''
-      this.pageNum = 1
-      this.pageSize = 10
-      this.getPageList()
-    },
     _getContext (ctx) {
       // console.log(ctx)
       this.ctx = ctx.html
@@ -357,79 +165,28 @@ export default {
         this.pictureUrl = res.data.content
       }
     },
+    addGoodsSigle () {
+      this.modal1 = true
+    },
+    cancelModal (istf) {
+      this.modal1 = false
+    },
+    saveGoods (obj) {
+      this.modal1 = false
+      console.log('obj', obj)
+    },
     // 添加模板
     addModal () {
 
     },
     submitSave () {
 
-    },
-    // 保存
-    saveGoods () {
-      console.log('selectedList', this.selectedList)
-    },
-    cancelModal () {
-      // console.log('取消')
-      this.modal1 = false
-    },
-    selClist1 (id) {
-      this.getcategList(id, '', 1)
-      this.cid2 = ''
-      this.cid3 = ''
-    },
-    selectedSku (res) {
-      this.selectedListSpu = res
-      // console.log(res)
-      // console.log(this.dataList)
-    },
-    selClist2 (id) {
-      if (id) {
-        this.getcategList(id, '', 2)
-        this.cid3 = ''
-      }
-    },
-    selClist3 (id) {
-      this.cid3 = id
-      // this.listBrands(this.clist3[i].id)
-      let selObj = this.clist3.filter(item => {
-        return item.id === id
-      })
-      this.selObj = selObj[0]
-    },
-    clearInputList () {
-      this.brandId = ''
-      this.cid1 = ''
-      this.cid2 = ''
-      this.cid3 = ''
-      this.clist2 = []
-      this.clist3 = []
-      this.goodsTitle = ''
-      this.getPageList()
-    },
-    searchPageList () {
-      this.getPageList()
-    },
-    changePageSize (value) {
-      this.pageNum = 1
-      this.pageSize = value
-      this.getPageList()
-    },
-    updateDataList () {
-      this.pageNum = 1
-      this.pageSize = 10
-      this.getPageList()
-    },
-    pageChange (value) {
-      this.pageNum = value
-      this.getPageList()
     }
   },
   created () {
   },
   mounted () {
-    this.getPageList()
-    this.getcategList(0, '', 1)
-    this.getlistBrandsPage()
+
   }
 }
 </script>
@@ -445,9 +202,6 @@ export default {
   }
 }
 .tb-line-item{
-  font-family: sans-
-
-  ;
   span{
     display: inline-block;
     margin-right: 4px;
@@ -675,6 +429,10 @@ export default {
   display: block;
 }
 .smsActiveModel /deep/ .ivu-modal-footer,.smsModel .ivu-modal-footer{
+  padding: 0;
+  display: none;
+}
+.smsAddModel /deep/ .ivu-modal-footer,.smsModel .ivu-modal-footer{
   padding: 0;
   display: none;
 }

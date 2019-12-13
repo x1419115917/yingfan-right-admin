@@ -422,7 +422,7 @@ export const appRouter = [
           icon: 'ios-menu',
           title: '会员升级'
         },
-        component: () => import('@/view/member/memberUpgrade.vue')
+        component: () => import('@/view/member/memberUpgradeNew.vue')
       }
     ]
   },
