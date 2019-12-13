@@ -23,6 +23,11 @@
             <template v-if="orderDetail.orderPay">¥{{ orderDetail.orderPay.earnPay }}</template>
             <template v-else>-</template>
           </Col>
+          <Col :span="10">订单备注</Col>
+          <Col :span="14">
+            <template v-if="orderDetail.remarks">{{ orderDetail.remarks }}</template>
+            <template v-else>-</template>
+          </Col>
         </Row>
       </Col>
       <Col :span="12">
