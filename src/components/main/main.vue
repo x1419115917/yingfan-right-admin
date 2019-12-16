@@ -225,7 +225,7 @@ export default {
     }
     this.$nextTick(() => {
       this.getMenusList = [...this.getMenusListes]
-      console.log('sessionStorage.getMenusLists', this.getMenusList)
+      // console.log('sessionStorage.getMenusLists', this.getMenusList)
     })
     this.$forceUpdate()
   }

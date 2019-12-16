@@ -276,17 +276,7 @@ export default {
         }
       ],
       columns1: [],
-      data1: [
-        {
-          imageList: ['https://img14.360buyimg.com/n0/jfs/t1/68717/29/5994/405044/5d42a15aEc4d4f026/7eca4ea5b2308842.jpg'],
-          supplyPrice: '20',
-          age: 18,
-          retailPrice: '10',
-          tradePrice: '20',
-          stockNum: '12',
-          soldNum: '10'
-        }
-      ],
+      data1: [],
       model1: '商品ID',
       goodsType: [
         {

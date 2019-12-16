@@ -29,7 +29,7 @@
             <Button type="info" ghost class="sku-btn" @click="searchPageList">查询</Button>
           </div>
         </Row>
-        <Table ref="selection" class="table-height" :columns="columnsList" :data="dataList" border>
+        <Table ref="selection" max-height ="450" class="table-height" :columns="columnsList" :data="dataList" border>
         </Table>
         <div class="pages">
           <Page
@@ -145,7 +145,7 @@ export default {
   },
   watch: {
     modal1: {
-      immediate: true, // 这句重要
+      immediate: true, // 深度拷贝
       handler (val) {
         if (val) {
           this.brandId = ''
@@ -259,16 +259,23 @@ export default {
     },
     // 保存
     saveGoods () {
-      let selcheck = this.dataList.filter(item => {
+      let selcheck = []
+      selcheck = this.dataList.filter(item => {
         return item.checkBox
       })
-      // console.log('selcheck', selcheck)
-      this.$emit('saveGoods', selcheck)
+      if (selcheck.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择活动商品'
+        })
+        return
+      }
+      this.$emit('chooseGoods', selcheck[0])
       // console.log('selectedList', this.selectedList)
     },
     cancelModal () {
       // console.log('取消')
-      this.$emit('cancelModal', false)
+      this.$emit('cancelModal')
     },
     selClist1 (id) {
       this.getcategList(id, '', 1)

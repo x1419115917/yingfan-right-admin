@@ -145,7 +145,7 @@ export default {
     // 此方法用来获取路由菜单是否展示访问
     getuserMemu ({ state, commit }) {
       let menus = JSON.parse(sessionStorage.getItem('menus'))
-      console.log('menus1111', menus)
+      // console.log('menus1111', menus)
       commit('setMenuLists', menus)
       // userMemu().then(res => {
       //   const { data } = res

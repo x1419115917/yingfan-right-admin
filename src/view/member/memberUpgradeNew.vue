@@ -34,11 +34,32 @@
             活动商品
           </Col>
           <Col class="member-goods-right" :span="19">
-            <Button type="success" ghost>添加商品</Button>
+            <Button type="success" ghost @click="openWriteModal">添加商品</Button>
           </Col>
         </Row>
         <Row class="member-goods-bottom">
-          <Table border :columns="columns" :data="dataList"></Table>
+          <Table border :columns="columns" :data="dataList">
+            <!-- status  style="height: 480px" -->
+            <template slot-scope="{ row, index }" slot="status">
+              <!-- <Select v-model="row.statu" style="width:100px">
+                  <Option v-for="item in statuList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select> -->
+              <i-switch size="large" v-model="row.statu" @on-change="changeSwitch($event,index)" true-value="1" false-value="0">
+                  <span slot="open">启用</span>
+                  <span slot="close">隐藏</span>
+              </i-switch>
+            </template>
+            <template slot-scope="{ row, index }" slot="action">
+              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+                <i></i>
+                <span>编辑</span>
+              </Button>
+              <Button class="btn-item del-btn" type="text" size="small" @click="remove(index)">
+                <i></i>
+                <span>删除</span>
+              </Button>
+            </template>
+          </Table>
         </Row>
       </div>
       <Row>
@@ -48,11 +69,8 @@
       </Row>
     </div>
     <Modal v-model="modal0" class="smsActiveModel" title="添加活动商品"  width="1200" :mask-closable="false">
-      <member-active></member-active>
+      <member-active @cancelModalWrite="cancelModalWrite" :modal0="modal0" :operationShow="operationShow" @saveGoods="saveGoods"></member-active>
     </Modal>
-    <Modal v-model="modal1" class="smsAddModel" title="添加商品"  width="940" :mask-closable="false">
-      <member-chosses @cancelModal="cancelModal" :modal1="modal1"></member-chosses>
-		</Modal>
   </div>
 </template>
 <script>
@@ -60,22 +78,33 @@ import editors from '@/components/editors/editor'
 import { singleUpload } from '@/api/base'
 import { arrayTiff, arrayChecked, date2string } from '@/libs/util'
 import memberActive from './memberActive.vue'
-import memberChosses from './memberChosses.vue'
 export default {
   name: 'member-upgrade',
   components: {
     'v-editor': editors,
-    memberActive,
-    memberChosses
+    memberActive
   },
   data () {
     return {
       vsShowNav: 1,
       activityName: '',
+      operationShow: false,
+      goodsInfo: {},
+      goodsId: '',
+      goodsTitle: '',
       ctx: '',
       modalsel: '0',
-      modal0: false,
-      modal1: false,
+      modal0: true,
+      statuList: [
+        {
+          label: '显示',
+          value: '1'
+        },
+        {
+          label: '隐藏',
+          value: '0'
+        }
+      ],
       modalLists: [
         {
           pictureUrl: '',
@@ -104,8 +133,8 @@ export default {
                 },
                 style: {
                   display: 'block',
-                  width: '80px',
-                  height: '80px',
+                  width: '120px',
+                  height: '60px',
                   borderRadius: '3px'
                 }
               })
@@ -114,7 +143,8 @@ export default {
         },
         {
           title: '商品ID',
-          key: 'id'
+          key: 'id',
+          width: 100
         },
         {
           title: '商品名称',
@@ -122,17 +152,37 @@ export default {
         },
         {
           title: '起止时间',
-          key: 'time',
-          sortable: true
+          key: 'time'
+          // sortable: true
         },
         {
           title: '权重',
           key: 'sort',
-          sortable: true
+          width: 120,
+          render: (h, params) => {
+            var vm = this
+            return h('Input', {
+              props: {
+                value: vm.dataList[params.index].sort
+              },
+              on: {
+                'on-change' (event) {
+                  vm.dataList[params.index].sort = event.target.value
+                }
+              }
+            })
+          }
         },
         {
           title: '状态',
-          key: 'statu'
+          slot: 'status',
+          width: 120
+        },
+        {
+          title: '操作',
+          width: 200,
+          slot: 'action',
+          align: 'center'
         }
       ],
       dataList: []
@@ -153,6 +203,11 @@ export default {
     _getContext (ctx) {
       // console.log(ctx)
       this.ctx = ctx.html
+    },
+    changeSwitch (e, index) {
+      // console.log('e---', e)
+      this.dataList[index].statu = e
+      // console.log('switch', this.dataList[index].statu)
     },
     navSave (val) {
       switch (val) {
@@ -183,8 +238,9 @@ export default {
           break
       }
     },
-    delsFn () {
-
+    saveGoods (obj) {
+      console.log('obj123++++', obj)
+      this.cancelModalWrite()
     },
     // 上传图片
     async fileUploadGoods (e) {
@@ -209,11 +265,11 @@ export default {
         this.pictureUrl = res.data.content
       }
     },
-    addGoodsSigle () {
-      this.modal1 = true
+    openWriteModal () {
+      this.modal0 = true
     },
-    cancelModal (istf) {
-      this.modal1 = false
+    cancelModalWrite () {
+      this.modal0 = false
     },
     // 添加模板
     addModal () {
@@ -349,8 +405,7 @@ export default {
   padding: 0;
   display: none;
 }
-.smsAddModel /deep/ .ivu-modal-footer,.smsModel .ivu-modal-footer{
-  padding: 0;
-  display: none;
-}
+// .ivu-table-wrapper,.ivu-table{
+//   overflow: auto;
+// }
 </style>

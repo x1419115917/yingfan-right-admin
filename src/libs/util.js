@@ -291,7 +291,7 @@ export const getTagNavListFromLocalstorage = () => {
  */
 export const getHomeRoute = (routers, homeName = 'home') => {
   let i = -1
-  console.log(routers)
+  // console.log(routers)
   let len = routers ? routers.length : 0
   let homeRoute = {}
   while (++i < len) {
