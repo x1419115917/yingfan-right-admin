@@ -216,7 +216,6 @@
 import { listGoodsPage, saleableFn, skuSpecList, saveSkuStock } from '@/api/goods'
 import { listBrandsPage } from '@/api/nature'
 import { supplierList, categList } from '@/api/supplier'
-import { date2string } from '@/libs/util'
 export default {
   name: 'goods-list',
   data () {
@@ -430,9 +429,9 @@ export default {
       this.tableLoading = true
       let data = {
         FLAG: 1,
-        beginTime: this.beginTime != '' ? date2string(this.beginTime) : '',
+        beginTime: this.beginTime != '' ? this.$dateString(this.beginTime) : '',
         brandId: this.brandId,
-        endTime: this.endTime != '' ? date2string(this.endTime) : '',
+        endTime: this.endTime != '' ? this.$dateString(this.endTime) : '',
         // maxRetailPrice: this.maxRetailPrice,
         maxStockNum: this.maxStockNum ? parseInt(this.maxStockNum) : '',
         // maxSupplyPrice: this.maxSupplyPrice,
@@ -448,7 +447,7 @@ export default {
       let res = await listGoodsPage(data)
       this.tableLoading = false
       if (res.data.code === 0) {
-        console.log(res.data.content)
+        // console.log(res.data.content)
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {

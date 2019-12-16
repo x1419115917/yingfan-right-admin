@@ -575,6 +575,12 @@ export default {
         this.$refs.filezm.value = ''
         return
       }
+      if (file.size > 1024 * 1024 * 0.5) {
+        this.$Message.warning('请选择小于500k的图片上传')
+        this.loadingBox = false
+        e.target.value = ''
+        return
+      }
       let data = {
         file: file,
         tag: 2

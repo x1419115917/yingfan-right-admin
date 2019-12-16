@@ -18,13 +18,15 @@ import '@/assets/icons/iconfont.css'
 import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
-import { ForMat } from './libs/util'
+import { ForMat, date2string } from './libs/util'
 import VueQuillEditor from 'vue-quill-editor'
 // require styles
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 Vue.prototype.$format = ForMat
+// 日期转换成字符串格式
+Vue.prototype.$dateString = date2string
 // 实际打包时应该不引入mock
 /* eslint-disable */
 // if (process.env.NODE_ENV !== 'production') require('@/mock')

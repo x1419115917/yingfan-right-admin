@@ -10,6 +10,31 @@
         <Col span="20" class="member-item-right"><Input v-model="goodsTitle" placeholder="默认展示选择商品标题，支持编辑" style="width: 500px" /></Col>
       </Row>
       <Row class="member-item">
+        <Col span="4" class="member-item-left member-banner"> 商品banner </Col>
+        <Col span="20" class="member-item-right" style="padding-top: 12px">
+          <Row>
+            <Col span="6" class="active-imgbox">
+              <img v-show="!imgShow" class="active-imgurl" src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191031/fd9b8888-a8c1-4ed4-80c5-166a4d45ea97/20191031183109.png" alt="">
+              <img v-show="imgShow" class="active-imgurl" :src="pictureUrl" />
+              <Spin fix class="loading-box" v-show="loadingBox">
+                <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                <div>上传中</div>
+              </Spin>
+            </Col>
+            <Col span="18">
+              <div class="upload-img-box">
+                <Button class="upload-btn" type="success" ghost :loading="loadingBox">上传图片</Button>
+                <input type="file" class="img-ipt"
+                  @change="fileUplaod($event)"
+                  accept="image/*"
+                  capture="camera">
+              </div>
+              <div style="line-height: 30px"><span class="title-span-tips">(图片尺寸宽度1125，高度不限，jpg，jpeg，gif，小于500k)</span></div>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row class="member-item">
         <Col span="4" class="member-item-left"> 起止时间 </Col>
         <Col span="20" class="member-item-right">
           <DatePicker v-model="beginTime" type="datetime" @on-change="changeStartTime" :options="options1" placeholder="开始日期" style="width: 208px"></DatePicker>
@@ -59,7 +84,7 @@
 <script>
 import { skuSpecList } from '@/api/goods'
 import memberChosses from './memberChosses.vue'
-import { date2string } from '@/libs/util'
+import { singleUpload } from '@/api/base'
 export default {
   name: 'memberActive',
   components: {
@@ -94,6 +119,9 @@ export default {
       status: '',
       specTemplates: [],
       isFull: false,
+      loadingBox: false,
+      pictureUrl: '',
+      imgShow: false,
       skuList: [],
       goodsTitle: '',
       goodsInfo: {},
@@ -148,6 +176,7 @@ export default {
           this.columns1 = []
           this.status = ''
           this.isFull = false
+          this.pictureUrl = ''
         }
       }
     }
@@ -214,6 +243,34 @@ export default {
         this.data1 = this.skuListUpdata
       }
     },
+    // 上传图片
+    async fileUplaod (e) {
+      this.loadingBox = true
+      let file = e.target.files[0]
+      if (!/\/(?:jpg|jpeg|png|gif)/i.test(file.type)) {
+        this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+        this.loadingBox = false
+        e.target.value = ''
+        return
+      }
+      if (file.size > 1024 * 1024 * 0.5) {
+        this.$Message.warning('请选择小于500k的图片上传')
+        this.loadingBox = false
+        e.target.value = ''
+        return
+      }
+      let data = {
+        file: file,
+        tag: 2
+      }
+      let res = await singleUpload(data)
+      this.loadingBox = false
+      if (res.data.code === 0) {
+        this.imgShow = true
+        e.target.value = ''
+        this.pictureUrl = res.data.content
+      }
+    },
     changActivePrice (e, index) {
       // console.log('e++',e)
       this.data1[index].activePrice = e
@@ -250,6 +307,13 @@ export default {
         this.$Modal.warning({
           title: '提示',
           content: '请选择活动商品'
+        })
+        return
+      }
+      if (this.pictureUrl === '') {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请上传banner'
         })
         return
       }
@@ -299,10 +363,11 @@ export default {
       obj = {
         goodsId: this.goodsInfo.id,
         goodsTitle: this.goodsTitle,
-        beginTime: date2string(this.beginTime),
-        endTime: date2string(this.endTime),
+        beginTime: this.$dateString(this.beginTime),
+        endTime: this.$dateString(this.endTime),
         restrictNumber: this.restrictNumber,
         skus: sellist,
+        pictureUrl: this.pictureUrl,
         status: this.status
       }
       this.$emit('saveGoods', obj)
@@ -343,6 +408,10 @@ export default {
       color: #ed4014;
     }
   }
+  .member-banner{
+    height: 136px;
+    line-height: 136px;
+  }
   .member-item-right{
     border-left: 1px solid #ebebeb;
     padding-left: 16px;
@@ -361,6 +430,36 @@ export default {
   text-align: right;
   padding: 20px 0 10px;
 }
+// 图片样式
+.active-imgbox{
+  position: relative;
+}
+.active-imgurl{
+  display: inline-block;
+  background-color: #f9f9f9;
+  border: 1px solid #e8e8e8;
+  box-sizing: border-box;
+  width: 90%;
+  height: 100px;
+  margin-top: 4px;
+}
+.upload-img-box{
+  position: relative;
+  .img-ipt{
+    position: absolute;
+    opacity: 0;
+    left: 0;
+    width: 80px;
+    height: 32px;
+  }
+}
+.title-span-tips{
+  padding-left: 6px;
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+}
+// 底部模态按钮隐藏
 .smsAddModel /deep/ .ivu-modal-footer,.smsModel .ivu-modal-footer{
   padding: 0;
   display: none;
