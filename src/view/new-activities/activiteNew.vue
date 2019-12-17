@@ -77,7 +77,8 @@
       </Row>
     </div>
     <Modal v-model="modal0" class="smsActiveModel" title="添加活动商品"  width="1220" :mask-closable="false">
-      <member-active @cancelModalWrite="cancelModalWrite" :modal0="modal0" :operationShow="operationShow" @saveGoods="saveGoods"></member-active>
+      <member-active @cancelModalWrite="cancelModalWrite" :modal0="modal0" :operationShow="operationShow" @saveGoods="
+      "></member-active>
     </Modal>
   </div>
 </template>

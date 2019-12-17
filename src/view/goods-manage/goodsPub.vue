@@ -270,7 +270,7 @@
                   <Input class="w80 goods-info-ipt" v-model="goodsObj.trade" placeholder="输入批发价"  />
                   <!-- v-show="rewardState == 1" -->
                   <span class="goods-info-ipt" v-show="rewardState == 1">
-                    佣金比例: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
+                    奖励: <Input class="w80" v-model="goodsObj.brokerage" placeholder=""  /> %
                   </span>
                   <span class="goods-info-ipt">
                     应分返还:
@@ -648,7 +648,7 @@ export default {
           }
         },
         {
-          title: '佣金比例(%)',
+          title: '奖励(%)',
           key: 'brokerage',
           minWidth: 120,
           render: (h, params) => {
@@ -1055,7 +1055,7 @@ export default {
       // 重新赋值
       this.columnsList = columnsListOriginal
     },
-    // 初始化不支持佣金比例和应分兑换
+    // 初始化不支持奖励和应分兑换
     initExchangeFn () {
       let columnsListOriginal = [...this.columnsListUpdata]
       // 初始化都不支持
@@ -1233,7 +1233,7 @@ export default {
           cid2: this.cur2,
           cid3: this.cur3,
           description: this.ctx,
-          rewardState: this.rewardState, // 佣金比例是否支持
+          rewardState: this.rewardState, // 奖励是否支持
           pointExchangeState: this.pointExchangeState, // 应分是否支持
           enableWholesale: 0,
           imageList: imgList,
@@ -1414,7 +1414,7 @@ export default {
           cid2: this.cur2,
           cid3: this.cur3,
           description: this.ctx,
-          rewardState: this.rewardState, // 佣金比例是否支持
+          rewardState: this.rewardState, // 奖励是否支持
           pointExchangeState: this.pointExchangeState, // 应分是否支持
           enableWholesale: 0,
           imageList: imgList,
@@ -1646,7 +1646,7 @@ export default {
         this.supplierId = spuInfo.supplierId
         let imageList = JSON.parse(spuInfo.images)
         this.goodsTitle = spuInfo.title
-        this.rewardState = spuInfo.rewardState.toString() // 佣金比例是否支持
+        this.rewardState = spuInfo.rewardState.toString() // 奖励是否支持
         this.pointExchangeState = spuInfo.pointExchangeState.toString() // 应分是否支持
         this.subTitle = spuInfo.subTitle
         this.brandsId = spuInfo.brandId
