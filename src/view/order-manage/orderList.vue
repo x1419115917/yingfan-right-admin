@@ -11,13 +11,15 @@
             @on-change="selectDate"
             placeholder="年/月/日" ></DatePicker>
         </Col>
-        <Col span="8">
-          <Select style="width: 100px; margin-right: 6px;" clearable>
-            <Option v-for="item in typeOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
-          <Input v-model="form.type" :style="{ width: inpWidth}" placeholder="请输入" />
+        <Col span="6">
+          <span>订单号</span>
+          <Input v-model="form.orderId" :style="{ width: inpWidth}" placeholder="请输入订单号" clearable />
         </Col>
-        <Col span="10">
+        <Col span="6">
+          <span>下单人</span>
+          <Input v-model="form.orderPlacer" :style="{ width: inpWidth}" placeholder="请输入下单人" clearable />
+        </Col>
+        <Col span="6">
           <span>订单状态</span>
           <Select v-model="form.orderStatus" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in orderStatusOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -65,7 +67,7 @@
 </template>
 <script>
 import { doOrderList } from '@/api/order'
-import { orderStatus, type } from './orderList'
+import { orderStatus } from './orderList'
 import orderDetail from './orderDetail'
 export default {
   name: 'orderList',
@@ -86,7 +88,8 @@ export default {
         FLAG: 1,
         startTime: null, // 开始时间
         endTime: null, // 结束时间
-        // type: null,          //查询类型
+        orderId: null, // 订单号
+        orderPlacer: null, // 下单人
         orderStatus: null, // 订单状态
         pageIndex: 1,
         pageSize: 10 // 每页查询数量
@@ -106,6 +109,11 @@ export default {
           title: '订单金额',
           align: 'center',
           slot: 'payAmt'
+        },
+        {
+          title: '下单人',
+          align: 'center',
+          key: 'userName'
         },
         {
           title: '下单时间',
@@ -129,7 +137,7 @@ export default {
     returnOrderType (item) {
       switch (item) {
         case 0 : return '普通'
-        case 1 : return '众筹'
+        case 1 : return '预售'
         case 2 : return '升级'
       }
     },
@@ -195,9 +203,6 @@ export default {
   computed: {
     orderStatusOpts () {
       return orderStatus()
-    },
-    typeOpts () {
-      return type()
     }
   },
   created () {
