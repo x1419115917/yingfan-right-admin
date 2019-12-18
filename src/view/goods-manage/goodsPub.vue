@@ -1120,6 +1120,7 @@ export default {
       let specTemplate = []
       let attrTemplate = []
       let imgList = []
+      let imageUrl = []
       let skus = []
       let cheval = ''
       if (this.baseSpec && this.baseSpec.length > 0) {
@@ -1211,7 +1212,7 @@ export default {
             chooseSpec: '',
             exchangePoints: '0',
             commissionRate: item.brokerage,
-            imageList: imgList,
+            imageList: item.imageUrl.split(','),
             merchantCode: item.code,
             minWholesaleVolume: item.wholesale,
             pointRate: item.integral,
@@ -1391,7 +1392,7 @@ export default {
           chooseSpec: '',
           exchangePoints: '0',
           commissionRate: item.brokerage,
-          imageList: imgList,
+          imageList: item.imageUrl.split(','),
           merchantCode: item.code,
           minWholesaleVolume: item.wholesale,
           pointRate: item.integral,

@@ -91,7 +91,7 @@
   </div>
 </template>
 <script>
-import { skuSpecList } from '@/api/goods'
+import { vipSave, getSKus } from '@/api/vip'
 import memberChosses from './memberChosses.vue'
 import { singleUpload } from '@/api/base'
 export default {

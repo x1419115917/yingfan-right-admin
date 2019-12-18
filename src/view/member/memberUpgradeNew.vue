@@ -8,7 +8,7 @@
     <div class="member-con" v-show="vsShowNav == 0">
       <Row class="tb-line-item name">
         <Col class="active-name" :span="2"><span>*</span>升级活动名称：</Col>
-        <Col :span="18"><Input v-model="activityName" placeholder="请输入活动名称" style="width: 600px" /></Col>
+        <Col :span="18"><Input v-model="activeName" placeholder="请输入活动名称" style="width: 600px" /></Col>
       </Row>
       <div class="tb-line tb-editor photo-tips-box">
         <Row class="tb-line-item name" style="margin: 0 auto 10px;">
@@ -17,13 +17,13 @@
         </Row>
         <Row class="tb-line-item">
           <div class="editor">
-            <v-editor @on-change="_getContext" :initContent='ctx'></v-editor>
+            <v-editor @on-change="_getContext" :initContent='showDetail'></v-editor>
           </div>
         </Row>
       </div>
       <Row class="tb-line-item rules">
         <Col class="active-name" :span="2"><span>*</span>活动规则：</Col>
-        <Col :span="18"><Input v-model="rules" type="textarea" :rows="8" placeholder="请输入活动规则" style="width: 600px" /></Col>
+        <Col :span="18"><Input v-model="activeRule" type="textarea" :rows="8" placeholder="请输入活动规则" style="width: 600px" /></Col>
       </Row>
       <Row class="tb-line-item">
         <Col class="active-name" :span="2"></Col>
@@ -46,7 +46,7 @@
           </Col>
         </Row>
         <Row class="member-goods-bottom">
-          <Table border :columns="columns" :data="dataList">
+          <Table border :columns="columns" :data="dataList" :laoding="tableLoading">
             <!-- status  style="height: 480px" -->
             <template slot-scope="{ row, index }" slot="status">
               <span>{{row.status == 1 ? '显示' : '隐藏'}}</span>
@@ -94,6 +94,7 @@
 <script>
 import editors from '@/components/editors/editor'
 import { singleUpload } from '@/api/base'
+import { saveVipActive, queryVipActive, vipList } from '@/api/vip'
 import { arrayTiff, arrayChecked, date2string } from '@/libs/util'
 import memberActive from './memberActive.vue'
 export default {
@@ -105,13 +106,13 @@ export default {
   data () {
     return {
       vsShowNav: 0,
-      activityName: '',
+      activeName: '',
       operationShow: false,
       goodsInfo: {},
       goodsId: '',
       goodsTitle: '',
-      rules: '',
-      ctx: '',
+      activeRule: '',
+      showDetail: '',
       modalsel: '0',
       modal0: false,
       statuList: [
@@ -126,7 +127,7 @@ export default {
       ],
       modalLists: [
         {
-          pictureUrl: '',
+          images: '',
           imgShow: false,
           goodsInfo: {
             title: '',
@@ -142,13 +143,13 @@ export default {
       columns: [
         {
           title: '商品banner',
-          key: 'pictureUrl',
+          key: 'images',
           width: 160,
           render: (h, params) => {
             return h('div', [
               h('img', {
                 domProps: {
-                  'src': params.row.pictureUrl ? params.row.pictureUrl : ''
+                  'src': params.row.images ? params.row.images : ''
                 },
                 style: {
                   display: 'block',
@@ -162,12 +163,12 @@ export default {
         },
         {
           title: '商品ID',
-          key: 'id',
+          key: 'spuId',
           width: 100
         },
         {
           title: '商品名称',
-          key: 'goodsname'
+          key: 'title'
         },
         {
           title: '起止时间',
@@ -233,10 +234,55 @@ export default {
   methods: {
     _getContext (ctx) {
       // console.log(ctx)
-      this.ctx = ctx.html
+      this.showDetail = ctx.html
     },
-    getPageList () {
-
+    // 获取商品列表
+    async getPageList () {
+      this.tableLoading = true
+      let data = {
+        FLAG: 1,
+        pageIndex: this.pageNum,
+        pageSize: this.pageSize
+      }
+      let res = await vipList(data)
+      this.tableLoading = false
+      if (res.data.code === 0) {
+        if (res.data.content && res.data.content.length > 0) { this.dataList = res.data.content }
+        this.total = +res.data.content.total
+        this.dataList.forEach((item) => {
+          item.time = `${item.startTime} - ${item.endTime}`
+        })
+      }
+    },
+    // 获取页面设置
+    async queryVipActive () {
+      let data = {}
+      let res = await queryVipActive(data)
+      if (res.data.code === 0) {
+        if (res.data && res.data.content) {
+          let content = res.data.content
+          this.activeName = content.activeName
+          this.activeRule = content.activeRule
+          this.showDetail = content.showDetail
+        }
+      }
+    },
+    // 保存页面设置
+    async saveVipActive () {
+      let data = {
+        FLAG: 1,
+        activeName: this.activeName,
+        activeRule: this.activeRule,
+        showDetail: this.showDetail
+      }
+      let res = await saveVipActive(data)
+      if (res.data.code === 0) {
+        this.vsShowNav = 1
+        // this.$Modal.success({
+        //   title: '提示',
+        //   content: '保存页面设置成功'
+        // })
+      }
     },
     changeSwitch (e, index) {
       // console.log('e---', e)
@@ -249,29 +295,29 @@ export default {
           this.vsShowNav = 0
           break
         case 1:
-          if (this.activityName === '') {
+          if (this.activeName === '') {
             this.$Modal.warning({
               title: '提示',
               content: '请填写活动名称'
             })
             return
           }
-          if (this.ctx === '') {
+          if (this.showDetail === '') {
             this.$Modal.warning({
               title: '提示',
               content: '请填写页面内容'
             })
             return
           }
-          // rules
-          if (this.rules === '') {
+          // activeRule
+          if (this.activeRule === '') {
             this.$Modal.warning({
               title: '提示',
               content: '请填写活动规则'
             })
             return
           }
-          this.vsShowNav = 1
+          this.saveVipActive()
           break
         case 2:
           this.vsShowNav = 2
@@ -283,7 +329,7 @@ export default {
     saveGoods (obj) {
       // console.log('obj123++++', obj)
       this.dataList.push({
-        pictureUrl: obj.pictureUrl,
+        images: obj.pictureUrl,
         id: obj.goodsId,
         goodsname: obj.goodsTitle,
         time: `${obj.beginTime} - ${obj.endTime}`,
@@ -339,7 +385,8 @@ export default {
   created () {
   },
   mounted () {
-
+    this.queryVipActive()
+    this.getPageList()
   }
 }
 </script>
