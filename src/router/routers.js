@@ -455,16 +455,6 @@ export const appRouter = [
           title: '售后订单'
         },
         component: () => import('@/view/order-manage/afterSaleOrder.vue')
-      },
-      {
-        path: 'returnAddress',
-        name: 'returnAddress',
-        meta: {
-          hideInMenu: true,
-          icon: '',
-          title: '退货地址'
-        },
-        component: () => import('@/view/order-manage/returnAddress.vue')
       }
     ]
   },
@@ -497,16 +487,17 @@ export const appRouter = [
           title: '收益列表'
         },
         component: () => import('@/view/infun-manage/inComeList.vue')
-      }, {
-        path: 'cashOut',
-        name: 'cashOut',
-        meta: {
-          hideInMenu: true,
-          icon: '',
-          title: '余额提现'
-        },
-        component: () => import('@/view/infun-manage/cashOut.vue')
       }
+      // {
+      //   path: 'cashOut',
+      //   name: 'cashOut',
+      //   meta: {
+      //     hideInMenu: true,
+      //     icon: '',
+      //     title: '余额提现'
+      //   },
+      //   component: () => import('@/view/infun-manage/cashOut.vue')
+      // }
     ]
   },
   {
