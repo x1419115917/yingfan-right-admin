@@ -49,13 +49,11 @@
           <Table border :columns="columns" :data="dataList">
             <!-- status  style="height: 480px" -->
             <template slot-scope="{ row, index }" slot="status">
-              <!-- <Select v-model="row.statu" style="width:100px">
-                  <Option v-for="item in statuList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-              </Select> -->
-              <i-switch size="large" v-model="row.status" @on-change="changeSwitch($event,index)" true-value="1" false-value="0">
+              <span>{{row.status == 1 ? '显示' : '隐藏'}}</span>
+              <!-- <i-switch size="large" v-model="row.status" @on-change="changeSwitch($event,index)" true-value="1" false-value="0">
                   <span slot="open">启用</span>
                   <span slot="close">隐藏</span>
-              </i-switch>
+              </i-switch> -->
             </template>
             <template slot-scope="{ row, index }" slot="action">
               <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
@@ -69,6 +67,18 @@
             </template>
           </Table>
         </Row>
+        <div class="pages">
+          <Page
+            :current="pageNum"
+            :page-size="pageSize"
+            :total="total"
+            show-total
+            show-elevator
+            show-sizer
+            @on-page-size-change="changePageSize"
+            @on-change="pageChange"
+          />
+        </div>
       </div>
       <Row>
         <div class="tb-line btn btn-goods">
@@ -167,23 +177,28 @@ export default {
         {
           title: '权重',
           key: 'sort',
-          width: 120,
-          render: (h, params) => {
-            var vm = this
-            return h('InputNumber', {
-              props: {
-                value: vm.dataList[params.index].sort,
-                min: 1
-              },
-              on: {
-                'on-change' (e) {
-                  vm.dataList[params.index].sort = e
-                  // console.log('vm.dataList[params.index].sort', vm.dataList[params.index].sort)
-                }
-              }
-            })
-          }
+          width: 100
         },
+        // {
+        //   title: '权重',
+        //   key: 'sort',
+        //   width: 120,
+        //   render: (h, params) => {
+        //     var vm = this
+        //     return h('InputNumber', {
+        //       props: {
+        //         value: vm.dataList[params.index].sort,
+        //         min: 1
+        //       },
+        //       on: {
+        //         'on-change' (e) {
+        //           vm.dataList[params.index].sort = e
+        //           // console.log('vm.dataList[params.index].sort', vm.dataList[params.index].sort)
+        //         }
+        //       }
+        //     })
+        //   }
+        // },
         {
           title: '状态',
           slot: 'status',
@@ -196,7 +211,12 @@ export default {
           align: 'center'
         }
       ],
-      dataList: []
+      dataList: [],
+      pageNum: 1,
+      pageSize: 10,
+      delIndex: '',
+      total: 0,
+      tableLoading: false
     }
   },
   computed: {
@@ -214,6 +234,9 @@ export default {
     _getContext (ctx) {
       // console.log(ctx)
       this.ctx = ctx.html
+    },
+    getPageList () {
+
     },
     changeSwitch (e, index) {
       // console.log('e---', e)
@@ -264,7 +287,7 @@ export default {
         id: obj.goodsId,
         goodsname: obj.goodsTitle,
         time: `${obj.beginTime} - ${obj.endTime}`,
-        sort: 1,
+        sort: obj.sort,
         restrictNumber: obj.restrictNumber,
         status: obj.status,
         skus: obj.skus
@@ -300,12 +323,17 @@ export default {
     cancelModalWrite () {
       this.modal0 = false
     },
-    // 添加模板
-    addModal () {
-
+    changePageSize (value) {
+      this.pageNum = 1
+      this.pageSize = value
+      this.getPageList()
+    },
+    pageChange (value) {
+      this.pageNum = value
+      this.getPageList()
     },
     submitSave () {
-
+      // this.changeGoods();
     }
   },
   created () {

@@ -56,6 +56,12 @@
         </Col>
       </Row>
       <Row class="member-item">
+        <Col span="4" class="member-item-left">权重</Col>
+        <Col span="20" class="member-item-right">
+          <InputNumber :max="10" :min="1" v-model="sort" placeholder="权重" style="width: 120px"></InputNumber><span class="tips">默认填1，权重越小，前端展示排越前</span>
+        </Col>
+      </Row>
+      <Row class="member-item">
         <Col span="4" class="member-item-left">每用户限制件数</Col>
         <Col span="20" class="member-item-right">
           <InputNumber :max="10" :min="1" v-model="restrictNumber" placeholder="请输入每个用户限制件数" style="width: 120px"></InputNumber><span class="tips">默认填1，表示整个SPU商品限购一件</span>
@@ -117,6 +123,7 @@ export default {
     return {
       modal1: false,
       restrictNumber: 1,
+      sort: 1,
       beginTime: '',
       endTime: '',
       status: '',
@@ -138,6 +145,10 @@ export default {
           type: 'selection',
           width: 60,
           align: 'center'
+        },
+        {
+          title: 'sku',
+          key: 'sku'
         },
         {
           title: '供货价',
@@ -401,7 +412,8 @@ export default {
         restrictNumber: this.restrictNumber,
         skus: sellist,
         pictureUrl: this.pictureUrl,
-        status: this.status
+        status: this.status,
+        sort: this.sort
       }
       this.$emit('saveGoods', obj)
     },

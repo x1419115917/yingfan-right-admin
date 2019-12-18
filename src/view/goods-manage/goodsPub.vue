@@ -137,7 +137,7 @@
           <div class="tb-line tb-editor photo-tips-box">
             <Row class="tb-line-item name" style="margin: 0 auto 10px;">
               <span>*</span>商品详情页：
-              <span class="goto-brand">【建议：图片上传尺寸为：宽度800以下，高度1200以下&nbsp;单张图片小于500K】</span>
+              <span class="goto-brand">【建议：图片上传尺寸为：宽度800以下，高度1200以下&nbsp;单张图片小于2M】</span>
             </Row>
             <Row class="tb-line-item" style="margin: 0 auto;">
               <div class="editor">
