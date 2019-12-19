@@ -11,6 +11,8 @@ export default {
   goodsManage: '商品管理',
   goodsPub: '商品发布',
   memberUpgrade: '会员升级',
+  active: '新人活动',
+  activeNew: '新人专区',
   goodsList: '商品列表',
   orderManage: '订单管理',
   orderList: '商城订单',

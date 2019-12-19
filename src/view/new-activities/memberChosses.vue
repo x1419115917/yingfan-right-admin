@@ -181,11 +181,12 @@ export default {
         categoryId: this.cid3 ? +this.cid3 : '',
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        title: this.goodsTitle
+        title: this.goodsTitle,
+        saleable: 1
       }
       let res = await listGoodsPage(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
+        // console.log(res.data.content)
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
