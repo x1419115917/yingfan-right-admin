@@ -251,7 +251,7 @@ export default {
       if (res.data.code === 0) {
         if (res.data.content && res.data.content.length > 0) {
           this.dataList = res.data.content
-          this.total = +res.data.content.total
+          this.total = res.data.total ? +res.data.total : 0
           this.dataList.forEach((item) => {
             item.time = `${item.startTime} - ${item.endTime}`
           })

@@ -157,7 +157,7 @@ export default {
           align: 'center'
         },
         {
-          title: 'sku',
+          title: 'SKU',
           key: 'specParam',
           minWidth: 100
         },
@@ -210,6 +210,7 @@ export default {
           this.data1.forEach(item => {
             item._disabled = false
             item._checked = true
+            item.specParam = item.specParam != '' ? item.specParam : '-'
           })
           this.goodsId = this.editInfo.spuId
           this.selectList = [...this.data1]
@@ -254,6 +255,7 @@ export default {
           item._disabled = !item.isShow
           item.vipPrice = null
           item.sort = null
+          item.specParam = item.specParam != '' ? item.specParam : '-'
         })
         // this.skuList = res.data.content.skus
       }
