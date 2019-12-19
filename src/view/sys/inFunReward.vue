@@ -3,7 +3,7 @@
   <div class="inFunReward">
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
       <FormItem label="积分奖励" prop="value">
-        <Input :style="{ width: inpWidth}" v-model="formValidate.value" placeholder="请输入积分比例"></Input>
+        <Input type="number" :style="{ width: inpWidth}" v-model="formValidate.value" placeholder="请输入积分比例"></Input>
         %<span class="tip">说明：该积分是平台返还给上级的,积分公式：返给购买者的积分X百分比</span>
       </FormItem>
       <FormItem>
