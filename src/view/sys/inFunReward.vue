@@ -1,6 +1,7 @@
 <!--系统设置-积分奖励-->
 <template>
   <div class="inFunReward">
+  <Card>
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
       <FormItem label="积分奖励" prop="value">
         <Input type="number" :style="{ width: inpWidth}" v-model="formValidate.value" placeholder="请输入积分比例"></Input>
@@ -10,6 +11,7 @@
           <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
       </FormItem>
     </Form>
+  </Card>
   </div>
 </template>
 <script>
