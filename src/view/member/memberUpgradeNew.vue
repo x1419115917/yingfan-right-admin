@@ -49,14 +49,14 @@
           <Table border :columns="columns" :data="dataList" :laoding="tableLoading">
             <!-- status  style="height: 480px" -->
             <template slot-scope="{ row, index }" slot="status">
-              <span>{{row.status == 1 ? '显示' : '隐藏'}}</span>
+              <span>{{row.isShow == 1 ? '显示' : '隐藏'}}</span>
               <!-- <i-switch size="large" v-model="row.status" @on-change="changeSwitch($event,index)" true-value="1" false-value="0">
                   <span slot="open">启用</span>
                   <span slot="close">隐藏</span>
               </i-switch> -->
             </template>
             <template slot-scope="{ row, index }" slot="action">
-              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index)">
+              <Button class="btn-item preview-btn" type="text" size="small" @click="edit(index, row.id)">
                 <i></i>
                 <span>编辑</span>
               </Button>
@@ -87,14 +87,14 @@
       </Row>
     </div>
     <Modal v-model="modal0" class="smsActiveModel" title="添加活动商品"  width="1220" :mask-closable="false">
-      <member-active @cancelModalWrite="cancelModalWrite" :modal0="modal0" :operationShow="operationShow" @saveGoods="saveGoods"></member-active>
+      <member-active @cancelModalWrite="cancelModalWrite" :modal0="modal0" :operationShow="operationShow" @saveGoods="saveGoods" :editInfo="editInfo" :editId="editId"></member-active>
     </Modal>
   </div>
 </template>
 <script>
 import editors from '@/components/editors/editor'
 import { singleUpload } from '@/api/base'
-import { saveVipActive, queryVipActive, vipList } from '@/api/vip'
+import { saveVipActive, queryVipActive, vipList, detailSpuVipId } from '@/api/vip'
 import { arrayTiff, arrayChecked, date2string } from '@/libs/util'
 import memberActive from './memberActive.vue'
 export default {
@@ -113,6 +113,8 @@ export default {
       goodsTitle: '',
       activeRule: '',
       showDetail: '',
+      editId: 0,
+      editInfo: {},
       modalsel: '0',
       modal0: false,
       statuList: [
@@ -247,11 +249,13 @@ export default {
       let res = await vipList(data)
       this.tableLoading = false
       if (res.data.code === 0) {
-        if (res.data.content && res.data.content.length > 0) { this.dataList = res.data.content }
-        this.total = +res.data.content.total
-        this.dataList.forEach((item) => {
-          item.time = `${item.startTime} - ${item.endTime}`
-        })
+        if (res.data.content && res.data.content.length > 0) {
+          this.dataList = res.data.content
+          this.total = +res.data.content.total
+          this.dataList.forEach((item) => {
+            item.time = `${item.startTime} - ${item.endTime}`
+          })
+        }
       }
     },
     // 获取页面设置
@@ -265,6 +269,16 @@ export default {
           this.activeRule = content.activeRule
           this.showDetail = content.showDetail
         }
+      }
+    },
+    // 获取活动设置
+    async detailSpuVipId (id) {
+      let res = await detailSpuVipId(id)
+      if (res.data.code === 0) {
+        this.operationShow = true
+        this.modal0 = true
+        this.editInfo = res.data.content
+        this.editId = res.data.content.id
       }
     },
     // 保存页面设置
@@ -328,16 +342,7 @@ export default {
     },
     saveGoods (obj) {
       // console.log('obj123++++', obj)
-      this.dataList.push({
-        images: obj.pictureUrl,
-        id: obj.goodsId,
-        goodsname: obj.goodsTitle,
-        time: `${obj.beginTime} - ${obj.endTime}`,
-        sort: obj.sort,
-        restrictNumber: obj.restrictNumber,
-        status: obj.status,
-        skus: obj.skus
-      })
+      this.getPageList()
       this.cancelModalWrite()
     },
     // 上传图片
@@ -363,7 +368,13 @@ export default {
         this.pictureUrl = res.data.content
       }
     },
+    // 编辑
+    edit (index, id) {
+      // let title = this.dataList[index].title
+      this.detailSpuVipId(id)
+    },
     openWriteModal () {
+      this.operationShow = false
       this.modal0 = true
     },
     cancelModalWrite () {

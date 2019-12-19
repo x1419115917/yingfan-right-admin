@@ -477,7 +477,8 @@ export default {
         categoryId: this.cid3 ? +this.cid3 : '',
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        title: this.goodsTitle
+        title: this.goodsTitle,
+        saleable: 1
       }
       let res = await listGoodsPage(data)
       if (res.data.code === 0) {

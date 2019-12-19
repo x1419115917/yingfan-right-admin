@@ -37,7 +37,7 @@
       <Row class="member-item">
         <Col span="4" class="member-item-left"> 起止时间 </Col>
         <Col span="20" class="member-item-right">
-          <DatePicker v-model="beginTime" type="datetime" @on-change="changeStartTime" :options="options1" placeholder="开始日期" style="width: 208px"></DatePicker>
+          <DatePicker v-model="startTime" type="datetime" @on-change="changeStartTime" :options="options1" placeholder="开始日期" style="width: 208px"></DatePicker>
           <span style="margin:0 5px;" class="span-table">——</span>
           <DatePicker v-model="endTime" type="datetime" @on-change="endDate" placeholder="结束日期" :options="options1" placement="bottom-end" style="width: 208px"></DatePicker>
         </Col>
@@ -46,11 +46,11 @@
         <Col span="4" class="member-item-left"> SKU选择 </Col>
         <Col span="20" class="member-item-right" style="padding: 20px">
           <Table class="table-height" :loading="tableLoading" :columns="columns1" :data="data1" border max-height ="450" @on-selection-change="selectChange">
-            <template slot-scope="{ row, index }" slot="activePrice">
-              ￥ <InputNumber style="width: 80px;" placeholder="活动价格" :min="0" class="sku-ipt" type="number" v-model="row.activePrice" @on-change="changActivePrice($event, index)" ></InputNumber>
+            <template slot-scope="{ row, index }" slot="vipPrice">
+              ￥ <InputNumber style="width: 80px;" placeholder="活动价格" :min="0" class="sku-ipt" type="number" v-model="row.vipPrice" @on-change="changActivePrice($event, index)" ></InputNumber>
             </template>
-            <template slot-scope="{ row, index }" slot="reorder">
-              <InputNumber style="width: 80px;" placeholder="排序" :min="0" class="sku-ipt" type="number" v-model="row.reorder" @on-change="changReorder($event, index)" ></InputNumber>
+            <template slot-scope="{ row, index }" slot="sort">
+              <InputNumber style="width: 80px;" placeholder="排序" :min="0" class="sku-ipt" type="number" v-model="row.sort" @on-change="changReorder($event, index)" ></InputNumber>
             </template>
           </Table>
         </Col>
@@ -58,7 +58,7 @@
       <Row class="member-item">
         <Col span="4" class="member-item-left">权重</Col>
         <Col span="20" class="member-item-right">
-          <InputNumber :max="10" :min="1" v-model="sort" placeholder="权重" style="width: 120px"></InputNumber><span class="tips">默认填1，权重越小，前端展示排越前</span>
+          <InputNumber :max="10" :min="1" v-model="sort" placeholder="权重" style="width: 120px"></InputNumber><span class="tips">默认填1，权重数字越小，展示排序越前</span>
         </Col>
       </Row>
       <Row class="member-item">
@@ -91,7 +91,7 @@
   </div>
 </template>
 <script>
-import { vipSave, getSKus } from '@/api/vip'
+import { vipSave, skuSpecList } from '@/api/vip'
 import memberChosses from './memberChosses.vue'
 import { singleUpload } from '@/api/base'
 export default {
@@ -117,6 +117,18 @@ export default {
       default: function () {
         return false
       }
+    },
+    editId: {
+      type: Number,
+      default: function () {
+        return 0
+      }
+    },
+    editInfo: {
+      type: Object,
+      default: function () {
+        return {}
+      }
     }
   },
   data () {
@@ -124,14 +136,12 @@ export default {
       modal1: false,
       restrictNumber: 1,
       sort: 1,
-      beginTime: '',
+      startTime: '',
       endTime: '',
       status: '',
-      specTemplates: [],
       loadingBox: false,
       pictureUrl: '',
       imgShow: false,
-      skuList: [],
       goodsTitle: '',
       goodsInfo: {},
       selectList: [],
@@ -140,7 +150,7 @@ export default {
           return date && date.valueOf() < Date.now() - 86400000
         }
       },
-      columnsOriginal1: [
+      columns1: [
         {
           type: 'selection',
           width: 60,
@@ -148,7 +158,8 @@ export default {
         },
         {
           title: 'sku',
-          key: 'sku'
+          key: 'specParam',
+          minWidth: 100
         },
         {
           title: '供货价',
@@ -165,15 +176,14 @@ export default {
         {
           title: '活动价',
           widtn: 100,
-          slot: 'activePrice'
+          slot: 'vipPrice'
         },
         {
           title: '排序',
           widtn: 100,
-          slot: 'reorder'
+          slot: 'sort'
         }
       ],
-      columns1: [],
       data1: [],
       tableLoading: false
     }
@@ -184,61 +194,40 @@ export default {
       handler (val) {
         if (val && !this.operationShow) {
           this.restrictNumber = 1
-          this.beginTime = ''
+          this.startTime = ''
           this.endTime = ''
-          this.specTemplates = []
-          this.skuList = []
           this.goodsTitle = ''
           this.goodsInfo = {}
           this.data1 = []
-          // this.columns1 = []
           this.status = ''
           this.pictureUrl = ''
           this.imgShow = false
           this.pictureUrl = ''
         }
+        if (val && this.operationShow) {
+          this.data1 = this.editInfo.skus
+          this.data1.forEach(item => {
+            item._disabled = false
+            item._checked = true
+          })
+          this.goodsTitle = this.editInfo.title
+          this.imgShow = true
+          this.pictureUrl = this.editInfo.images
+          this.startTime = this.editInfo.startTime
+          this.endTime = this.editInfo.endTime
+          this.restrictNumber = this.editInfo.limitNum
+          this.sort = this.editInfo.sort
+          this.status = this.editInfo.isShow.toString()
+        }
       }
     }
   },
   computed: {
-    columnsListUpdata: function () {
-      let columns1 = [...this.columnsOriginal1]
-      let specTemplates = this.specTemplates
-      specTemplates.forEach((item, index) => {
-        item.editShow = false
-        columns1.splice(index + 1, 0, {
-          title: item.specName,
-          key: `guige${index}`,
-          minWidth: 100
-        })
-      })
-      return columns1
-    },
-    skuListUpdata: function () {
-      // let data1 = this.data1
-      let skuList = this.skuList
-      skuList.forEach((item, index) => {
-        if (item.skuSpecs) {
-          if (item.skuSpecs.length === 1) {
-            item.guige0 = item.skuSpecs[0].specValue
-            // item.activePrice = null
-            item.activePrice = null
-            item.reorder = null
-          } else if (item.skuSpecs.length === 2) {
-            item.guige0 = item.skuSpecs[0].specValue
-            item.guige1 = item.skuSpecs[1].specValue
-            item.activePrice = null
-            item.reorder = null
-          }
-        }
-      })
-      return skuList
-    }
   },
   methods: {
     endDate (val) {
       // 時間关联判断(判断开始时间)
-      if (new Date(val) < new Date(this.beginTime)) {
+      if (new Date(val) < new Date(this.startTime)) {
         this.$Message.warning('结束时间不能在开始时间之前')
         this.endTime = ''
       }
@@ -247,7 +236,7 @@ export default {
       // 時間关联判断(判断结束时间)
       if (new Date(val) > new Date(this.endTime)) {
         this.$Message.warning('开始时间不能在结束时间之后')
-        this.beginTime = ''
+        this.startTime = ''
         this.endTime = ''
       }
     },
@@ -257,11 +246,36 @@ export default {
       let res = await skuSpecList(id)
       this.tableLoading = false
       if (res.data.code === 0) {
-        // console.log(res)
-        this.skuList = res.data.content.skus
-        this.specTemplates = res.data.content.specTemplate
-        this.columns1 = this.columnsListUpdata
-        this.data1 = this.skuListUpdata
+        this.data1 = res.data.content
+        this.data1.forEach(item => {
+          item._disabled = !item.isShow
+          item.vipPrice = null
+          item.sort = null
+        })
+        // this.skuList = res.data.content.skus
+      }
+    },
+    async vipSave (obj) {
+      let data = {
+        FLAG: 1,
+        endTime: obj.endTime,
+        id: this.editId === 0 ? '' : this.editId,
+        images: obj.pictureUrl,
+        isShow: obj.status,
+        limitNum: obj.restrictNumber,
+        skus: obj.skus,
+        sort: obj.sort,
+        spuId: obj.goodsId,
+        startTime: obj.startTime,
+        title: obj.goodsTitle
+      }
+      let res = await vipSave(data)
+      if (res.data.code === 0) {
+        this.$Modal.success({
+          title: '提示',
+          content: '保存成功'
+        })
+        this.$emit('saveGoods', obj)
       }
     },
     // 上传图片
@@ -294,23 +308,23 @@ export default {
     },
     changReorder (e, index) {
       // console.log('e++',e)
-      this.data1[index].reorder = e
+      this.data1[index].sort = e
       // 判断是否已选中数据，有则赋值给selectList里的activePrice
       if (this.selectList.length != 0) {
         this.selectList.forEach(item => {
           if (item.skuId === this.data1[index].skuId) {
-            item.reorder = e
+            item.sort = e
           }
         })
       }
     },
     changActivePrice (e, index) {
-      this.data1[index].activePrice = e
+      this.data1[index].vipPrice = e
       // 判断是否已选中数据，有则赋值给selectList里的activePrice
       if (this.selectList.length != 0) {
         this.selectList.forEach(item => {
           if (item.skuId === this.data1[index].skuId) {
-            item.activePrice = e
+            item.vipPrice = e
           }
         })
       }
@@ -334,10 +348,10 @@ export default {
       sellist = [...this.selectList]
       // 筛选已选中的sku未填写活动价的数据
       fullArr = this.selectList.filter(item => {
-        return item.activePrice === null
+        return item.vipPrice === null
       })
       reorderArr = this.selectList.filter(item => {
-        return item.reorder === null
+        return item.sort === null
       })
       if (this.goodsTitle === '') {
         this.$Modal.warning({
@@ -353,7 +367,7 @@ export default {
         })
         return
       }
-      if (this.beginTime === '') {
+      if (this.startTime === '') {
         this.$Modal.warning({
           title: '提示',
           content: '请选择开始时间'
@@ -407,7 +421,7 @@ export default {
       obj = {
         goodsId: this.goodsInfo.id,
         goodsTitle: this.goodsTitle,
-        beginTime: this.$dateString(this.beginTime),
+        startTime: this.$dateString(this.startTime),
         endTime: this.$dateString(this.endTime),
         restrictNumber: this.restrictNumber,
         skus: sellist,
@@ -415,7 +429,7 @@ export default {
         status: this.status,
         sort: this.sort
       }
-      this.$emit('saveGoods', obj)
+      this.vipSave(obj)
     },
     selectChange (data) {
       // console.log('data++', data)、
@@ -431,7 +445,7 @@ export default {
   created () {
   },
   mounted () {
-    this.columns1 = [...this.columnsListUpdata]
+    // this.columns1 = [...this.columnsListUpdata]
   }
 }
 </script>

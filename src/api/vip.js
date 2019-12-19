@@ -8,7 +8,7 @@ export const saveVipActive = data => {
     method: 'post'
   })
 }
-// 获取升级VIP活动设置内容
+// 获取升级VIP设置内容
 export const queryVipActive = data => {
   return axios.request({
     url: '/vip/queryVipActive',
@@ -16,9 +16,9 @@ export const queryVipActive = data => {
     method: 'get'
   })
 }
-// 存储升级VIP活动页面设置
-export const detailSpu = spuVipId => {
-  data = {}
+// 获取升级VIP活动设置
+export const detailSpuVipId = spuVipId => {
+  let data = {}
   return axios.request({
     url: `/vip/detail/${spuVipId}`,
     data,
@@ -42,7 +42,7 @@ export const vipSave = data => {
   })
 }
 // 根据选中spuId获取skus
-export const getSKus = spuId => {
+export const skuSpecList = spuId => {
   let data = {}
   return axios.request({
     url: `/vip/skus/${spuId}`,
