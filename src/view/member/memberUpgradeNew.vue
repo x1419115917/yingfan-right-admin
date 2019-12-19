@@ -391,6 +391,11 @@ export default {
     },
     submitSave () {
       // this.changeGoods();
+      this.$Modal.success({
+        title: '提示',
+        content: '保存成功'
+      })
+      this.vsShowNav = 0
     }
   },
   created () {
