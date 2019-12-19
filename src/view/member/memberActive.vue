@@ -197,6 +197,7 @@ export default {
           this.startTime = ''
           this.endTime = ''
           this.goodsTitle = ''
+          this.goodsId = ''
           this.goodsInfo = {}
           this.data1 = []
           this.status = ''
@@ -210,6 +211,8 @@ export default {
             item._disabled = false
             item._checked = true
           })
+          this.goodsId = this.editInfo.spuId
+          this.selectList = [...this.data1]
           this.goodsTitle = this.editInfo.title
           this.imgShow = true
           this.pictureUrl = this.editInfo.images
@@ -335,6 +338,7 @@ export default {
     chooseGoods (obj) {
       this.goodsInfo = obj
       this.goodsTitle = obj.title
+      this.goodsId = obj.id
       this.skuSpecList(obj.id)
       this.cancelModal()
       // console.log('this.goodsInfo',this.goodsInfo)
@@ -419,7 +423,7 @@ export default {
         return
       }
       obj = {
-        goodsId: this.goodsInfo.id,
+        goodsId: this.goodsId,
         goodsTitle: this.goodsTitle,
         startTime: this.$dateString(this.startTime),
         endTime: this.$dateString(this.endTime),

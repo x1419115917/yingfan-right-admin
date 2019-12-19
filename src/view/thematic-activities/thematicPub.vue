@@ -480,9 +480,10 @@ export default {
         title: this.goodsTitle,
         saleable: 1
       }
+
       let res = await listGoodsPage(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
+        // console.log(res.data.content)
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
@@ -502,7 +503,7 @@ export default {
       }
       let res = await activityDetail(data)
       if (res.data.code === 0) {
-        console.log('res', res)
+        // console.log('res', res)
         let data = res.data.content
         this.activityName = data.activityName
         this.imgShow = true
@@ -589,7 +590,7 @@ export default {
       let res = await singleUpload(data)
       this.loadingBox = false
       if (res.data.code === 0) {
-        console.log(res)
+        // console.log(res)
         this.imgShow = true
         e.target.value = ''
         this.pictureUrl = res.data.content

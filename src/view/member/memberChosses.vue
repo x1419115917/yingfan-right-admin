@@ -186,7 +186,7 @@ export default {
       }
       let res = await listGoodsPage(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
+        // console.log(res.data.content)
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
