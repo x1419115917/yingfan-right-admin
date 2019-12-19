@@ -42,7 +42,7 @@
                           accept="image/*"
                           capture="camera">
                       </div>
-                      <div><span class="title-span-tips">(图片尺寸宽度1125，高度不限，jpg，jpeg，gif，小于500k)</span></div>
+                      <div><span class="title-span-tips">(图片尺寸宽度710，高度250，jpg，jpeg，gif，小于500k)</span></div>
                     </Col>
                   </Row>
                 </Col>
@@ -477,11 +477,13 @@ export default {
         categoryId: this.cid3 ? +this.cid3 : '',
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
-        title: this.goodsTitle
+        title: this.goodsTitle,
+        saleable: 1
       }
+
       let res = await listGoodsPage(data)
       if (res.data.code === 0) {
-        console.log(res.data.content)
+        // console.log(res.data.content)
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
@@ -501,7 +503,7 @@ export default {
       }
       let res = await activityDetail(data)
       if (res.data.code === 0) {
-        console.log('res', res)
+        // console.log('res', res)
         let data = res.data.content
         this.activityName = data.activityName
         this.imgShow = true
@@ -588,7 +590,7 @@ export default {
       let res = await singleUpload(data)
       this.loadingBox = false
       if (res.data.code === 0) {
-        console.log(res)
+        // console.log(res)
         this.imgShow = true
         e.target.value = ''
         this.pictureUrl = res.data.content

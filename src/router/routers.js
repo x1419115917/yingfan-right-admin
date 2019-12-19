@@ -427,6 +427,28 @@ export const appRouter = [
     ]
   },
   {
+    path: '/active',
+    name: 'active',
+    meta: {
+      hideInMenu: true,
+      icon: 'ios-menu',
+      title: '新人活动'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'activeNew',
+        name: 'activeNew',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-menu',
+          title: '新人专区'
+        },
+        component: () => import('@/view/new-activities/activeNew.vue')
+      }
+    ]
+  },
+  {
     path: '/orderManage',
     name: 'orderManage',
     meta: {
