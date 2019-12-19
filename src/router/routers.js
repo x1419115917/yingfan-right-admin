@@ -597,6 +597,38 @@ export const appRouter = [
         component: () => import('@/view/supplierWeb/supplier.vue')
       }
     ]
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    meta: {
+      icon: 'ios-menu',
+      title: '系统设置',
+      hideInMenu: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'inFunReward',
+        name: 'inFunReward',
+        meta: {
+          icon: '',
+          title: '积分奖励',
+          hideInMenu: true
+        },
+        component: () => import('@/view/sys/inFunReward.vue')
+      },
+      {
+        path: 'vipReward',
+        name: 'vipReward',
+        meta: {
+          icon: '',
+          title: '邀新奖励',
+          hideInMenu: true
+        },
+        component: () => import('@/view/sys/vipReward.vue')
+      }
+    ]
   }
 ]
 // 所有上面定义的路由都要写在下面的routers里

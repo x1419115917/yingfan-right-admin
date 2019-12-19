@@ -216,3 +216,27 @@ export const deptupdate = data => {
     method: 'post'
   })
 }
+// 积分奖励设置
+export const doSetReward = data => {
+  return axios.request({
+    url: `/system/config/saveOrUpdate`,
+    data,
+    method: 'post'
+  })
+}
+// 查询积分系统设置
+export const doCheckIntegral = data => {
+  return axios.request({
+    url: `/system/config/getConfigForIntegral`,
+    data,
+    method: 'post'
+  })
+}
+// 查询vip系统设置
+export const doCheckVip = data => {
+  return axios.request({
+    url: `/system/config/getConfigForVIP`,
+    data,
+    method: 'post'
+  })
+}
