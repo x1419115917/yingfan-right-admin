@@ -29,7 +29,7 @@
                   accept="image/*"
                   capture="camera">
               </div>
-              <div style="line-height: 30px"><span class="title-span-tips">(图片尺寸宽度1125，高度不限，jpg，jpeg，gif，小于500k)</span></div>
+              <div style="line-height: 30px"><span class="title-span-tips">(图片尺寸宽度710，高度250，jpg，jpeg，gif，小于500k)</span></div>
             </Col>
           </Row>
         </Col>
