@@ -33,4 +33,9 @@ html,body{
   /* 设置下拉框placeholder的样式*/
   /* 设置输入框placeholder的样式*/
 }
+.btn-item{
+  padding: 4px 8px!important;
+  border: 1px solid #dcdee2!important;
+  margin-left: 8px;
+}
 </style>
