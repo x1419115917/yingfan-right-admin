@@ -12,6 +12,7 @@ export function icons () {
     'ios-cart-outline',
     'md-cart',
     'md-people',
+    'md-bicycle',
     'md-person',
     'md-basket',
     'ios-settings',

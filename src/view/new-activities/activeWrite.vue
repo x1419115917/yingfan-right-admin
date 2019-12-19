@@ -64,7 +64,7 @@
       <Row class="member-item">
         <Col span="4" class="member-item-left">每用户限制件数</Col>
         <Col span="20" class="member-item-right">
-          <InputNumber :max="10" :min="1" v-model="restrictNumber" placeholder="请输入每个用户限制件数" style="width: 120px"></InputNumber><span class="tips">默认填1，表示整个SPU商品限购一件</span>
+          <InputNumber :max="10" :min="1" v-model="restrictNumber" placeholder="请输入每个用户限制件数" style="width: 120px"></InputNumber><span class="tips">默认填1，表示勾选的SKU商品限购一件，买了其中一个SKU，其他的活动SKU商品不能再购买，0表示不限购</span>
         </Col>
       </Row>
       <Row class="member-item">
