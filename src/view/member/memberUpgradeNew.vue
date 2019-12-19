@@ -373,6 +373,13 @@ export default {
       // let title = this.dataList[index].title
       this.detailSpuVipId(id)
     },
+    // 删除
+    remove (index) {
+      this.$Modal.warning({
+        title: '提示',
+        content: '该功能暂未开放'
+      })
+    },
     openWriteModal () {
       this.operationShow = false
       this.modal0 = true
