@@ -36,6 +36,6 @@ html,body{
 .btn-item{
   padding: 4px 8px!important;
   border: 1px solid #dcdee2!important;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 </style>

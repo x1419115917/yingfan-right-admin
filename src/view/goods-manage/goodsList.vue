@@ -882,7 +882,7 @@ export default {
 }
 
 .btn-item{
-  margin-left: 6px;
+  margin-left: 5px;
 }
 .table-height{
   max-height: 500px;
