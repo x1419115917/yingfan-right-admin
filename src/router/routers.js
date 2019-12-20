@@ -629,6 +629,28 @@ export const appRouter = [
         component: () => import('@/view/sys/vipReward.vue')
       }
     ]
+  },
+  {
+    path: '/service',
+    name: 'service',
+    meta: {
+      icon: 'ios-menu',
+      title: '客服QQ配置',
+      hideInMenu: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'serviceQQ',
+        name: 'serviceQQ',
+        meta: {
+          icon: '',
+          title: '客服列表',
+          hideInMenu: true
+        },
+        component: () => import('@/view/service/serviceQQ.vue')
+      }
+    ]
   }
 ]
 // 所有上面定义的路由都要写在下面的routers里
