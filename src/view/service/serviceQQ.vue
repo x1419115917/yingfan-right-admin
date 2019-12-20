@@ -174,7 +174,8 @@ export default {
       this.formValidate = {
         account: '',
         nickname: '',
-        status: ''
+        status: '',
+        type: 0
       }
     },
     // 保存客服
