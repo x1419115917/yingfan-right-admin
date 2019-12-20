@@ -170,6 +170,7 @@ export default {
     addFn () {
       this.operationShow = false
       this.modal1 = true
+      this.editId = ''
       this.formValidate = {
         account: '',
         nickname: '',
