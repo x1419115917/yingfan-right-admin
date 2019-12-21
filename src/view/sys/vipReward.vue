@@ -16,7 +16,6 @@
 </template>
 <script>
 import { doSetReward, doCheckVip } from '@/api/sys'
-import { mapMutations } from 'vuex'
 import Cookies from 'js-cookie'
 export default {
   name: 'vipReward',
@@ -37,9 +36,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'closeTag'
-    ]),
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -54,9 +50,6 @@ export default {
       let res = await doSetReward(this.formValidate)
       if (res.data.code === 0) {
         this.$Message.success('操作成功!')
-        this.closeTag({
-          name: 'vipReward'
-        })
       }
     },
     async getVipReward () {
