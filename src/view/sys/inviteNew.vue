@@ -3,9 +3,9 @@
   <div class="inviteNew">
     <Card>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
-        <FormItem label="邀请VIP奖励" prop="value">
+        <FormItem label="邀新奖励" prop="value">
           <Input type="number" :style="{ width: inpWidth}" v-model="formValidate.value" placeholder="请输入奖励金额"></Input>
-          元<span class="tip">该奖励是平台返还给VIP用户的奖励（如：VIP A邀请B成功购买指定商品升级为VIP,B支付后，邀请奖励到VIPA个人账户中，在累计余额体现）</span>
+          元<span class="tip"></span>
         </FormItem>
         <FormItem>
             <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
@@ -15,7 +15,7 @@
   </div>
 </template>
 <script>
-import { doSetReward, doCheckVip } from '@/api/sys'
+import { doSetReward, doCheckNewbie } from '@/api/sys'
 import { mapMutations } from 'vuex'
 import Cookies from 'js-cookie'
 export default {
@@ -26,7 +26,7 @@ export default {
       formValidate: {
         FLAG: 1,
         value: '',
-        type: 1,
+        type: 2,
         operatorId: ''
       },
       ruleValidate: {
@@ -55,19 +55,19 @@ export default {
       if (res.data.code === 0) {
         this.$Message.success('操作成功!')
         this.closeTag({
-          name: 'vipReward'
+          name: 'inviteNew'
         })
       }
     },
-    async getVipReward () {
-      let res = await doCheckVip()
+    async getNewbie () {
+      let res = await doCheckNewbie()
       if (res.data.code === 0) {
         this.formValidate.value = res.data.content.value
       }
     }
   },
   created () {
-    this.getVipReward()
+    this.getNewbie()
   }
 }
 </script>

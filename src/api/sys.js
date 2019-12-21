@@ -232,10 +232,18 @@ export const doCheckIntegral = data => {
     method: 'post'
   })
 }
-// 查询vip系统设置
+// 查询邀请vip奖励
 export const doCheckVip = data => {
   return axios.request({
     url: `/system/config/getConfigForVIP`,
+    data,
+    method: 'post'
+  })
+}
+// 查询邀新奖励
+export const doCheckNewbie = data => {
+  return axios.request({
+    url: `/system/config/getConfigForNewbie`,
     data,
     method: 'post'
   })
