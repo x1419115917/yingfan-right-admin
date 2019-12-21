@@ -348,7 +348,7 @@ export const appRouter = [
         meta: {
           hideInMenu: true,
           icon: '',
-          title: '首页banner'
+          title: '首页配置'
         },
         component: () => import('@/view/home-manage/bannerList.vue')
       },
@@ -623,7 +623,7 @@ export const appRouter = [
         name: 'vipReward',
         meta: {
           icon: '',
-          title: '邀新奖励',
+          title: '邀请vip奖励',
           hideInMenu: true
         },
         component: () => import('@/view/sys/vipReward.vue')

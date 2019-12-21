@@ -8,7 +8,7 @@
         %<span class="tip">说明：该积分是平台返还给上级的,积分公式：返给购买者的积分X百分比</span>
       </FormItem>
       <FormItem>
-          <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
+        <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
       </FormItem>
     </Form>
   </Card>
@@ -16,6 +16,7 @@
 </template>
 <script>
 import { doSetReward, doCheckIntegral } from '@/api/sys'
+import { mapMutations } from 'vuex'
 import Cookies from 'js-cookie'
 export default {
   name: 'inFunReward',
@@ -36,6 +37,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+      'closeTag'
+    ]),
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -50,6 +54,9 @@ export default {
       let res = await doSetReward(this.formValidate)
       if (res.data.code === 0) {
         this.$Message.success('操作成功!')
+        this.closeTag({
+          name: 'inFunReward'
+        })
       }
     },
     async getIntegral () {
