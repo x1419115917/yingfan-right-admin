@@ -627,6 +627,16 @@ export const appRouter = [
           hideInMenu: true
         },
         component: () => import('@/view/sys/vipReward.vue')
+      },
+      {
+        path: 'inviteNew',
+        name: 'inviteNew',
+        meta: {
+          icon: '',
+          title: '邀新奖励',
+          hideInMenu: true
+        },
+        component: () => import('@/view/sys/inviteNew.vue')
       }
     ]
   },

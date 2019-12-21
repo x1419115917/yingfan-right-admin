@@ -13,6 +13,7 @@ export default {
   setting: '系统设置',
   inFunReward: '积分奖励',
   vipReward: '邀请vip奖励',
+  inviteNew: '邀新奖励',
   service: '客服QQ设置',
   serviceQQ: '客服列表',
   memberUpgrade: '会员升级',
