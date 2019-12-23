@@ -5,7 +5,7 @@
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="邀新奖励" prop="value">
           <Input type="number" :style="{ width: inpWidth}" v-model="formValidate.value" placeholder="请输入奖励金额"></Input>
-          元<span class="tip"></span>
+          元<span class="tip"> 说明：新人在新人专区购物体验后邀请好友注册并在新人专区购物后获得红包奖励金额，可提现。</span>
         </FormItem>
         <FormItem>
             <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>

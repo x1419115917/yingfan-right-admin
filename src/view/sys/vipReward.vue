@@ -5,7 +5,7 @@
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="邀请VIP奖励" prop="value">
           <Input type="number" :style="{ width: inpWidth}" v-model="formValidate.value" placeholder="请输入奖励金额"></Input>
-          元<span class="tip">该奖励是平台返还给VIP用户的奖励（如：VIP A邀请B成功购买指定商品升级为VIP,B支付后，邀请奖励到VIPA个人账户中，在累计余额体现）</span>
+          元<span class="tip">说明：VIP会员邀请好友注册并成功升级VIP会员后获得红包奖励金额，可提现。</span>
         </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
