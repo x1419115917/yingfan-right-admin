@@ -252,7 +252,9 @@ export default {
       if (res.data.code === 0) {
         this.data1 = res.data.content
         this.data1.forEach(item => {
-          item._disabled = !item.isShow
+          if (id != this.editInfo.spuId) {
+            item._disabled = !item.isShow
+          }
           item.vipPrice = null
           item.sort = null
           item.specParam = item.specParam != '' ? item.specParam : '-'
@@ -342,6 +344,7 @@ export default {
       this.goodsInfo = obj
       this.goodsTitle = obj.title
       this.goodsId = obj.id
+      // console.log('editInfo',this.editInfo)
       this.skuSpecList(obj.id)
       this.cancelModal()
       // console.log('this.goodsInfo',this.goodsInfo)
