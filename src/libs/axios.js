@@ -112,7 +112,7 @@ class HttpRequest {
         // }
       }
       // addErrorLog(errorInfo)
-      if (window.location.pathname !== '/login') {
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/active/activeNew' && window.location.pathname !== '/member/memberUpgrade') {
         Modal.warning({
           title: '提示',
           content: '服务内部错误',

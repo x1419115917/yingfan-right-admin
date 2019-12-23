@@ -17,7 +17,7 @@
         </Row>
         <Row class="tb-line-item">
           <div class="editor">
-            <v-editor @on-change="_getContext" :initContent='showDetail'></v-editor>
+            <!-- <v-editor @on-change="_getContext" :initContent='showDetail'></v-editor> -->
           </div>
         </Row>
       </div>
@@ -363,14 +363,28 @@ export default {
     },
     // 获取页面设置
     async queryVipActive () {
+      this.imageList = []
       let res = await queryVipActive(1)
       if (res.data.code === 0) {
         if (res.data && res.data.content) {
           let content = res.data.content
           this.activeName = content.activeName
           this.activeRule = content.activeRule
-          this.showDetail = content.showDetail
+          content.imgList.forEach(item => {
+            this.imageList.push(
+              {
+                imgShow: true,
+                imgUrl: item,
+                loadingBox: false
+              }
+            )
+          })
+          this.showDetail = content.imgList
+        } else {
+          this.imageList = [{ imgUrl: '', imgShow: false, loadingBox: false }]
         }
+      } else {
+        this.imageList = [{ imgUrl: '', imgShow: false, loadingBox: false }]
       }
     },
     // 删除活动
@@ -385,8 +399,10 @@ export default {
       if (res.data.code === 0) {
         this.$Modal.success({
           title: '提示',
-          content: '删除成功'
-
+          content: '删除成功',
+          onOk: () => {
+            this.getPageList()
+          }
         })
       }
     },
@@ -402,12 +418,18 @@ export default {
     },
     // 保存页面设置
     async saveVipActive () {
+      let imgList = []
+      this.imageList.forEach(item => {
+        if (item.imgUrl != '') {
+          imgList.push(item.imgUrl)
+        }
+      })
       let data = {
         FLAG: 1,
         activeType: 1,
         activeName: this.activeName,
         activeRule: this.activeRule,
-        showDetail: this.showDetail
+        imgList: imgList
       }
       let res = await saveVipActive(data)
       if (res.data.code === 0) {
@@ -424,6 +446,10 @@ export default {
       // console.log('switch', this.dataList[index].statu)
     },
     navSave (val) {
+      let imgEmpt = []
+      imgEmpt = this.imageList.filter(item => {
+        return item.imgUrl == ''
+      })
       switch (val) {
         case 0:
           this.vsShowNav = 0
@@ -436,10 +462,10 @@ export default {
             })
             return
           }
-          if (this.showDetail === '') {
+          if (imgEmpt.length > 0) {
             this.$Modal.warning({
               title: '提示',
-              content: '请填写页面内容'
+              content: '请上传图片'
             })
             return
           }

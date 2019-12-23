@@ -54,7 +54,7 @@ export const skuSpecList = spuId => {
 // 删除活动 /vip/delete/{spuVipId}
 export const deleteSpu = data => {
   return axios.request({
-    url: `/vip/delete/${data.spuVipId}`,
+    url: `/vip/delete`,
     data,
     method: 'post'
   })

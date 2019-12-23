@@ -7,7 +7,7 @@
     </div>
     <div class="member-con" v-show="vsShowNav == 0">
       <Row class="tb-line-item name">
-        <Col class="active-name" :span="2"><span>*</span>升级活动名称：</Col>
+        <Col class="active-name" :span="2"><span>*</span>新人活动名称：</Col>
         <Col :span="18"><Input v-model="activeName" placeholder="请输入活动名称" style="width: 600px" /></Col>
       </Row>
       <div class="tb-line tb-editor photo-tips-box" v-show="false">
@@ -17,7 +17,7 @@
         </Row>
         <Row class="tb-line-item">
           <div class="editor">
-            <v-editor @on-change="_getContext" :initContent='showDetail'></v-editor>
+            <!-- <v-editor @on-change="_getContext" :initContent='showDetail'></v-editor> -->
           </div>
         </Row>
       </div>
@@ -345,7 +345,7 @@ export default {
       this.tableLoading = true
       let data = {
         FLAG: 1,
-        activeType: 1,
+        activeType: 2,
         pageIndex: this.pageNum,
         pageSize: this.pageSize
       }
@@ -363,21 +363,35 @@ export default {
     },
     // 获取页面设置
     async queryVipActive () {
-      let res = await queryVipActive(1)
+      this.imageList = []
+      let res = await queryVipActive(2)
       if (res.data.code === 0) {
         if (res.data && res.data.content) {
           let content = res.data.content
           this.activeName = content.activeName
           this.activeRule = content.activeRule
-          this.showDetail = content.showDetail
+          content.imgList.forEach(item => {
+            this.imageList.push(
+              {
+                imgShow: true,
+                imgUrl: item,
+                loadingBox: false
+              }
+            )
+          })
+          this.showDetail = content.imgList
+        } else {
+          this.imageList = [{ imgUrl: '', imgShow: false, loadingBox: false }]
         }
+      } else {
+        this.imageList = [{ imgUrl: '', imgShow: false, loadingBox: false }]
       }
     },
     // 删除活动
     async deleteSpu () {
       let data = {
         FLAG: 1,
-        activeType: 1,
+        activeType: 2,
         spuId: this.deletedInfo.spuId,
         spuVipId: this.deletedInfo.id
       }
@@ -385,8 +399,10 @@ export default {
       if (res.data.code === 0) {
         this.$Modal.success({
           title: '提示',
-          content: '删除成功'
-
+          content: '删除成功',
+          onOk: () => {
+            this.getPageList()
+          }
         })
       }
     },
@@ -402,12 +418,18 @@ export default {
     },
     // 保存页面设置
     async saveVipActive () {
+      let imgList = []
+      this.imageList.forEach(item => {
+        if (item.imgUrl != '') {
+          imgList.push(item.imgUrl)
+        }
+      })
       let data = {
         FLAG: 1,
-        activeType: 1,
+        activeType: 2,
         activeName: this.activeName,
         activeRule: this.activeRule,
-        showDetail: this.showDetail
+        imgList: imgList
       }
       let res = await saveVipActive(data)
       if (res.data.code === 0) {
@@ -424,6 +446,10 @@ export default {
       // console.log('switch', this.dataList[index].statu)
     },
     navSave (val) {
+      let imgEmpt = []
+      imgEmpt = this.imageList.filter(item => {
+        return item.imgUrl == ''
+      })
       switch (val) {
         case 0:
           this.vsShowNav = 0
@@ -436,10 +462,10 @@ export default {
             })
             return
           }
-          if (this.showDetail === '') {
+          if (imgEmpt.length > 0) {
             this.$Modal.warning({
               title: '提示',
-              content: '请填写页面内容'
+              content: '请上传图片'
             })
             return
           }
