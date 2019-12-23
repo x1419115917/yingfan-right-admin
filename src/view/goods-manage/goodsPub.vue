@@ -1583,7 +1583,7 @@ export default {
       let files = e.target.files[0]
       // console.log(this.$refs.filezm1.files[0])
       this.goodsImgList[val].loading = true
-      if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+      if (files && files.type && !/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
         e.target.value = ''
         this.goodsImgList[val].loading = false
