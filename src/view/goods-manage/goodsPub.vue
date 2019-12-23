@@ -1599,7 +1599,7 @@ export default {
         this.goodsImgList[val].loading = false
         this.goodsImgList[val].imgUrl = res.data.content
         this.$refs.filezm1.value = ''
-        e.target.files[0].value = ''
+        e.target.value = ''
       }
       console.log(this.goodsImgList)
     },

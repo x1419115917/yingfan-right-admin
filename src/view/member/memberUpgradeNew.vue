@@ -10,7 +10,7 @@
         <Col class="active-name" :span="2"><span>*</span>升级活动名称：</Col>
         <Col :span="18"><Input v-model="activeName" placeholder="请输入活动名称" style="width: 600px" /></Col>
       </Row>
-      <div class="tb-line tb-editor photo-tips-box">
+      <div class="tb-line tb-editor photo-tips-box" v-show="false">
         <Row class="tb-line-item name" style="margin: 0 auto 10px;">
           <span>*</span>页面展示：
           <span class="goto-brand">【建议：图片上传尺寸为：宽度800以下，高度1200以下&nbsp;单张图片小于500K】</span>
@@ -18,6 +18,51 @@
         <Row class="tb-line-item">
           <div class="editor">
             <v-editor @on-change="_getContext" :initContent='showDetail'></v-editor>
+          </div>
+        </Row>
+      </div>
+      <div class="tb-line tb-editor photo-tips-box">
+        <Row class="tb-line-item name" style="margin: 0 auto 10px;">
+          <span>*</span>页面展示：
+          <span class="goto-brand">【建议：图片尺寸宽度750，高度400，jpg，jpeg，gif &nbsp;单张图片小于500K】</span>
+        </Row>
+        <Row class="tb-line-item">
+          <div class="content-box">
+            <Row class="content-item2">
+              <Col class="table-left" span="4">模板图片</Col>
+              <Col class="table-right" span="20">
+                <Row style="padding-left: 10px;">
+                  <Select v-model="modalsel" style="width:300px;">
+                      <Option v-for="(item,index) in modalList" :value="item.id" :key="index">{{ item.value }}</Option>
+                  </Select>
+                  <Button type="success" ghost style="margin-left:6px;" @click="addModal">添加模板</Button>
+                </Row>
+                <Row style="" class="img-list">
+                  <Row class="img-list-item" v-for="(item,index) in imageList" :key="index">
+                    <Col span="7" class="active-imgbox">
+                      <img v-show="!item.imgShow" class="active-imgurl" src="https://ec-platform-dev.oss-cn-shenzhen.aliyuncs.com/product/20191031/fd9b8888-a8c1-4ed4-80c5-166a4d45ea97/20191031183109.png" alt="">
+                      <img v-show="item.imgShow" class="active-imgurl" :src="item.imgUrl" />
+                      <Spin fix class="loading-box" v-show="item.loadingBox">
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <!-- <div>上传中</div> -->
+                      </Spin>
+                      <span class="del-btn" @click="deleteImg(index)">删除</span>
+                    </Col>
+                    <Col span="17">
+                      <div class="upload-img-box">
+                        <Button class="upload-btn" type="success" ghost :loading="item.loadingBox">上传图片</Button>
+                        <input type="file" class="img-ipt"
+                          ref="filezm1"
+                          @change="imgUplaod($event, index)"
+                          accept="image/*"
+                          capture="camera">
+                      </div>
+                      <div style="line-height: 30px"><span class="title-span-tips">(750*400)</span></div>
+                    </Col>
+                  </Row>
+                </Row>
+              </Col>
+            </Row>
           </div>
         </Row>
       </div>
@@ -89,6 +134,13 @@
     <Modal v-model="modal0" class="smsActiveModel" title="添加活动商品"  width="1220" :mask-closable="false">
       <member-active @cancelModalWrite="cancelModalWrite" :modal0="modal0" :operationShow="operationShow" @saveGoods="saveGoods" :editInfo="editInfo" :editId="editId"></member-active>
     </Modal>
+    <Modal
+        v-model="modal2"
+        width="420"
+        title="提示"
+        @on-ok="asyncOK">
+        <p style="height: 38px;line-height: 38px;font-size: 14px;padding-left: 20px">确定删除选中数据？</p>
+    </Modal>
   </div>
 </template>
 <script>
@@ -108,7 +160,12 @@ export default {
       vsShowNav: 0,
       activeName: '',
       operationShow: false,
+      modalLoading: false,
+      modal2: false,
       goodsInfo: {},
+      imageList: [
+        { imgUrl: '', imgShow: false, loadingBox: false }
+      ],
       goodsId: '',
       goodsTitle: '',
       activeRule: '',
@@ -239,6 +296,50 @@ export default {
       // console.log(ctx)
       this.showDetail = ctx.html
     },
+    // 删除单个图片
+    deleteImg (i) {
+      this.imageList.splice(i, 1)
+    },
+    // 添加一个图片
+    addModal () {
+      this.imageList.push(
+        { imgUrl: '', imgShow: false, loadingBox: false }
+      )
+    },
+    // 上传模板图片
+    async imgUplaod (e, val) {
+      let data = {}
+      let files = e.target.files[0]
+      // console.log('files',files)
+      // console.log('e.target.value',e.target.value)
+      // return
+      this.imageList[val].loadingBox = true
+      if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
+        this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
+        this.imageList[val].loadingBox = false
+        e.target.value = ''
+        return
+      }
+      if (files.size > 1024 * 1024 * 0.5) {
+        this.$Message.warning('请选择小于500k的图片上传')
+        this.imageList[val].loadingBox = false
+        e.target.value = ''
+        return
+      }
+      data = {
+        file: files,
+        tag: 0
+      }
+      let res = await singleUpload(data)
+      this.imageList[val].loadingBox = false
+      if (res.data.code === 0) {
+        this.imageList[val].imgShow = true
+        this.imageList[val].imgUrl = res.data.content
+        this.$refs.filezm1.value = ''
+        e.target.value = ''
+      }
+      console.log(this.imageList)
+    },
     // 获取商品列表
     async getPageList () {
       this.tableLoading = true
@@ -285,8 +386,8 @@ export default {
         this.$Modal.success({
           title: '提示',
           content: '删除成功'
+
         })
-        this.getPageList()
       }
     },
     // 获取活动设置
@@ -392,16 +493,14 @@ export default {
       // let title = this.dataList[index].title
       this.detailSpuVipId(id)
     },
+    //
+    asyncOK () {
+      this.deleteSpu()
+    },
     // 删除
     remove (index) {
       this.deletedInfo = this.dataList[index]
-      this.$Modal.warning({
-        title: '提示',
-        content: '确定删除,删除后无法恢复？',
-        onOk: function () {
-          this.deleteSpu()
-        }
-      })
+      this.modal2 = true
       // this.$Modal.warning({
       //   title: '提示',
       //   content: '该功能暂未开放'
@@ -465,6 +564,94 @@ export default {
     }
   }
 }
+.content-box{
+  border-bottom: 1px solid #b9b8b8;
+  margin-bottom: 20px;
+  .content-item{
+    height: 70px;
+    border: 1px solid #b9b8b8;
+    box-sizing: border-box;
+    border-bottom: 0px;
+    .table-left{
+      height: 100%;
+      text-align: center;
+      background-color: rgba(244, 244, 244, 1);
+    }
+    .table-right{
+      height: 100%;
+      border-left: 1px solid #b9b8b8;
+    }
+  }
+  .content-item1{
+    height: 110px;
+    .table-left{
+      padding: 40px 10px 0px;
+    }
+  }
+  .content-item2{
+    border: 1px solid #b9b8b8;
+    box-sizing: border-box;
+    border-bottom: 0px;
+    min-height: 70px;
+    .table-left{
+      line-height: 70px;
+      height: 100%;
+      text-align: center;
+      background-color: rgba(244, 244, 244, 1);
+    }
+    .table-right{
+      line-height: 70px;
+      height: 100%;
+      border-left: 1px solid #b9b8b8;
+    }
+  }
+}
+// 图片样式
+.active-imgbox{
+  position: relative;
+  .del-btn{
+    font-size: 12px;
+    color: red;
+    position: absolute;
+    width: 30px;
+    cursor: pointer;
+  }
+}
+.active-imgurl{
+  display: inline-block;
+  background-color: #f9f9f9;
+  border: 1px solid #e8e8e8;
+  box-sizing: border-box;
+  width: 90%;
+  height: 140px;
+}
+.img-list{
+  .img-list-item{
+    padding: 15px 10px;
+    height: 177px;
+    overflow: hidden;
+    border-top: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
+  }
+}
+.upload-img-box{
+  position: relative;
+  .img-ipt{
+    position: absolute;
+    opacity: 0;
+    left: 0;
+    top: 21px;
+    width: 80px;
+    height: 32px;
+  }
+}
+.title-span-tips{
+  padding-left: 6px;
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+}
+// 212
 .active-name{
   line-height: 32px;
   height: 32px;
