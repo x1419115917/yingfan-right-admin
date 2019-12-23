@@ -263,6 +263,7 @@ export default {
     async vipSave (obj) {
       let data = {
         FLAG: 1,
+        activeType: 1,
         endTime: obj.endTime,
         id: this.editId === 0 ? '' : this.editId,
         images: obj.pictureUrl,

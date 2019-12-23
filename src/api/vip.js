@@ -9,11 +9,12 @@ export const saveVipActive = data => {
   })
 }
 // 获取升级VIP设置内容
-export const queryVipActive = data => {
+export const queryVipActive = activeType => {
+  let data = {}
   return axios.request({
-    url: '/vip/queryVipActive',
+    url: `/vip/queryVipActive/${activeType}`,
     data,
-    method: 'get'
+    method: 'post'
   })
 }
 // 获取升级VIP活动设置
@@ -22,7 +23,7 @@ export const detailSpuVipId = spuVipId => {
   return axios.request({
     url: `/vip/detail/${spuVipId}`,
     data,
-    method: 'get'
+    method: 'post'
   })
 }
 // 查询VIP活动商品列表
@@ -47,6 +48,14 @@ export const skuSpecList = spuId => {
   return axios.request({
     url: `/vip/skus/${spuId}`,
     data,
-    method: 'get'
+    method: 'post'
+  })
+}
+// 删除活动 /vip/delete/{spuVipId}
+export const deleteSpu = data => {
+  return axios.request({
+    url: `/vip/delete/${data.spuVipId}`,
+    data,
+    method: 'post'
   })
 }

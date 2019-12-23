@@ -308,7 +308,7 @@ export default {
       this.clist2 = []
       this.clist3 = []
       this.goodsTitle = ''
-      this.getPageList()
+      this.updateDataList()
     },
     searchPageList () {
       this.getPageList()

@@ -287,7 +287,8 @@ export default {
         FLAG: 1,
         activeName: this.activeName,
         activeRule: this.activeRule,
-        showDetail: this.showDetail
+        showDetail: this.showDetail,
+        activeType: 1
       }
       let res = await saveVipActive(data)
       if (res.data.code === 0) {

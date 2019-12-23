@@ -94,7 +94,7 @@
 <script>
 import editors from '@/components/editors/editor'
 import { singleUpload } from '@/api/base'
-import { saveVipActive, queryVipActive, vipList, detailSpuVipId } from '@/api/vip'
+import { saveVipActive, queryVipActive, vipList, detailSpuVipId, deleteSpu } from '@/api/vip'
 import { arrayTiff, arrayChecked, date2string } from '@/libs/util'
 import memberActive from './memberActive.vue'
 export default {
@@ -214,6 +214,7 @@ export default {
           align: 'center'
         }
       ],
+      deletedInfo: {},
       dataList: [],
       pageNum: 1,
       pageSize: 10,
@@ -243,15 +244,16 @@ export default {
       this.tableLoading = true
       let data = {
         FLAG: 1,
+        activeType: 1,
         pageIndex: this.pageNum,
         pageSize: this.pageSize
       }
       let res = await vipList(data)
       this.tableLoading = false
       if (res.data.code === 0) {
-        if (res.data.content && res.data.content.length > 0) {
-          this.dataList = res.data.content
-          this.total = res.data.total ? +res.data.total : 0
+        if (res.data.content && res.data.content.data.length > 0) {
+          this.dataList = res.data.content.data
+          this.total = res.data.content.total ? +res.data.content.total : 0
           this.dataList.forEach((item) => {
             item.time = `${item.startTime} - ${item.endTime}`
           })
@@ -260,8 +262,7 @@ export default {
     },
     // 获取页面设置
     async queryVipActive () {
-      let data = {}
-      let res = await queryVipActive(data)
+      let res = await queryVipActive(1)
       if (res.data.code === 0) {
         if (res.data && res.data.content) {
           let content = res.data.content
@@ -269,6 +270,23 @@ export default {
           this.activeRule = content.activeRule
           this.showDetail = content.showDetail
         }
+      }
+    },
+    // 删除活动
+    async deleteSpu () {
+      let data = {
+        FLAG: 1,
+        activeType: 1,
+        spuId: this.deletedInfo.spuId,
+        spuVipId: this.deletedInfo.id
+      }
+      let res = await deleteSpu(data)
+      if (res.data.code === 0) {
+        this.$Modal.success({
+          title: '提示',
+          content: '删除成功'
+        })
+        this.getPageList()
       }
     },
     // 获取活动设置
@@ -285,6 +303,7 @@ export default {
     async saveVipActive () {
       let data = {
         FLAG: 1,
+        activeType: 1,
         activeName: this.activeName,
         activeRule: this.activeRule,
         showDetail: this.showDetail
@@ -375,10 +394,18 @@ export default {
     },
     // 删除
     remove (index) {
+      this.deletedInfo = this.dataList[index]
       this.$Modal.warning({
         title: '提示',
-        content: '该功能暂未开放'
+        content: '确定删除,删除后无法恢复？',
+        onOk: function () {
+          this.deleteSpu()
+        }
       })
+      // this.$Modal.warning({
+      //   title: '提示',
+      //   content: '该功能暂未开放'
+      // })
     },
     openWriteModal () {
       this.operationShow = false
