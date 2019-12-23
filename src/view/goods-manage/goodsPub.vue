@@ -1586,6 +1586,7 @@ export default {
       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
         e.target.value = ''
+        this.goodsImgList[val].loading = false
         return
       }
       data = {
@@ -1593,8 +1594,8 @@ export default {
         tag: 0
       }
       let res = await singleUpload(data)
+      this.goodsImgList[val].loading = false
       if (res.data.code === 0) {
-        console.log(res)
         this.goodsImgList[val].imgShow = true
         this.goodsImgList[val].loading = false
         this.goodsImgList[val].imgUrl = res.data.content
