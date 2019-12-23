@@ -2122,7 +2122,7 @@ export default {
 }
 .spce-right{
   float: left;
-  width: 920px;
+  width: 800px;
 }
 .check-box[data-v-5c127369] {
     max-width: 560px;
