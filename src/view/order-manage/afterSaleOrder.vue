@@ -249,7 +249,8 @@ export default {
 <style lang="less" scoped>
 .afterSaleList {
   .btnActive {
-    color: #6699CC
+    background: #2d8cf0;
+    color: #fff;
   }
   .wrap {
     margin-top: 10px;

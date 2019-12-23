@@ -8,7 +8,7 @@
           元<span class="tip">该奖励是平台返还给VIP用户的奖励（如：VIP A邀请B成功购买指定商品升级为VIP,B支付后，邀请奖励到VIPA个人账户中，在累计余额体现）</span>
         </FormItem>
         <FormItem>
-            <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
+          <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
         </FormItem>
       </Form>
     </Card>

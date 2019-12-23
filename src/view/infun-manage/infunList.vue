@@ -1,7 +1,7 @@
 <!--应分管理-应分列表-->
 <template>
   <div class="infunList">
-    <div class="overview">
+    <!--<div class="overview">
       <Row :gutter="20">
         <Col :span="8">
           <Card>
@@ -55,7 +55,7 @@
           </Card>
         </Col>
       </Row>
-    </div>
+    </div>-->
     <Card title="应分列表">
       <Row>
         <Col span="6">
