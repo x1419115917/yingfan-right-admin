@@ -112,8 +112,8 @@
         <Row>
           <div class="set-con">
             <span style="margin-right: 10px">设置：</span>
-            <Button class="btn" type="primary" :loading="uploadLoading" @click="gunderFn(1)">上架</Button>
-            <Button class="btn" type="primary" ghost :loading="uploadLoading" @click="gunderFn(0)">下架</Button>
+            <Button class="btn" type="primary" :loading="uploadLoading" @click="uplowFn(1)">上架</Button>
+            <Button class="btn" type="primary" ghost :loading="uploadLoading" @click="uplowFn(2)">下架</Button>
             <!-- <Button class="btn" type="info" :loading="uploadLoading" @click="addFn">设置新品</Button>
             <Button class="btn" type="info" ghost :loading="uploadLoading" @click="addFn">取消新品</Button>
             <Button class="btn" type="warning" :loading="uploadLoading" @click="addFn">设置爆款</Button>
@@ -152,11 +152,11 @@
                 <i></i>
                 <span>编辑商品</span>
               </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="grounding(row)" v-show="row.saleable == 0">
+              <Button class="btn-item del-btn" type="text" size="small" @click="grnFn(3, row)" v-show="row.saleable == 0">
                 <i></i>
                 <span>上架</span>
               </Button>
-              <Button class="btn-item del-btn" type="text" size="small" @click="undercarriage(row)" v-show="row.saleable == 1">
+              <Button class="btn-item del-btn" type="text" size="small" @click="grnFn(4, row)" v-show="row.saleable == 1">
                 <i></i>
                 <span>下架</span>
               </Button>
@@ -210,18 +210,28 @@
         </Table>
      </div>
 			<div slot="footer">
-				<Button size="large" @click="skuLower(1)" type="warning" class="cancel" style="margin-right: 10px">上架</Button>
-				<Button size="large" @click="skuUpper(0)" type="primary">下架</Button>
+				<Button size="large" @click="uplowFn(5)" type="warning" class="cancel" style="margin-right: 10px">上架</Button>
+				<Button size="large" @click="uplowFn(6)" type="primary">下架</Button>
 			</div>
 		</Modal>
-    <!-- <Modal
+    <!-- 多选弹窗上下架 -->
+    <Modal
 				width="20"
 				v-model="upperLower"
 				@on-ok="upperLowerFn"
 				:closable="false"
 				class-name="vertical-center-modal">
-			<p>确定对选中数据上架？</p>
-		</Modal> -->
+			<p style="font-size: 14px">{{tips}}</p>
+		</Modal>
+    <!-- 单选弹窗上下架 -->
+    <Modal
+				width="20"
+				v-model="grund"
+				@on-ok="grundFn"
+				:closable="false"
+				class-name="vertical-center-modal">
+			<p style="font-size: 14px">{{tips}}</p>
+		</Modal>
   </div>
 </template>
 <script>
@@ -235,7 +245,10 @@ export default {
       value: '',
       modal1: false,
       upperLower: false,
-      tips: '确定对选中数据上架？',
+      checkNum: 0,
+      grund: false,
+      grundRow: {},
+      tips: '确定上架？',
       buyStock: '', // 可售卖库存
       spuSkuEnums: 'SPU',
       skuList: [],
@@ -545,9 +558,6 @@ export default {
       })
       this.selObj = selObj[0]
     },
-    async look (i) {
-
-    },
     // 更新库存
     async saveSkuStock (skuStockDtos) {
       let data = {
@@ -572,6 +582,96 @@ export default {
         }
       })
     },
+    // 上下架处理
+    // upperLower: false,
+    // checkNum: 0,
+    // tips: '确定对选中数据上架？',
+    uplowFn (i) {
+      let ids = []
+      if (i <= 2) {
+        this.selectedList.forEach(item => {
+          ids.push(item.id)
+        })
+      }
+      if (i >= 5) {
+        this.selectedListSku.forEach(item => {
+          ids.push(item.skuId)
+        })
+      }
+      if (ids && ids.length === 0) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '请选择数据再进行操作'
+        })
+        return
+      }
+      switch (i) {
+        case 1:
+          this.upperLower = true
+          this.checkNum = 1
+          this.tips = '确定上架？'
+          break
+        case 2:
+          this.upperLower = true
+          this.checkNum = 2
+          this.tips = '确定下架？'
+          break
+        case 5:
+          this.upperLower = true
+          this.checkNum = 5
+          this.tips = '确定上架？'
+          break
+        case 6:
+          this.upperLower = true
+          this.checkNum = 6
+          this.tips = '确定下架？'
+          break
+      }
+    },
+    upperLowerFn () {
+      switch (this.checkNum) {
+        case 1:
+          this.gunderFn(1)
+          break
+        case 2:
+          this.gunderFn(0)
+          break
+        case 5:
+          this.skuLower(1)
+          break
+        case 6:
+          this.skuUpper(0)
+          break
+      }
+    },
+    grnFn (i, row) {
+      switch (i) {
+        case 3:
+          this.grund = true
+          this.checkNum = 3
+          this.grundRow = row
+          this.tips = '确定上架？'
+          // this.gunderFn(1)
+          break
+        case 4:
+          this.grund = true
+          this.checkNum = 4
+          this.grundRow = row
+          this.tips = '确定下架？'
+          // this.gunderFn(0)
+          break
+      }
+    },
+    grundFn () {
+      switch (this.checkNum) {
+        case 3:
+          this.grounding(this.grundRow)
+          break
+        case 4:
+          this.undercarriage(this.grundRow)
+          break
+      }
+    },
     // 上下架
     async saleableFn (ids, saleableStatus, type) {
       this.spuSkuEnums = type
@@ -584,6 +684,7 @@ export default {
       let res = await saleableFn(data)
       if (res.data.code === 0) {
         // console.log(res)
+        this.checkNum = 0
         this.modal1 = false
         this.$Modal.success({
           title: '提示',
@@ -620,6 +721,7 @@ export default {
         })
         return
       }
+      // this.checkNum = 0
       this.saleableFn(ids, saleableStatus, 'SKU')
     },
     gunderFn (i) {
@@ -635,6 +737,7 @@ export default {
         })
         return
       }
+      this.checkNum = 0
       this.saleableFn(ids, saleableStatus, 'SPU')
     },
     grounding (row) {
