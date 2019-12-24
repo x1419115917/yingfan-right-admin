@@ -78,7 +78,7 @@
                 <Button class="nav-right-btn" type="warning" ghost @click="addCatgModal">添加类目模块</Button>
               </Col>
             </Row>
-            <div class="content-box" v-for="(item, index) in actNavs" :key="index" v-show="navIndex === index" >
+            <div class="content-box" v-for="(item, index) in actNavs" :key="index" v-show="navIndex == index" >
               <Row class="content-item content-item1">
                 <Col class="table-left lh35" span="4">类目名称</Col>
                 <Col class="table-right" span="20">
@@ -439,13 +439,16 @@ export default {
       // 因为当钩子执行前，组件实例还没被创建
       if (vm.$route.query.type === 'edit') {
         vm.vsShowNav = 0
-        vm.type = vm.$route.query.type,
-        vm.activeId = vm.$route.query.id,
+        vm.type = vm.$route.query.type
+        vm.navIndex = 0
+        vm.activeId = vm.$route.query.id
+        vm.actNavs = []
         // console.log('vm.$route', vm.$route)
         vm.activityDetail(vm.$route.query.id)
       }
       if (vm.$route.query.type !== 'edit') {
         vm.vsShowNav = 0
+        vm.navIndex = 0
         vm.type = ''
         vm.activeId = ''
         vm.goodsTitle = ''
