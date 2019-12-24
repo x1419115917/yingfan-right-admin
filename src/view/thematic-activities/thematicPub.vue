@@ -442,7 +442,6 @@ export default {
         vm.type = vm.$route.query.type
         vm.navIndex = 0
         vm.activeId = vm.$route.query.id
-        vm.actNavs = []
         // console.log('vm.$route', vm.$route)
         vm.activityDetail(vm.$route.query.id)
       }
