@@ -533,6 +533,7 @@ export default {
       // })
     },
     openWriteModal () {
+      this.editId = 0
       this.operationShow = false
       this.modal0 = true
     },

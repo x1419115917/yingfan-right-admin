@@ -46,6 +46,9 @@
         <Col span="4" class="member-item-left"> SKU选择 </Col>
         <Col span="20" class="member-item-right" style="padding: 20px">
           <Table class="table-height" :loading="tableLoading" :columns="columns1" :data="data1" border max-height ="450" @on-selection-change="selectChange">
+            <template slot-scope="{ row, index }" slot="specParam">
+              <span class="lalal">{{row.specParam}} <span class="saleable" v-show="row.saleable === 0">已下架</span></span>
+            </template>
             <template slot-scope="{ row, index }" slot="vipPrice">
               ￥ <InputNumber style="width: 80px;" placeholder="活动价格" :min="0" class="sku-ipt" type="number" v-model="row.vipPrice" @on-change="changActivePrice($event, index)" ></InputNumber>
             </template>
@@ -158,8 +161,11 @@ export default {
         },
         {
           title: 'SKU',
-          key: 'specParam',
-          minWidth: 100
+          // key: 'specParam',
+          // maxWidth: 300,
+          minWidth: 100,
+          maxWidth: 300,
+          slot: 'specParam'
         },
         {
           title: '供货价',
@@ -175,12 +181,12 @@ export default {
         },
         {
           title: '活动价',
-          widtn: 100,
+          width: 138,
           slot: 'vipPrice'
         },
         {
           title: '排序',
-          widtn: 100,
+          width: 100,
           slot: 'sort'
         }
       ],
@@ -252,12 +258,17 @@ export default {
       if (res.data.code === 0) {
         this.data1 = res.data.content
         this.data1.forEach(item => {
-          if (id != this.editInfo.spuId) {
-            item._disabled = !item.isShow
-          }
+          item._disabled = !item.isShow
           item.vipPrice = null
           item.sort = null
           item.specParam = item.specParam != '' ? item.specParam : '-'
+          if (this.editId !== 0) {
+            this.editInfo.skus.forEach(item1 => {
+              if (item.skuId === item1.skuId) {
+                item._disabled = false
+              }
+            })
+          }
         })
         // this.skuList = res.data.content.skus
       }
