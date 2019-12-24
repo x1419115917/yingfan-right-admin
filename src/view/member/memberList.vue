@@ -104,12 +104,12 @@ export default {
         },
         {
           title: '升级时间',
-          key: 'createTime',
+          key: 'levelUpTime',
           width: 180
         },
         {
           title: '会员等级',
-          key: 'createTime',
+          key: 'levels',
           width: 180
         },
         {
@@ -117,7 +117,11 @@ export default {
           key: 'invitePhone'
         },
         {
-          title: '销售奖励',
+          title: '余额(可提现)',
+          key: 'cash'
+        },
+        {
+          title: '收益(不可提现)',
           key: 'bonus'
         },
         {
@@ -158,6 +162,9 @@ export default {
         console.log(res.data.content)
         this.total = +res.data.content.total
         this.dataList = res.data.content.rows
+        this.dataList.forEach(item => {
+          item.levels = item.level === 1 ? 'VIP会员' : '普通会员'
+        })
       }
     },
     searchFn () {

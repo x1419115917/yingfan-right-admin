@@ -205,7 +205,7 @@ export default {
         },
         {
           title: '会员等级',
-          key: 'beInviteUserPhone'
+          key: 'levels'
         },
         {
           title: '注册时间',
@@ -213,16 +213,10 @@ export default {
         },
         {
           title: '升级时间',
-          key: 'createTime'
+          key: 'levelUpTime'
         }
       ],
-      dataList3: [
-        {
-          id: 2,
-          phone: '13694240214',
-          createTime: '2019-11-07 12:30:30'
-        }
-      ],
+      dataList3: [],
       addShow: false,
       pageNum: 1,
       pageSize: 10,
@@ -279,6 +273,10 @@ export default {
       if (res.data.code === 0) {
         this.total = +res.data.content.total
         this.dataList3 = res.data.content.rows
+        this.dataList3.forEach(item => {
+          item.levels = item.level === 1 ? 'VIP会员' : '普通会员'
+          item.levelUpTime = item.levelUpTime ? item.levelUpTime : '-'
+        })
         // this.dataList2.forEach(item => {
         //   item.businessType1 = item.businessType === 1 ? '购物获得应分' : '下级购物返应分'
         //   item.status1 = item.status === 0 ? '冻结' : item.status === 1 ? '生效' : '失效'
