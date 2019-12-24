@@ -70,7 +70,7 @@
         <Col class="active-name" :span="2"><span>*</span>活动规则：</Col>
         <Col :span="18"><Input v-model="activeRule" type="textarea" :rows="8" placeholder="请输入活动规则" style="width: 600px" /></Col>
       </Row>
-      <Row class="tb-line-item">
+      <Row class="tb-line-item" v-show="false">
         <Col class="active-name" :span="2"></Col>
         <Col class="tips-mark" :span="18">如需要分段，请在该段话末尾输入符号 \ 表示</Col>
       </Row>
