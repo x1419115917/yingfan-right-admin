@@ -184,13 +184,17 @@
           />
         </div>
     </Row>
-    <Modal v-model="modal1" class="smsModel" title="基本信息"  width="940" @on-cancel="cancelModal1">
+    <Modal v-model="modal1" class="smsModel" title="基本信息"  width="980" @on-cancel="cancelModal1">
      <div class="edit-skubox">
         <Row class="edit-sku-search">
           <Input placeholder="可售卖库存" class="sku-ipt" type="number" v-model="buyStock" />
           <Button type="warning" ghost class="sku-btn" @click="saveSkusBatch">批量填充</Button>
         </Row>
-        <Table class="table-height" @on-selection-change="selectedSku" :columns="columns1" :data="data1" border>
+        <Table class="table-height" max-height="600" @on-selection-change="selectedSku" :columns="columns1" :data="data1" border>
+          <!-- saleable -->
+          <template slot-scope="{ row, index }" slot="saleable">
+            <span>{{row.saleable == 1 ? '上架' : '下架'}}</span>
+          </template>
           <template slot-scope="{ row, index }" slot="stockNum">
             <div class="stock-box">
               <div class="stock-save" v-show="row.editShow">
@@ -210,6 +214,14 @@
 				<Button size="large" @click="skuUpper(0)" type="primary">下架</Button>
 			</div>
 		</Modal>
+    <!-- <Modal
+				width="20"
+				v-model="upperLower"
+				@on-ok="upperLowerFn"
+				:closable="false"
+				class-name="vertical-center-modal">
+			<p>确定对选中数据上架？</p>
+		</Modal> -->
   </div>
 </template>
 <script>
@@ -222,6 +234,8 @@ export default {
     return {
       value: '',
       modal1: false,
+      upperLower: false,
+      tips: '确定对选中数据上架？',
       buyStock: '', // 可售卖库存
       spuSkuEnums: 'SPU',
       skuList: [],
@@ -250,6 +264,10 @@ export default {
               })
             ])
           }
+        },
+        {
+          title: '状态',
+          slot: 'saleable'
         },
         {
           title: '供货价',
@@ -883,9 +901,5 @@ export default {
 
 .btn-item{
   margin-left: 5px;
-}
-.table-height{
-  max-height: 500px;
-  overflow: auto;
 }
 </style>
