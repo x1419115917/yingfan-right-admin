@@ -8,7 +8,7 @@
     <div class="member-con" v-show="vsShowNav == 0">
       <Row class="tb-line-item name">
         <Col class="active-name" :span="2"><span>*</span>升级活动名称：</Col>
-        <Col :span="18"><Input v-model="activeName" placeholder="请输入活动名称" style="width: 600px" /></Col>
+        <Col :span="18"><Input v-model="activeName" :maxlength="20" placeholder="请输入活动名称" style="width: 600px" /></Col>
       </Row>
       <div class="tb-line tb-editor photo-tips-box" v-show="false">
         <Row class="tb-line-item name" style="margin: 0 auto 10px;">
