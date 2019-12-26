@@ -242,7 +242,7 @@ export default {
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
-          item.specValsStr = item.specVals.join('，')
+          item.specValsStr = item.specVals.length > 0 ? item.specVals.join('，') : '-'
           item.specTypes = item.specType == 1 ? '基本' : '规格'
           if (item.specType == 0) {
             this.expandSpecs.push(item)

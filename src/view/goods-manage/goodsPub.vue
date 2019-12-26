@@ -228,8 +228,9 @@
                       <div class="edit-item">
                         <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
-                          <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" />
-                          <Button class="edit-btn" @click="saveExpandFn(index, item.editVal)" type="info">保存</Button>
+                          <!-- <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" /> -->
+                          <Input class="edit-modal-ipt" v-model="addSpelVal" placeholder="请输入" style="width: 100px" />
+                          <Button class="edit-btn" @click="saveExpandFn(index, addSpelVal)" type="info">保存</Button>
                         </div>
                       </div>
                     </div>
@@ -367,6 +368,7 @@ export default {
       value: '',
       brandsId: '',
       brandsIds: '',
+      addSpelVal: '',
       speaval: '',
       brandsIdsList: [],
       supplierListArr: [],
@@ -1728,14 +1730,14 @@ export default {
     editExpandFn (index) {
       let obj = this.expandSpec[index]
       obj.showEdit = !obj.showEdit
+      // this.expandSpec[index].editVal = ''
       this.$set(this.expandSpec, index, obj)
     },
     saveExpandFn (index, value) {
-      console.log('this.expandSpec-edit-edit1', this.expandSpec)
       let val = value.replace(/(^\s*)|(\s*$)/g, '')
       if (val === '') {
         this.expandSpec[index].showEdit = false
-        this.expandSpec[index].editVal = ''
+        this.addSpelVal = ''
         return
       }
       let obj = this.expandSpec[index]
@@ -1744,7 +1746,7 @@ export default {
       this.$set(this.expandSpec, index, obj)
       // console.log('index3210', index)
       // console.log('this.expandSpec-edit-edit2', this.expandSpec)
-      this.expandSpec[index].editVal = ''
+      this.addSpelVal = ''
       if (this.type !== 'edit') {
         this.expandSpecForEach(this.expandSpec)
       } else {
