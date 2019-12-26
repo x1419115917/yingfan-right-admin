@@ -575,7 +575,7 @@ export default {
     // 编辑商品
     editGoods (index) {
       this.$router.push({
-        path: 'goodsPub',
+        path: 'goodsEdit',
         query: {
           id: this.dataList[index].id,
           type: 'edit'

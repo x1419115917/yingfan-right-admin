@@ -10,6 +10,7 @@ export default {
   dept: '部门管理',
   goodsManage: '商品管理',
   goodsPub: '商品发布',
+  goodsEdit: '商品编辑',
   setting: '系统设置',
   inFunReward: '积分奖励',
   vipReward: '邀请vip奖励',

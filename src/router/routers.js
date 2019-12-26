@@ -279,6 +279,16 @@ export const appRouter = [
         component: () => import('@/view/goods-manage/goodsPub.vue')
       },
       {
+        path: 'goodsEdit',
+        name: 'goodsEdit',
+        meta: {
+          icon: '',
+          title: '商品编辑',
+          hideInMenu: true
+        },
+        component: () => import('@/view/goods-manage/goodsPub.vue')
+      },
+      {
         path: 'goodsList',
         name: 'goodsList',
         meta: {

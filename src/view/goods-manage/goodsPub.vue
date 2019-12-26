@@ -790,6 +790,8 @@ export default {
       // 新增清空
       if (vm.$route.query.type !== 'edit') {
         vm.vsShowNav = 0
+        vm.rewardState = '0' // 商品奖励状态：0-不支持；1支持
+        vm.pointExchangeState = '0'
         vm.type = ''
         vm.goodsId = ''
         vm.brandsId = ''
@@ -1214,7 +1216,7 @@ export default {
           skus.push({
             barcode: item.tcode,
             chooseSpec: '',
-            exchangePoints: '0',
+            // exchangePoints: '0',
             commissionRate: item.brokerage,
             imageList: item.imageUrl.split(','),
             merchantCode: item.code,
@@ -1394,7 +1396,7 @@ export default {
           skuId: item.skuId || '',
           barcode: item.tcode,
           chooseSpec: '',
-          exchangePoints: '0',
+          // exchangePoints: '0',
           commissionRate: item.brokerage,
           imageList: item.imageUrl.split(','),
           merchantCode: item.code,
@@ -1939,6 +1941,20 @@ export default {
           break
         case 3:
           if (this.type !== 'edit') {
+            if (this.expandSpec && this.expandSpec.length > 0 && this.expandSpec[0].specVals.length === 0) {
+              this.$Modal.warning({
+                title: '提示',
+                content: `请添加${this.expandSpec[0].specName}的属性值`
+              })
+              return
+            }
+            if (this.expandSpec && this.expandSpec.length > 1 && this.expandSpec[1].specVals.length === 0) {
+              this.$Modal.warning({
+                title: '提示',
+                content: `请添加${this.expandSpec[1].specName}的属性值`
+              })
+              return
+            }
             this.saveGood()
             console.log('保存')
           } else {
