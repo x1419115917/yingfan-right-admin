@@ -204,7 +204,7 @@
                     <div class="spce-right">
                       <span class="check-box to-ipt-show" v-show="!item.showEdit">{{item.specVals[0]}}</span>
                       <div class="edit-item">
-                        <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
+                        <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
                           <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
@@ -226,7 +226,7 @@
                         <Input class="check-box to-ipt-show toname-ipt" type="text" :value="values" @on-focus="iptFocus($event,index,idx)" @on-blur="iptChange($event,index,idx)"></Input>
                       </div>
                       <div class="edit-item">
-                        <Icon v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-create-outline" size="22" />
+                        <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" />
                           <Button class="edit-btn" @click="saveExpandFn(index, item.editVal)" type="info">保存</Button>
