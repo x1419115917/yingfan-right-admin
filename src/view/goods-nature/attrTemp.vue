@@ -83,7 +83,7 @@
 				<FormItem label="属性名称:" prop="name">
 					<Input v-model="formValidate.name" placeholder="请输入属性名称"></Input>
 				</FormItem>
-        <FormItem label="属性值:" class="check-attr">
+        <FormItem label="属性值:" class="check-attr" v-show="formValidate.status == 1">
           <div class="attr-list">
             <div class="attr-item" v-for="(item,index) in attrListArr" :key="index">
               <Input class="attr-ipt" v-model="item.attrItem" placeholder="请输入属性值"></Input>
@@ -393,16 +393,16 @@ export default {
       return data
     },
     // 循环树形结构，得到选中id
-    forTreesIds (arr) {
-      arr.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          this.forTreesIds(item.children)
-        }
-      })
-    },
+    // forTreesIds (arr) {
+    //   arr.forEach((item, index) => {
+    //     if (item.checked == true) {
+    //       this.checkedIds.push(item.id)
+    //     }
+    //     if (item.children) {
+    //       this.forTreesIds(item.children)
+    //     }
+    //   })
+    // },
     // 循环树形结构，得到选中id
     forTrees () {
       this.ztreesData.forEach((item, index) => {
@@ -471,15 +471,17 @@ export default {
       let itemVal = []
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          itemVal = this.attrListArr.filter((item, index) => {
-            return item.attrItem != ''
-          })
-          if (itemVal && itemVal.length === 0) {
-            this.$Modal.warning({
-              title: '提示',
-              content: '请添加属性值'
+          if (this.formValidate.status == 1) {
+            itemVal = this.attrListArr.filter((item, index) => {
+              return item.attrItem != ''
             })
-            return
+            if (itemVal && itemVal.length === 0) {
+              this.$Modal.warning({
+                title: '提示',
+                content: '请添加属性值'
+              })
+              return
+            }
           }
           if (this.formValidate.status == 0 && this.expandSpecs && this.expandSpecs.length >= 2) {
             this.$Modal.warning({

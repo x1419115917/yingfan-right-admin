@@ -464,7 +464,6 @@ export default {
       title: '新增供应商',
       type: '',
       goodsId: '',
-      value: '',
       value3: '',
       modal1: false,
       operationShow: false,
@@ -781,8 +780,8 @@ export default {
             imgShow: false
           }
         ]
-        vm.type = vm.$route.query.type,
-        vm.goodsId = vm.$route.query.id,
+        vm.type = vm.$route.query.type
+        vm.goodsId = vm.$route.query.id
         console.log('vm.$route', vm.$route)
         vm.goodsDetail(vm.$route.query.id)
       }
@@ -1006,10 +1005,13 @@ export default {
       })
       console.log('this.expandSpec++', this.expandSpec)
       if (this.expandSpec && this.expandSpec.length == 2) {
+        this.expandSpec[0].specVals = []
+        this.expandSpec[1].specVals = []
         this.expandSpec1 = [...this.expandSpec[0].specVals]
         this.expandSpec2 = [...this.expandSpec[1].specVals]
         this.dataList = this.Descates
       } else if (this.expandSpec && this.expandSpec.length == 1) {
+        this.expandSpec[0].specVals = []
         this.expandSpec1 = [...this.expandSpec[0].specVals]
         this.expandSpec2 = []
         this.dataList = this.Descates
