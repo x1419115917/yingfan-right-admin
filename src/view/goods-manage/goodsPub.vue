@@ -204,7 +204,7 @@
                     <div class="spce-right">
                       <span class="check-box to-ipt-show" v-show="!item.showEdit">{{item.specVals[0]}}</span>
                       <div class="edit-item">
-                        <Icon v-show="!item.showEdit && false" @click="editFn(index)" type="ios-create-outline" size="22" />
+                        <Icon v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
                           <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
