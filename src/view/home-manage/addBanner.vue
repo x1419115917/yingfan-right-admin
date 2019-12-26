@@ -65,12 +65,13 @@
               </Select>
             </template>
             <template slot-scope="{ row,index }" slot="sortOrder">
+              <!--<InputNumber :max="5" :min="1" v-model.sync="form.plaDets[index].sortOrder" placeholder="权重"></InputNumber>-->
               <Input type="number" v-model="form.plaDets[index].sortOrder" :style="{width: inpWidth}" placeholder="请输入权重"></Input>
               <div class="tips">（请输入1~5之间数字，1为最高权重）</div>
             </template>
           </Table>
         </FormItem>
-        <FormItem label="状态" prop="isShow">
+        <FormItem v-if="form.plateRegion != '0'" label="状态" prop="isShow">
           <RadioGroup v-model="form.isShow">
             <Radio label="0">显示</Radio>
             <Radio label="1">隐藏</Radio>
@@ -216,10 +217,22 @@ export default {
       }
     },
     pushObj () {
-      let obj = {
-        activityId: '',
-        pictureUrl: '',
-        sortOrder: ''
+      let obj
+      if (this.form.showMode === '6') {
+        obj = {
+          activityId: '',
+          pictureUrl: '',
+          sortOrder: '',
+          isShow: '0'
+        }
+        delete this.form.isShow
+      } else {
+        obj = {
+          activityId: '',
+          pictureUrl: '',
+          sortOrder: ''
+        }
+        this.form.isShow = '0'
       }
       this.form.plaDets.push(obj)
     },
