@@ -552,7 +552,7 @@ export default {
               },
               on: {
                 'on-change' (event) {
-                  console.log(event.target.value)
+                  // console.log(event.target.value)
                   vm.dataList[params.index].supply = event.target.value
                 }
               }
@@ -784,7 +784,7 @@ export default {
         ]
         vm.type = vm.$route.query.type
         vm.goodsId = vm.$route.query.id
-        console.log('vm.$route', vm.$route)
+        // console.log('vm.$route', vm.$route)
         vm.goodsDetail(vm.$route.query.id)
       }
       // 新增清空
@@ -840,7 +840,7 @@ export default {
         ]
         sessionStorage.removeItem('BrandLists')
         sessionStorage.removeItem('specListArr')
-        console.log('vm.ctx', vm.ctx)
+        // console.log('vm.ctx', vm.ctx)
       }
     })
   },
@@ -1007,7 +1007,7 @@ export default {
           this.baseSpec.push(item)
         }
       })
-      console.log('this.expandSpec++', this.expandSpec)
+      // console.log('this.expandSpec++', this.expandSpec)
       if (this.expandSpec && this.expandSpec.length == 2) {
         this.expandSpec[0].specVals = []
         this.expandSpec[1].specVals = []
@@ -1105,7 +1105,7 @@ export default {
     },
     // 批量填入
     saveGoodsObj () {
-      console.log(this.goodsObj)
+      // console.log(this.goodsObj)
       let newDataList = []
       newDataList = [...this.dataList]
       this.dataList = []
@@ -1119,7 +1119,7 @@ export default {
         item.integral = this.goodsObj.integral
       })
       this.dataList = newDataList
-      console.log('this.dataList+-+-', this.dataList)
+      // console.log('this.dataList+-+-', this.dataList)
     },
     // 保存添加商品
     async saveGood () {
@@ -1956,7 +1956,7 @@ export default {
               return
             }
             this.saveGood()
-            console.log('保存')
+            // console.log('保存')
           } else {
             this.updateGoods()
           }
@@ -2053,7 +2053,7 @@ export default {
     },
     selected (res) {
       this.selectedList = res
-      console.log(res)
+      // console.log(res)
     },
     changePageSize (value) {
       this.pageNum = 1
