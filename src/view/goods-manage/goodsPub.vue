@@ -1748,8 +1748,14 @@ export default {
       let val = value.replace(/(^\s*)|(\s*$)/g, '')
       if (val === '') {
         this.expandSpec[index].showEdit = false
-        this.addSpelVal = ''
-        this.addSpelVal1 = ''
+        switch (index) {
+          case 0:
+            this.addSpelVal = ''
+            break
+          case 1:
+            this.addSpelVal1 = ''
+            break
+        }
         return
       }
       let obj = this.expandSpec[index]
@@ -1758,8 +1764,14 @@ export default {
       this.$set(this.expandSpec, index, obj)
       // console.log('index3210', index)
       // console.log('this.expandSpec-edit-edit2', this.expandSpec)
-      this.addSpelVal = ''
-      this.addSpelVal1 = ''
+      switch (index) {
+        case 0:
+          this.addSpelVal = ''
+          break
+        case 1:
+          this.addSpelVal1 = ''
+          break
+      }
       if (this.type !== 'edit') {
         this.expandSpecForEach(this.expandSpec)
       } else {
