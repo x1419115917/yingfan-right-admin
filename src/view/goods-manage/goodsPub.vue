@@ -207,7 +207,7 @@
                         <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
-                          <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
+                          <Button class="edit-btn" @click="saveFn(index, 3)" type="info">保存</Button>
                         </div>
                       </div>
                     </div>
@@ -1808,12 +1808,13 @@ export default {
       // console.log('this.baseSpec[index].showEdit',this.baseSpec[index].showEdit);
     },
     saveFn (i, type) {
-      let val = this.baseSpec[i].editVal.replace(/(^\s*)|(\s*$)/g, '')
-      if (val === '') {
-        this.baseSpec[i].showEdit = false
-        this.baseSpec[i].editVal = ''
-        return
-      }
+      // console.log('type', type)
+      // let val = this.baseSpec[i].editVal.replace(/(^\s*)|(\s*$)/g, '')
+      // if (val === '') {
+      //   this.baseSpec[i].showEdit = false
+      //   this.baseSpec[i].editVal = ''
+      //   return
+      // }
       switch (type) {
         case 1:
           this.baseSpec[i].specVals.push(this.baseSpec[i].editVal)
@@ -1826,7 +1827,9 @@ export default {
           this.baseSpec[i].editVal = ''
           break
         case 3:
+          // console.log('this.baseSpec[i]+++', this.baseSpec[i])
           this.baseSpec[i].showEdit = false
+          this.$set(this.baseSpec, i, this.baseSpec[i])
           break
       }
     },
