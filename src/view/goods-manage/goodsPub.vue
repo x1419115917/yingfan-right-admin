@@ -166,7 +166,7 @@
                   <div class="tb-top-item">
                     <span class="top-name">{{item.specName}}：</span>
                     <div class="spce-right">
-                      <CheckboxGroup v-model="item.checkspeVals" class="check-box">
+                      <CheckboxGroup v-model="item.checkspeVals" class="check-box" @on-change="specValsChange1($event,index)">
                         <Checkbox class="check-item" :label="val" v-for="(val, inx1) in item.specVals" :key="inx1+'item'">
                             <span class="brand-name">{{val}}</span>
                         </Checkbox>
@@ -185,7 +185,7 @@
                   <div class="tb-top-item">
                     <span class="top-name">{{item.specName}}：</span>
                     <div class="spce-right" style="float:left;">
-                      <Select class="check-box" style="width: 300px;margin-right: 6px;height: 35px; float: left;" v-model="item.checkVals" filterable allow-create @on-change="selClistBrand">
+                      <Select class="check-box" style="width: 300px;margin-right: 6px;height: 35px; float: left;" v-model="item.checkVals" filterable allow-create >
                         <Option v-for="(vale,ind) in item.specVals" :value="vale" :key="ind">{{ vale }}</Option>
                       </Select>
                       <div class="edit-item" v-show="false">
@@ -207,7 +207,7 @@
                         <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editFn(index)" type="ios-create-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <Input class="edit-modal-ipt" v-model="item.specVals[0]" placeholder="请输入" style="width: 300px" />
-                          <Button class="edit-btn" @click="saveFn(index, 3)" type="info">保存</Button>
+                          <Button class="edit-btn" @click="saveFn(index, item.operateType)" type="info">保存</Button>
                         </div>
                       </div>
                     </div>
@@ -1266,7 +1266,7 @@ export default {
         }
         let res = await saveGoods(data)
         if (res.data.code == 0) {
-          // console.log(res)
+          console.log(res)
           if (res.data.code === 0) {
             this.$Modal.success({
               title: '提示',
@@ -1294,7 +1294,7 @@ export default {
         this.validateStrNew(item.supply, 'number')
         this.validateStrNew(item.wholesale, 'number', 'int')
         this.validateStrNew(item.trade, 'number')
-        // console.log('item.exchangePrice', item.exchangePrice)
+        console.log('item.exchangePrice', item.exchangePrice)
         if (this.pointExchangeState == 1) {
           this.validateStrNew(item.exchangePoints, 'number')
           if (item.exchangePoints <= 0) {
@@ -1312,7 +1312,7 @@ export default {
         }
         this.validateStrNew(item.integral, 'number', 'int', 'range')
       })
-      // console.log('this.validateType', this.validateType)
+      console.log('this.validateType', this.validateType)
     },
     // 更新商品
     async updateGoods () {
@@ -1447,7 +1447,7 @@ export default {
         }
         let res = await updateGoods(data)
         if (res.data.code == 0) {
-          // console.log(res)
+          console.log(res)
           if (res.data.code === 0) {
             this.$Modal.success({
               title: '提示',
@@ -1566,7 +1566,7 @@ export default {
     },
     // 表格上传图片
     async tableUploadImg (e, index) {
-      // console.log(e)
+      console.log(e)
       let files = e.target.files[0]
       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
@@ -1706,7 +1706,7 @@ export default {
         this.baseSpec = skuInfo.attrTemplate
         this.expandSpec = skuInfo.specTemplate
         this.expandSpecFor(this.expandSpec, this.skusList)
-        // console.log('this.expandSpec-edit', this.expandSpec)
+        console.log('this.expandSpec-edit', this.expandSpec)
         // console.log('ctx-edit',this.ctx)
       }
     },
@@ -1756,6 +1756,7 @@ export default {
             this.addSpelVal1 = ''
             break
         }
+        this.$set(this.expandSpec, index, this.expandSpec[index])
         return
       }
       let obj = this.expandSpec[index]
@@ -1802,13 +1803,15 @@ export default {
       }
     },
     editFn (index) {
-      let obj = this.baseSpec[index]
-      obj.showEdit = !obj.showEdit
-      this.$set(this.baseSpec, index, obj)
+      // let obj = this.baseSpec[index]
+      this.baseSpec[index].showEdit = !this.baseSpec[index].showEdit
+      this.$set(this.baseSpec, index, this.baseSpec[index])
       // console.log('this.baseSpec[index].showEdit',this.baseSpec[index].showEdit);
     },
+    specValsChange1 (e, i) {
+      this.$set(this.baseSpec, i, this.baseSpec[i])
+    },
     saveFn (i, type) {
-      // console.log('type', type)
       // let val = this.baseSpec[i].editVal.replace(/(^\s*)|(\s*$)/g, '')
       // if (val === '') {
       //   this.baseSpec[i].showEdit = false
