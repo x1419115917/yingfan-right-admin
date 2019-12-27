@@ -225,12 +225,20 @@
                         <!-- <span class="check-box to-ipt-show toname-ipt">{{values}}</span> @on-change="iptChange($event,index,idx)" -->
                         <Input class="check-box to-ipt-show toname-ipt" type="text" :value="values" @on-focus="iptFocus($event,index,idx)" @on-blur="iptChange($event,index,idx)"></Input>
                       </div>
-                      <div class="edit-item">
+                      <div class="edit-item" v-show="expandSpec.length > 0 && index === 0">
                         <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
                         <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
                           <!-- <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" /> -->
                           <Input class="edit-modal-ipt" v-model="addSpelVal" placeholder="请输入" style="width: 100px" />
                           <Button class="edit-btn" @click="saveExpandFn(index, addSpelVal)" type="info">保存</Button>
+                        </div>
+                      </div>
+                      <div class="edit-item" v-show="expandSpec.length > 1 && index === 1">
+                        <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
+                        <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
+                          <!-- <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" /> -->
+                          <Input class="edit-modal-ipt" v-model="addSpelVal1" placeholder="请输入" style="width: 100px" />
+                          <Button class="edit-btn" @click="saveExpandFn(index, addSpelVal1)" type="info">保存</Button>
                         </div>
                       </div>
                     </div>
@@ -369,6 +377,7 @@ export default {
       brandsId: '',
       brandsIds: '',
       addSpelVal: '',
+      addSpelVal1: '',
       speaval: '',
       brandsIdsList: [],
       supplierListArr: [],
@@ -1740,6 +1749,7 @@ export default {
       if (val === '') {
         this.expandSpec[index].showEdit = false
         this.addSpelVal = ''
+        this.addSpelVal1 = ''
         return
       }
       let obj = this.expandSpec[index]
@@ -1749,6 +1759,7 @@ export default {
       // console.log('index3210', index)
       // console.log('this.expandSpec-edit-edit2', this.expandSpec)
       this.addSpelVal = ''
+      this.addSpelVal1 = ''
       if (this.type !== 'edit') {
         this.expandSpecForEach(this.expandSpec)
       } else {

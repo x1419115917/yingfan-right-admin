@@ -348,7 +348,7 @@ export default {
           content: '编辑成功'
         })
         this.checkedIds = []
-        this.branchIdsCheck = ''
+        // this.branchIdsCheck = ''
         this.attrListArr = []
         this.formValidate = {
           name: '',
