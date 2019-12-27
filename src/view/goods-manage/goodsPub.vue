@@ -723,6 +723,7 @@ export default {
       skusList: [],
       validateType: false,
       selectedList: [],
+      skusListOrg: [],
       contractInfo: '',
       expandSpec: [],
       expandSpec1: [],
@@ -801,6 +802,7 @@ export default {
         vm.vsShowNav = 0
         vm.rewardState = '0' // 商品奖励状态：0-不支持；1支持
         vm.pointExchangeState = '0'
+        vm.skusListOrg = []
         vm.type = ''
         vm.goodsId = ''
         vm.brandsId = ''
@@ -1084,8 +1086,8 @@ export default {
       // 重新赋值
       this.columnsList = columnsListOriginal
     },
-    expandSpecForEach (arr) {
-      if (arr && arr.length == 2) {
+    expandSpecForEach (arr, list) {
+      if (arr && arr.length === 2) {
         this.expandSpec1 = [...this.expandSpec[0].specVals]
         this.expandSpec2 = [...this.expandSpec[1].specVals]
         this.dataList = this.Descates
@@ -1097,6 +1099,24 @@ export default {
         this.expandSpec1 = []
         this.expandSpec2 = []
         this.dataList = this.Descates
+      }
+      if (list && list.length > 0) {
+        list.forEach((item, index) => {
+          this.dataList[index].skuId = ''
+          this.dataList[index].imageUrl = list[index].imageUrl
+          this.dataList[index].imageShow = this.dataList[index].imageUrl !== ''
+          this.dataList[index].code = list[index].code
+          this.dataList[index].tcode = list[index].tcode
+          this.dataList[index].supply = list[index].supply
+          this.dataList[index].stock = list[index].stock
+          this.dataList[index].retail = list[index].retail
+          this.dataList[index].wholesale = list[index].wholesale
+          this.dataList[index].trade = list[index].trade
+          this.dataList[index].brokerage = this.rewardState == 0 ? '' : list[index].brokerage
+          this.dataList[index].integral = list[index].integral
+          this.dataList[index].exchangePoints = this.pointExchangeState == 0 ? '' : list[index].exchangePoints
+          this.dataList[index].exchangePrice = this.pointExchangeState == 0 ? '' : list[index].exchangePrice
+        })
       }
       // this.columnsList = [...this.columnsListUpdata]
       this.initExchangeFn()
@@ -1739,8 +1759,15 @@ export default {
       }
     },
     editExpandFn (index) {
+      this.skusListOrg = []
+      if (this.dataList && this.dataList.length > 0) {
+        this.dataList.forEach(item => {
+          this.skusListOrg.push(item)
+        })
+      }
       let obj = this.expandSpec[index]
       obj.showEdit = !obj.showEdit
+      console.log('this.skusListOrg', this.skusListOrg)
       // this.expandSpec[index].editVal = ''
       this.$set(this.expandSpec, index, obj)
     },
@@ -1774,7 +1801,9 @@ export default {
           break
       }
       if (this.type !== 'edit') {
-        this.expandSpecForEach(this.expandSpec)
+        // console.log(this.dataList)
+        this.expandSpecForEach(this.expandSpec, this.skusListOrg)
+        // this.expandSpecFor(this.expandSpec, this.dataList)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)
       }
