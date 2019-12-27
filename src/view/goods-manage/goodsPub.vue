@@ -870,7 +870,7 @@ export default {
           minWidth: 120
         })
       })
-      console.log('columnsList-edit', columnsList)
+      // console.log('columnsList-edit', columnsList)
       return columnsList
     },
     // 表格字段更新
@@ -1266,7 +1266,7 @@ export default {
         }
         let res = await saveGoods(data)
         if (res.data.code == 0) {
-          console.log(res)
+          // console.log(res)
           if (res.data.code === 0) {
             this.$Modal.success({
               title: '提示',
@@ -1294,7 +1294,7 @@ export default {
         this.validateStrNew(item.supply, 'number')
         this.validateStrNew(item.wholesale, 'number', 'int')
         this.validateStrNew(item.trade, 'number')
-        console.log('item.exchangePrice', item.exchangePrice)
+        // console.log('item.exchangePrice', item.exchangePrice)
         if (this.pointExchangeState == 1) {
           this.validateStrNew(item.exchangePoints, 'number')
           if (item.exchangePoints <= 0) {
@@ -1312,7 +1312,7 @@ export default {
         }
         this.validateStrNew(item.integral, 'number', 'int', 'range')
       })
-      console.log('this.validateType', this.validateType)
+      // console.log('this.validateType', this.validateType)
     },
     // 更新商品
     async updateGoods () {
@@ -1447,7 +1447,7 @@ export default {
         }
         let res = await updateGoods(data)
         if (res.data.code == 0) {
-          console.log(res)
+          // console.log(res)
           if (res.data.code === 0) {
             this.$Modal.success({
               title: '提示',
@@ -1566,7 +1566,7 @@ export default {
     },
     // 表格上传图片
     async tableUploadImg (e, index) {
-      console.log(e)
+      // console.log(e)
       let files = e.target.files[0]
       if (!/\/(?:jpg|jpeg|png|gif)/i.test(files.type)) {
         this.$Message.warning('请选择jpg|jpeg|png|gif格式图片上传')
@@ -1617,7 +1617,7 @@ export default {
         this.$refs.filezm1.value = ''
         e.target.value = ''
       }
-      console.log(this.goodsImgList)
+      // console.log(this.goodsImgList)
     },
     // 富文本编辑器内容
     _getContext (ctx) {
@@ -1706,7 +1706,7 @@ export default {
         this.baseSpec = skuInfo.attrTemplate
         this.expandSpec = skuInfo.specTemplate
         this.expandSpecFor(this.expandSpec, this.skusList)
-        console.log('this.expandSpec-edit', this.expandSpec)
+        // console.log('this.expandSpec-edit', this.expandSpec)
         // console.log('ctx-edit',this.ctx)
       }
     },
