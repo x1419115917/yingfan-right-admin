@@ -16,8 +16,7 @@
         :data="dataList"
         border
         stripe
-        :loading="tableLoading"
-        no-data-text>
+        :loading="tableLoading">
         <template slot-scope="{ row, index }" slot="logo">
           <div class="logo"><img :src="row.logo" /></div>
         </template>
@@ -61,7 +60,6 @@ export default {
       inpWidth: '162px',
       modal1: false,
       deleteModal: false,
-      operationShow: false,
       dataList: [],
       deleteId: null,
       pageNum: 1,
