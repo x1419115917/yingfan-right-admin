@@ -551,6 +551,26 @@ export const appRouter = [
           title: '交易流水'
         },
         component: () => import('@/view/finance-manage/payList.vue')
+      },
+      {
+        name: 'cashoutList',
+        path: 'cashoutList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-menu',
+          title: '提现申请'
+        },
+        component: () => import('@/view/finance-manage/cashoutList.vue')
+      },
+      {
+        name: 'bankList',
+        path: 'bankList',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-menu',
+          title: '银行列表'
+        },
+        component: () => import('@/view/finance-manage/bankList.vue')
       }
     ]
   },
