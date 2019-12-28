@@ -1081,7 +1081,7 @@ export default {
         ? columnsListOriginal.filter(item => item.key != 'brokerage' && item.slotType != 'intredeem')
         : columnsListOriginal.filter(item => item.slotType != 'intredeem')
         : this.rewardState == 0
-          ? columnsListOriginal.filter(item => item.slotType != 'brokerage')
+          ? columnsListOriginal.filter(item => item.key != 'brokerage')
           : [...this.columnsListUpdata]
       // 重新赋值
       this.columnsList = columnsListOriginal
@@ -1684,6 +1684,7 @@ export default {
         let imageList = JSON.parse(spuInfo.images)
         this.goodsTitle = spuInfo.title
         this.rewardState = spuInfo.rewardState.toString() // 奖励是否支持
+        // console.log('this.rewardState---', this.rewardState)
         this.pointExchangeState = spuInfo.pointExchangeState.toString() // 应分是否支持
         this.subTitle = spuInfo.subTitle
         this.brandsId = spuInfo.brandId
