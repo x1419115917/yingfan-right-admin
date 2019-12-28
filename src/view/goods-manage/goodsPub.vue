@@ -185,7 +185,7 @@
                   <div class="tb-top-item">
                     <span class="top-name">{{item.specName}}：</span>
                     <div class="spce-right" style="float:left;">
-                      <Select class="check-box" style="width: 300px;margin-right: 6px;height: 35px; float: left;" v-model="item.checkVals" filterable allow-create >
+                      <Select class="check-box" style="width: 300px;margin-right: 6px;height: 35px; float: left;" v-model="item.checkVals" >
                         <Option v-for="(vale,ind) in item.specVals" :value="vale" :key="ind">{{ vale }}</Option>
                       </Select>
                       <div class="edit-item" v-show="false">
