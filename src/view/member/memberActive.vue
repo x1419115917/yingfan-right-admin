@@ -210,6 +210,8 @@ export default {
           this.pictureUrl = ''
           this.imgShow = false
           this.pictureUrl = ''
+          this.sort = 1
+          this.restrictNumber = 1
         }
         if (val && this.operationShow) {
           this.data1 = this.editInfo.skus
