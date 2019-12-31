@@ -1,130 +1,125 @@
 <!--财务管理-提现详情-->
 <template>
   <div class="cashoutDetail">
-    <div class="title">提现信息</div>
+    <div class="title">提现信息
+      <span class="success" v-if="cashoutDetail.status == '1'">【{{ returnStatus(cashoutDetail.status) }}】</span>
+      <span class="error" v-else-if="cashoutDetail.status == '2'">【{{ returnStatus(cashoutDetail.status) }}】</span>
+      <span class="process" v-else-if="cashoutDetail.status == '0'">【{{ returnStatus(cashoutDetail.status) }}】</span>
+    </div>
     <Row class="wrap">
       <Col :span="12">
         <Row>
           <Col :span="10">持卡人姓名</Col>
-          <Col :span="14"></Col>
-          <Col :span="10">可提现</Col>
-          <Col :span="14"></Col>
+          <Col :span="14">{{ cashoutDetail.trueName != null ? cashoutDetail.trueName : '-' }}</Col>
           <Col :span="10">平台手机号</Col>
-          <Col :span="14">-</Col>
-          <Col :span="10">提现金额</Col>
-          <Col :span="14"></Col>
+          <Col :span="14">{{ cashoutDetail.userPhone != null ? cashoutDetail.userPhone : '-' }}</Col>
           <Col :span="10">身份证号</Col>
-          <Col :span="14" class="money">
-          </Col>
-          <Col :span="10">提现后金额</Col>
-          <Col :span="14" class="money">
-          </Col>
+          <Col :span="14">{{ cashoutDetail.idNumber != null ? cashoutDetail.idNumber : '-' }}</Col>
           <Col :span="10">银行</Col>
-          <Col :span="14">
-          </Col>
+          <Col :span="14">{{ cashoutDetail.bankName != null ? cashoutDetail.bankName : '-' }}</Col>
+          <Col :span="10">银行卡号</Col>
+          <Col :span="14">{{ cashoutDetail.number != null ? cashoutDetail.number : '-' }}</Col>
+          <Col :span="10">申请时间</Col>
+          <Col :span="14">{{ cashoutDetail.handleTime != null ? cashoutDetail.handleTime : '-' }}</Col>
         </Row>
       </Col>
       <Col :span="12">
         <Row>
-          <Col :span="10">商品总额</Col>
-          <Col :span="14" class="money">¥</Col>
-          <Col :span="10">运费</Col>
-          <Col :span="14" class="money">¥</Col>
-          <Col :span="10">税费</Col>
-          <Col :span="14" class="money">-</Col>
-          <Col :span="10">付款时间</Col>
-          <Col :span="14">
-            <template>-</template>
-          </Col>
-          <Col :span="10">积分支付</Col>
-          <Col :span="14" class="money">
-            <template>-</template>
-          </Col>
-          <Col :span="10">在线支付</Col>
-          <Col :span="14" class="money">
-            <template>-</template>
-          </Col>
+          <Col :span="10">可提现</Col>
+          <Col :span="14" class="money">¥{{ cashoutDetail.beforeCash != null ? cashoutDetail.beforeCash : '-'}}</Col>
+          <Col :span="10">提现金额</Col>
+          <Col :span="14" class="money">¥{{ cashoutDetail.cash != null ? cashoutDetail.cash : '-'}}</Col>
+          <Col :span="10">提现后金额</Col>
+          <Col :span="14" class="money">¥{{ cashoutDetail.afterCash != null ? cashoutDetail.afterCash : '-'}}</Col>
+          <Col :span="10">银行支行</Col>
+          <Col :span="14">{{ cashoutDetail.branchAddress != null ? cashoutDetail.branchAddress : '-'}}</Col>
+          <Col :span="10">银行预留手机号</Col>
+          <Col :span="14">{{ cashoutDetail.userPhone != null ? cashoutDetail.userPhone : '-'}}</Col>
+          <Col :span="10">手续费</Col>
+          <Col :span="14" class="money">¥{{ cashoutDetail.commissionCharge != null ? cashoutDetail.commissionCharge : '-'}}</Col>
         </Row>
       </Col>
     </Row>
-    <div class="mark">
-      <Input v-model="markMsg" placeholder="请输入备注" :disabled="disabled">
-        <span slot="prepend">客服备注</span>
+    <div class="mark" v-if="cashoutDetail.status != '1' ">
+      <Input v-model="markMsg" placeholder="请输入备注" :disabled="cashoutDetail.status == '0' ? false : true" clearable>
+        <span slot="prepend">审核备注</span>
       </Input>
     </div>
+    <div class="tip">提醒：1.请认真核对提现金额和可提现的金额，以及提现后余额。2.认真核对绑定的银行卡信息和提现的银行卡信息是否相同。以上核对无误即可放款</div>
     <div class="btnGroup">
-      <Button size="large" type="primary" @click="close">确定</Button>
-      <Button size="large" @click="close">取消</Button>
+      <template v-if="cashoutDetail.status == '0' ">
+        <Button size="large" type="success" @click="handle('1')">同意</Button>
+        <Button size="large" type="error" @click="handle('2')">拒绝</Button>
+        <Button size="large" @click="close">取消</Button>
+      </template>
+      <template v-else>
+        <Button size="large" type="primary" @click="close">确定</Button>
+      </template>
     </div>
   </div>
 </template>
 <script>
-import { } from '@/api/order'
+import { doCheckCashoutDetail, doHandelCashout } from '@/api/finance'
 export default {
   name: 'cashoutDetail',
   data () {
     return {
       disabled: false,
       inpWidth: '162px',
-      orderDetailId: null,
+      cashoutDetailId: null,
       markMsg: null,
-      orderDetail: {}, // 订单详情
-      form: {
-        FLAG: 1,
-        expressCode: null, // 物流公司
-        expressNumber: null // 运单号
-      }
+      cashoutDetail: {}
     }
   },
-  props: [''],
+  props: ['cashoutId'],
   methods: {
-    returnOrderStatus (item) {
+    returnStatus (item) {
       switch (item) {
-        case 0 : return '待付款'
-        case 1 : return '待发货'
-        case 2 : return '已发货'
-        case 3 : return '已收货'
-        case 4 : return '交易关闭'
-        case 5 : return '退款'
+        case 0 : return '待审核'
+        case 1 : return '已放款'
+        case 2 : return '已拒绝'
       }
     },
     close () {
       this.$emit('close')
+    },
+    async getDetail () {
+      let obj = {
+        FLAG: 1,
+        id: this.cashoutDetailId
+      }
+      let res = await doCheckCashoutDetail(obj)
+      if (res.data.code === 0) {
+        this.cashoutDetail = res.data.content
+        this.markMsg = res.data.content.refuseCause
+      }
+    },
+    async handle (status) {
+      let obj = {
+        FLAG: 1,
+        id: this.cashoutDetailId,
+        refuseCause: this.markMsg,
+        status: status
+      }
+      let res = await doHandelCashout(obj)
+      if (res.data.code === 0) {
+        this.$Message.success('操作成功！')
+        this.$emit('close')
+        this.$emit('updateList')
+      }
     }
-    // async getOrderDetail () {
-    //   let orderId = {
-    //     FLAG: 1,
-    //     orderId: this.orderDetailId
-    //   }
-    //   let res = await doOrderDetail(orderId)
-    //   if (res.data.code === 0) {
-    //     this.orderDetail = res.data.content
-    //     this.goodsList = res.data.content.suborderSkuItemList
-    //     if (this.orderDetail.orderStatus === 2) { // 已发货-显示物流公司信息等
-    //       this.form.expressCode = this.orderDetail.expressCode
-    //       this.form.expressNumber = this.orderDetail.expressNumber
-    //       this.disabled = true
-    //     } else {
-    //       this.form.expressCode = ''
-    //       this.form.expressNumber = ''
-    //       this.disabled = false
-    //     }
-    //   }
-    // }
   },
-  computed: {
+  watch: {
+    cashoutId (val) {
+      this.cashoutDetailId = val
+      this.getDetail()
+    }
   },
-  // watch: {
-  //   orderId (val) {
-  //     this.orderDetailId = val
-  //     this.getOrderDetail()
-  //   }
-  // },
   created () {
-    // this.orderDetailId = this.orderId
-    // if (this.orderDetailId) {
-    //   this.getOrderDetail()
-    // }
+    this.cashoutDetailId = this.cashoutId
+    if (this.cashoutDetailId) {
+      this.getDetail()
+    }
   }
 }
 </script>
@@ -145,15 +140,28 @@ export default {
       }
     }
   }
+  .tip {
+    margin-top: 15px;
+    font-weight: bold;
+  }
   .title {
     padding: 5px 0;
     font-weight: 600;
     font-size: 14px;
+    .success {
+      color: #19be6b;
+    }
+    .error {
+      color: #ed4014;
+    }
+    .process {
+      color: #2d8cf0;
+    }
   }
   .btnGroup{
     margin-top: 16px;
     text-align: right;
-    button:nth-child(2){
+    button{
       margin-left: 16px;
     }
   }

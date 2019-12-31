@@ -9,7 +9,7 @@
         </Col>
         <Col span="18">
           <span>提现状态</span>
-          <Select v-model="form.statuss" :style="{ width: inpWidth}" clearable>
+          <Select v-model="form.status" :style="{ width: inpWidth}" clearable>
             <Option v-for="item in cashoutStatusOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           <Button type="primary" style="margin: 0 10px" @click="search">查询</Button>
@@ -21,9 +21,10 @@
       <Table :columns="columns" border :data="dataList" stripe>
           <template slot-scope="{ row, index }" slot="status"><span>{{ returnStatus(row.status) }}</span></template>
           <template slot-scope="{ row, index }" slot="action">
-            <Button type="success" size="small" style="margin-right: 5px">同意</Button>
-            <Button type="error" size="small" style="margin-right: 5px">拒绝</Button>
-            <Button type="primary" size="small" @click="checkDetail">详情</Button>
+            <template v-if="row.status == '0'">
+              <Button type="success" size="small" style="margin-right: 5px" @click="checkDetail(row.id)">处理</Button>
+            </template>
+            <Button type="primary" size="small" @click="checkDetail(row.id)">详情</Button>
           </template>
         </Table>
         <Page
@@ -37,7 +38,7 @@
           @on-change="pageChange"/>
       </div>
       <Modal v-model="modal" width="800" class="hideFootModal">
-        <cash-out-detail @close="modal = false"></cash-out-detail>
+        <cash-out-detail @close="modal = false" @updateList="getList" :cashoutId="cashoutId"></cash-out-detail>
       </Modal>
   </div>
 </template>
@@ -52,6 +53,7 @@ export default {
   },
   data () {
     return {
+      cashoutId: '', // 提现详情id
       modal: false,
       inpWidth: '162px',
       pageTotal: null,
@@ -59,7 +61,7 @@ export default {
       form: {
         FLAG: 1,
         phone: '',
-        statuss: '',
+        status: '',
         pageIndex: 1,
         pageSize: 10
       },
@@ -131,8 +133,9 @@ export default {
         case 2 : return '已拒绝'
       }
     },
-    checkDetail () {
-      // this.modal = true
+    checkDetail (id) {
+      this.cashoutId = id
+      this.modal = true
     },
     // 查询订单
     search () {
@@ -150,7 +153,6 @@ export default {
       this.$Message.warning('该功能暂未开放')
     },
     async getList () {
-      this.form.statuss = [this.form.statuss]
       let data = this.form
       let res = await doCashoutList(data)
       if (res.data.code === 0) {
