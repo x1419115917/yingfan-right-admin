@@ -258,6 +258,7 @@ export default {
       let res = await skuSpecList(id)
       this.tableLoading = false
       if (res.data.code === 0) {
+        this.selectList = []
         this.data1 = res.data.content
         this.data1.forEach(item => {
           item._disabled = !item.isShow
