@@ -46,6 +46,7 @@
 import { doCashoutList } from '@/api/finance'
 import { cashoutStatus } from './financeManage'
 import cashOutDetail from './cashoutDetail'
+import Bus from '@/assets/js/bus.js'
 export default {
   name: 'cashoutList',
   components: {
@@ -136,6 +137,7 @@ export default {
     checkDetail (id) {
       this.cashoutId = id
       this.modal = true
+      Bus.$emit('checkDetail', this.cashoutId)
     },
     // 查询订单
     search () {

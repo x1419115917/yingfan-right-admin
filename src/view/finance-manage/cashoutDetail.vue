@@ -40,7 +40,7 @@
         </Row>
       </Col>
     </Row>
-    <div class="mark" v-if="cashoutDetail.status != '1' ">
+    <div class="mark" v-if="cashoutDetail.status != '1'">
       <Input v-model="markMsg" placeholder="请输入备注" :disabled="cashoutDetail.status == '0' ? false : true" clearable>
         <span slot="prepend">审核备注</span>
       </Input>
@@ -60,6 +60,7 @@
 </template>
 <script>
 import { doCheckCashoutDetail, doHandelCashout } from '@/api/finance'
+import Bus from '@/assets/js/bus.js'
 export default {
   name: 'cashoutDetail',
   data () {
@@ -109,17 +110,14 @@ export default {
       }
     }
   },
-  watch: {
-    cashoutId (val) {
+  mounted () {
+    Bus.$on('checkDetail', (val) => {
+      if (this.cashoutDetail.status !== '2') {
+        this.markMsg = null
+      }
       this.cashoutDetailId = val
       this.getDetail()
-    }
-  },
-  created () {
-    this.cashoutDetailId = this.cashoutId
-    if (this.cashoutDetailId) {
-      this.getDetail()
-    }
+    })
   }
 }
 </script>
