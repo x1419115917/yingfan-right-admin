@@ -193,12 +193,18 @@ export default {
     },
     // 发货
     async deliveryGood () {
-      let data = Object.assign(this.form, { orderId: this.orderDetailId })
-      let res = await doDeliveryGood(data)
-      if (res.data.code === 0) {
-        this.$Message.success('操作成功！')
-        this.$emit('close')
-        this.$emit('updateList')
+      if (!this.form.expressCode) {
+        this.$Message.warning('请选择配送公司')
+      } else if (!this.form.expressNumber) {
+        this.$Message.warning('请填写运单号')
+      } else {
+        let data = Object.assign(this.form, { orderId: this.orderDetailId })
+        let res = await doDeliveryGood(data)
+        if (res.data.code === 0) {
+          this.$Message.success('操作成功！')
+          this.$emit('close')
+          this.$emit('updateList')
+        }
       }
     },
     close () {
