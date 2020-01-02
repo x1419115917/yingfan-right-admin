@@ -24,7 +24,8 @@
             <span v-else>-</span>
           </template>
           <template slot-scope="{ row, index }" slot="timeEnd">
-            {{ $moment(row.timeEnd).format("YYYY-MM-DD HH:mm:ss")}}
+            <span v-if="row.timeEnd">{{ $moment(row.timeEnd).format("YYYY-MM-DD HH:mm:ss")}}</span>
+            <span v-else>-</span>
           </template>
           <template slot-scope="{ row, index }" slot="status"><span>{{ returnStatus(row.status) }}</span></template>
           <template slot-scope="{ row, index }" slot="payFee">
