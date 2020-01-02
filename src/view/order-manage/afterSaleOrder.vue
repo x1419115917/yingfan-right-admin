@@ -188,6 +188,7 @@ export default {
     },
     // 选择订单状态
     selectState (value, index) {
+      this.form.pageIndex = 1
       this.activeIndex = index
       this.form.orderStatus = value
       this.getOrderList()
@@ -229,19 +230,6 @@ export default {
     }
   },
   created () {
-    // async getSupplierList () {
-    //   let data = {
-    //     FLAG: 1,
-    //     pageIndex: this.pageNum,
-    //     pageSize: this.pageSize,
-    //     name: this.value
-    //   }
-    //   let res = await supplierList(data)
-    //   if (res.data.code === 0) {
-    //     // this.dataList = res.data.content.rows
-    //     // this.total = +res.data.content.total
-    //   }
-    // },
     this.getOrderList()
   }
 }

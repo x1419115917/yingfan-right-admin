@@ -239,7 +239,6 @@ export default {
   watch: {
     orderId (val) {
       this.orderDetailId = val
-      console.log('改变后id' + this.orderDetailId)
       this.getOrderDetail()
     }
   },
@@ -257,7 +256,6 @@ export default {
   },
   created () {
     this.orderDetailId = this.orderId
-    console.log('初始id' + this.orderId)
     if (this.orderDetailId) {
       this.getOrderDetail()
     }
