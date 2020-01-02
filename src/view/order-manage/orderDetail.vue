@@ -213,7 +213,7 @@ export default {
       if (res.data.code === 0) {
         this.orderDetail = res.data.content
         this.goodsList = res.data.content.suborderSkuItemList
-        if (this.orderDetail.orderStatus === 2) { // 已发货-显示物流公司信息等
+        if (this.orderDetail.orderStatus === 2 || this.orderDetail.orderStatus === 3) { // 已发货或交易完成-显示物流公司信息等
           this.form.expressCode = this.orderDetail.expressCode
           this.form.expressNumber = this.orderDetail.expressNumber
           this.disabled = true
@@ -239,7 +239,7 @@ export default {
   mounted () {
     // 清空信息
     Bus.$on('clear', () => {
-      if (this.orderDetail.orderStatus !== 2) { // 已发货-显示物流公司信息等
+      if (this.orderDetail.orderStatus !== 2 || this.orderDetail.orderStatus !== 3) { // 已发货或交易完成-显示物流公司信息等
         this.form = {
           FLAG: 1,
           expressCode: null, // 物流公司

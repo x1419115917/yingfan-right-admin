@@ -50,10 +50,10 @@ export function orderStatus () {
       value: 2,
       label: '已发货'
     },
-    // {
-    //     value: 3,
-    //     label: '已收货'
-    // },
+    {
+      value: 3,
+      label: '已收货'
+    },
     {
       value: 4,
       label: '交易关闭'

@@ -147,7 +147,7 @@ export default {
         case 0 : return '待付款'
         case 1 : return '待发货'
         case 2 : return '已发货'
-        case 3 : return '交易完成'
+        case 3 : return '已收货'
         case 4 : return '交易关闭'
         case 5 : return '退款'
       }
