@@ -16,6 +16,14 @@ export function infunType () {
     {
       value: 3,
       label: '消费抵扣'
+    },
+    {
+      value: 4,
+      label: '应分抵扣'
+    },
+    {
+      value: 5,
+      label: '退款'
     }
   ]
 }

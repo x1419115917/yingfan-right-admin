@@ -112,11 +112,11 @@
         <Input class="expressNumber" v-model="form.expressNumber" :style="{ width: inpWidth}" placeholder="请输入运单号" clearable :disabled="disabled" />
       </Col>
     </Row>
-    <div class="mark">
-      <Input v-model="markMsg" placeholder="请输入备注" :disabled="disabled">
+    <!--<div class="mark">
+      <Input v-model="markMsg" placeholder="请输入备注" :disabled="disabled" clearable>
         <span slot="prepend">客服备注</span>
       </Input>
-    </div>
+    </div>-->
     <div class="btnGroup">
       <template v-if="orderDetail.orderStatus === 1"><Button size="large" type="primary" @click="deliveryGood">发货</Button></template>
       <template v-else><Button size="large" type="primary" @click="close">确定</Button></template>
@@ -127,6 +127,7 @@
 <script>
 import { doOrderDetail, doDeliveryGood } from '@/api/order'
 import { logisticsCompany } from './orderList.js'
+import Bus from '@/assets/js/bus.js'
 export default {
   name: 'orderDetail',
   data () {
@@ -234,6 +235,16 @@ export default {
       this.orderDetailId = val
       this.getOrderDetail()
     }
+  },
+  mounted () {
+    // 清空信息
+    Bus.$on('clear', () => {
+      this.form = {
+        FLAG: 1,
+        expressCode: null, // 物流公司
+        expressNumber: null // 运单号
+      }
+    })
   },
   created () {
     this.orderDetailId = this.orderId

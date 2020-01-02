@@ -69,6 +69,7 @@
 import { doOrderList } from '@/api/order'
 import { orderStatus } from './orderList'
 import orderDetail from './orderDetail'
+import Bus from '@/assets/js/bus.js'
 export default {
   name: 'orderList',
   components: {
@@ -175,6 +176,7 @@ export default {
     },
     // 查询订单详情
     checkDetail (data, index) {
+      Bus.$emit('clear')
       this.orderId = data.id
       this.modal = true
     },
