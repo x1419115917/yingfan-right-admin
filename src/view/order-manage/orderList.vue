@@ -140,6 +140,7 @@ export default {
         case 0 : return '普通'
         case 1 : return '预售'
         case 2 : return '升级'
+        case 3 : return '新人'
       }
     },
     returnOrderStatus (item) {
@@ -179,7 +180,6 @@ export default {
     // 查询订单详情
     checkDetail (data) {
       this.orderId = data.id
-      console.log(this.orderId)
       this.modal = true
       Bus.$emit('clear')
     },
