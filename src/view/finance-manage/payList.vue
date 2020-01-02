@@ -19,10 +19,6 @@
     </Card>
     <div class="wrap">
       <Table :columns="columns" border :data="dataList" stripe>
-          <template slot-scope="{ row, index }" slot="transactionId">
-            <span v-if="row.transactionId">{{ row.transactionId }}</span>
-            <span v-else>-</span>
-          </template>
           <template slot-scope="{ row, index }" slot="timeEnd">
             <span v-if="row.timeEnd">{{ $moment(row.timeEnd).format("YYYY-MM-DD HH:mm:ss")}}</span>
             <span v-else>-</span>
@@ -65,7 +61,7 @@ export default {
       columns: [
         {
           title: '交易流水号',
-          slot: 'transactionId',
+          key: 'id',
           align: 'center'
         },
         {
