@@ -41,7 +41,14 @@
         <template slot-scope="{ row, index }" slot="orderType"><span>{{ returnOrderType(row.orderType) }}</span></template>
         <template slot-scope="{ row, index }" slot="payAmt"><span>¥{{ row.payAmt }}</span></template>
         <template slot-scope="{ row, index }" slot="refundAmt"><span>¥{{ row.refundAmt }}</span></template>
-        <template slot-scope="{ row, index }" slot="applyStatus"><span>{{ returnPayStatus(row.applyStatus) }}</span></template>
+        <template slot-scope="{ row, index }" slot="applyStatus">
+          <span>
+            <template v-if="row.applyStatus">
+              {{ returnPayStatus(row.applyStatus) }}
+            </template>
+            <template v-else>-</template>
+          </span>
+        </template>
         <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="action">
           <Button v-has="'sys:refundOrder:detail'" type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>

@@ -47,7 +47,7 @@
           <template v-if="row.orderStatus === 1">
             <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row)">发货</Button>
           </template>
-          <Button type="primary" size="small" @click="mark(index)">客服备注</Button>
+          <Button type="primary" size="small" @click="mark(index)">备注</Button>
         </template>
       </Table>
       <Page
@@ -173,11 +173,13 @@ export default {
     },
     // 查询订单
     search () {
+      this.form.pageIndex = 1
       this.getOrderList()
     },
     // 查询订单详情
     checkDetail (data) {
       this.orderId = data.id
+      console.log(this.orderId)
       this.modal = true
       Bus.$emit('clear')
     },

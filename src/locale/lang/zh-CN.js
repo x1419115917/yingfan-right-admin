@@ -28,7 +28,7 @@ export default {
   supplierWeb: '供应商(官网申请)',
   infunManage: '应分收益明细',
   infunList: '应分列表',
-  inComeList: '应分收益',
+  inComeList: '收益明细',
   cashOut: '余额提现',
   financeManage: '财务管理',
   payList: '交易流水',

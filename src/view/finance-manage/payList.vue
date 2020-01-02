@@ -96,6 +96,7 @@ export default {
     },
     // 查询订单
     search () {
+      this.form.pageIndex = 1
       this.getPayList()
     },
     changePageSize (value) {

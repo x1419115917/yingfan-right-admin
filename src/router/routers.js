@@ -516,7 +516,7 @@ export const appRouter = [
         meta: {
           hideInMenu: true,
           icon: '',
-          title: '收益列表'
+          title: '收益明细'
         },
         component: () => import('@/view/infun-manage/inComeList.vue')
       }
