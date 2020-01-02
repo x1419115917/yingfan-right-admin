@@ -18,7 +18,7 @@
         <Col span="12">
           <span>收益类型</span>
           <Select v-model="form.businessType" :style="{ width: inpWidth}" clearable>
-            <Option v-for="item in inComeTypeOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Option v-for="item in bananceTypeOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           <Button type="primary" style="margin: 0 10px" @click="search">查询</Button>
         </Col>
@@ -41,10 +41,10 @@
   </div>
 </template>
 <script>
-import { doInFunBonussList } from '@/api/infun'
-import { infunType, inComeType } from './infunManage.js'
+import { doBalanceList } from '@/api/infun'
+import { bananceType } from './infunManage.js'
 export default {
-  name: 'infunList',
+  name: 'balanceList',
   data () {
     return {
       inpWidth: '162px',
@@ -63,22 +63,22 @@ export default {
       columns: [
         {
           title: '绑定手机号',
-          key: 'phone',
+          key: 'userPhone',
           align: 'center'
         },
         {
-          title: '收益类型',
+          title: '类型',
           slot: 'businessType',
           align: 'center'
         },
         {
-          title: '获取时间',
+          title: '时间',
           align: 'center',
           key: 'createTime'
         },
         {
           title: '收益',
-          key: 'bonus',
+          key: 'cash',
           align: 'center'
         }
       ]
@@ -87,10 +87,12 @@ export default {
   methods: {
     returnBusinessType (item) {
       switch (item) {
-        case 1: return '分享收益'
-        case 2: return '邀新收益'
-        case 3: return '应分兑换收益'
-        case 4: return '退款'
+        case 1: return '邀新收益'
+        case 2: return '邀VIP收益'
+        case 3: return '分享收益'
+        case 4: return '应分兑换'
+        case 5: return '消费抵扣'
+        case 6: return '退款'
       }
     },
     selectDate () {
@@ -99,23 +101,23 @@ export default {
     },
     // 查询
     search () {
-      this.getInFunBonussList()
+      this.getList()
     },
     changePageSize (value) {
       this.form.pageSize = value
-      this.getInFunBonussList()
+      this.getList()
     },
     pageChange (value) {
       this.form.pageIndex = value
-      this.getInFunBonussList()
+      this.getList()
     },
-    async getInFunBonussList () {
+    async getList () {
       let data = this.form
       if (this.form.createTimeBegin === 'Invalid date') {
         this.form.createTimeBegin = null
         this.form.createTimeEnd = null
       }
-      let res = await doInFunBonussList(data)
+      let res = await doBalanceList(data)
       if (res.data.code === 0) {
         this.dataList = res.data.content.rows
         this.pageTotal = res.data.content.total
@@ -125,15 +127,12 @@ export default {
     }
   },
   computed: {
-    infunTypeOpts () {
-      return infunType()
-    },
-    inComeTypeOpts () {
-      return inComeType()
+    bananceTypeOpts () {
+      return bananceType()
     }
   },
   created () {
-    this.getInFunBonussList()
+    this.getList()
   }
 }
 </script>

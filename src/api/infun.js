@@ -8,10 +8,18 @@ export const doInFunList = data => {
     method: 'post'
   })
 }
-// 应分收益列表
+// 收益列表
 export const doInFunBonussList = data => {
   return axios.request({
     url: '/account/inFunSore/listBonussPage',
+    data,
+    method: 'post'
+  })
+}
+// 余额列表
+export const doBalanceList = data => {
+  return axios.request({
+    url: '/account/inFunSore/listCashPage',
     data,
     method: 'post'
   })

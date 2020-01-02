@@ -42,7 +42,7 @@
 </template>
 <script>
 import { doInFunBonussList } from '@/api/infun'
-import { infunType, inComeType } from './infunManage.js'
+import { inComeType } from './infunManage.js'
 export default {
   name: 'infunList',
   data () {
@@ -125,9 +125,6 @@ export default {
     }
   },
   computed: {
-    infunTypeOpts () {
-      return infunType()
-    },
     inComeTypeOpts () {
       return inComeType()
     }
