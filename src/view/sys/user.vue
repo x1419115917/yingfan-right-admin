@@ -864,4 +864,7 @@ export default {
 .btn-item{
   margin-left: 6px;
 }
+/deep/ .ivu-table-cell{
+  padding: 0 6px;
+}
 </style>
