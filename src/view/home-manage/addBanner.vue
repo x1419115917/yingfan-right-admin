@@ -31,6 +31,12 @@
         <FormItem label="活动名称" prop="plateName">
           <Input v-model="form.plateName" :maxlength="maxlength" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
         </FormItem>
+        <FormItem label="跳转类型">
+          <RadioGroup>
+            <Radio label="0">活动</Radio>
+            <Radio label="1">商品</Radio>
+          </RadioGroup>
+        </FormItem>
         <FormItem label="图片">
           <Table max-height="400" border :columns="form.plateRegion === '0' ? imgColumns1 : imgColumns" :data="form.plaDets">
             <template slot-scope="{ row,index }" slot="uploadImg">
@@ -44,7 +50,7 @@
                     <span v-if="form.plateRegion === '0'" class="tips-upload">690*300</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '0'" class="tips-upload">690*160</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '1'" class="tips-upload">340*400</span>
-                    <span v-else-if="form.plateRegion === '1' && form.showMode === '4'" class="tips-upload">左边1张:340*196<br />右边2张:340*196</span>
+                    <span v-else-if="form.plateRegion === '1' && form.showMode === '4'" class="tips-upload">左边1张:340*400<br />右边2张:340*196</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '5'" class="tips-upload">340*196</span>
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '0'" class="tips-upload">690*160</span>
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '1'" class="tips-upload">340*160</span>
