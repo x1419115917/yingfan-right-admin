@@ -29,6 +29,7 @@ export default {
   infunManage: '应分收益明细',
   infunList: '应分列表',
   inComeList: '收益明细',
+  balanceList: '余额明细',
   cashOut: '余额提现',
   financeManage: '财务管理',
   payList: '交易流水',

@@ -519,17 +519,17 @@ export const appRouter = [
           title: '收益明细'
         },
         component: () => import('@/view/infun-manage/inComeList.vue')
+      },
+      {
+        path: 'balanceList',
+        name: 'balanceList',
+        meta: {
+          hideInMenu: true,
+          icon: '',
+          title: '余额明细'
+        },
+        component: () => import('@/view/infun-manage/balanceList.vue')
       }
-      // {
-      //   path: 'cashOut',
-      //   name: 'cashOut',
-      //   meta: {
-      //     hideInMenu: true,
-      //     icon: '',
-      //     title: '余额提现'
-      //   },
-      //   component: () => import('@/view/infun-manage/cashOut.vue')
-      // }
     ]
   },
   {
