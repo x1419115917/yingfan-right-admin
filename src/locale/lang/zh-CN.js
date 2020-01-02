@@ -27,7 +27,7 @@ export default {
   returnAddress: '退货地址',
   supplierWeb: '供应商(官网申请)',
   infunManage: '应分收益明细',
-  infunList: '应分列表',
+  infunList: '应分明细',
   inComeList: '收益明细',
   balanceList: '余额明细',
   cashOut: '余额提现',
