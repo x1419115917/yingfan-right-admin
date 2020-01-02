@@ -239,10 +239,12 @@ export default {
   mounted () {
     // 清空信息
     Bus.$on('clear', () => {
-      this.form = {
-        FLAG: 1,
-        expressCode: null, // 物流公司
-        expressNumber: null // 运单号
+      if (this.orderDetail.orderStatus !== 2) { // 已发货-显示物流公司信息等
+        this.form = {
+          FLAG: 1,
+          expressCode: null, // 物流公司
+          expressNumber: null // 运单号
+        }
       }
     })
   },
