@@ -118,7 +118,7 @@
       </Input>
     </div>-->
     <div class="btnGroup">
-      <template v-if="orderDetail.orderStatus === 1"><Button size="large" type="primary" @click="deliveryGood">发货</Button></template>
+      <template v-if="orderDetail.orderStatus === 1"><Button size="large" type="success" @click="deliveryGood">发货</Button></template>
       <template v-else><Button size="large" type="primary" @click="close">确定</Button></template>
       <Button size="large" @click="close">取消</Button>
     </div>
@@ -219,7 +219,7 @@ export default {
       if (res.data.code === 0) {
         this.orderDetail = res.data.content
         this.goodsList = res.data.content.suborderSkuItemList
-        if (this.orderDetail.orderStatus === 2 || this.orderDetail.orderStatus === 3) { // 已发货或交易完成-显示物流公司信息等
+        if (this.orderDetail.orderStatus === 2 || this.orderDetail.orderStatus === 3) { // 已发货或已收货-显示物流公司信息等
           this.form.expressCode = this.orderDetail.expressCode
           this.form.expressNumber = this.orderDetail.expressNumber
           this.disabled = true
@@ -239,13 +239,14 @@ export default {
   watch: {
     orderId (val) {
       this.orderDetailId = val
+      console.log('改变后id' + this.orderDetailId)
       this.getOrderDetail()
     }
   },
   mounted () {
     // 清空信息
     Bus.$on('clear', () => {
-      if (this.orderDetail.orderStatus !== 2 || this.orderDetail.orderStatus !== 3) { // 已发货或交易完成-显示物流公司信息等
+      if (this.orderDetail.orderStatus !== 2 || this.orderDetail.orderStatus !== 3) { // 已发货或已收货-显示物流公司信息等
         this.form = {
           FLAG: 1,
           expressCode: null, // 物流公司
@@ -256,6 +257,7 @@ export default {
   },
   created () {
     this.orderDetailId = this.orderId
+    console.log('初始id' + this.orderId)
     if (this.orderDetailId) {
       this.getOrderDetail()
     }

@@ -42,10 +42,10 @@
         <template slot-scope="{ row, index }" slot="orderType"><span>{{ returnOrderType(row.orderType) }}</span></template>
         <template slot-scope="{ row, index }" slot="orderStatus"><span>{{ returnOrderStatus(row.orderStatus) }}</span></template>
         <template slot-scope="{ row, index }" slot="action">
-          <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">详情</Button>
+          <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row)">详情</Button>
           <!--待发货-->
           <template v-if="row.orderStatus === 1">
-            <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row, index)">发货</Button>
+            <Button type="primary" size="small" style="margin-right: 5px" @click="checkDetail(row)">发货</Button>
           </template>
           <Button type="primary" size="small" @click="mark(index)">客服备注</Button>
         </template>
@@ -162,6 +162,7 @@ export default {
     },
     // 选择订单状态
     selectState (value, index) {
+      this.form.pageIndex = 1
       this.activeIndex = index
       this.form.orderStatus = value
       this.getOrderList()
@@ -175,10 +176,10 @@ export default {
       this.getOrderList()
     },
     // 查询订单详情
-    checkDetail (data, index) {
-      Bus.$emit('clear')
+    checkDetail (data) {
       this.orderId = data.id
       this.modal = true
+      Bus.$emit('clear')
     },
     // 添加备注
     mark () {
