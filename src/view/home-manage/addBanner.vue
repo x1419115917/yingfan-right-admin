@@ -50,7 +50,7 @@
                     <span v-if="form.plateRegion === '0'" class="tips-upload">690*300</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '0'" class="tips-upload">690*160</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '1'" class="tips-upload">340*400</span>
-                    <span v-else-if="form.plateRegion === '1' && form.showMode === '4'" class="tips-upload">左边1张:340*400<br />右边2张:340*196</span>
+                    <span v-else-if="form.plateRegion === '1' && form.showMode === '4'" class="tips-upload">左边1张:340*402<br />右边2张:340*196</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '5'" class="tips-upload">340*196</span>
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '0'" class="tips-upload">690*160</span>
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '1'" class="tips-upload">340*160</span>
