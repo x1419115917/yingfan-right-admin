@@ -187,7 +187,7 @@ export default {
   watch: {
     '$route' (to) {
       // 关闭其他，保留打开的当前路由菜单跟home页面
-      // this.handleTagsOption('others')
+      this.handleTagsOption('others')
       this.getTagElementByRoute(to)
     },
     visible (value) {
