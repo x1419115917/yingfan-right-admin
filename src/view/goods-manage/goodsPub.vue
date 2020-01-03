@@ -708,6 +708,7 @@ export default {
       columnsList: [],
       dataList: [ // 商品初始化表格填写字段
         {
+          skuId: '',
           imageUrl: '',
           imageShow: false,
           code: '',
@@ -895,6 +896,7 @@ export default {
                 guige0: item1,
                 guige1: item2,
                 imageUrl: '',
+                skuId: '',
                 imageShow: false,
                 code: '',
                 tcode: '',
@@ -918,6 +920,7 @@ export default {
             {
               guige0: item1,
               imageUrl: '',
+              skuId: '',
               imageShow: false,
               code: '',
               tcode: '',
@@ -938,6 +941,7 @@ export default {
           {
             imageUrl: '',
             imageShow: false,
+            skuId: '',
             code: '',
             tcode: '',
             stock: '',
@@ -1121,42 +1125,6 @@ export default {
           this.dataList[index].exchangePrice = this.pointExchangeState == 0 ? '' : list[index].exchangePrice
         })
       }
-      // this.columnsList = [...this.columnsListUpdata]
-      this.initExchangeFn()
-    },
-    // 删除重新遍历
-    expandSpecForEachClear (arr, list) {
-      if (arr && arr.length === 2) {
-        this.expandSpec1 = [...this.expandSpec[0].specVals]
-        this.expandSpec2 = [...this.expandSpec[1].specVals]
-        this.dataList = this.Descates
-      } else if (arr && arr.length == 1) {
-        this.expandSpec1 = [...this.expandSpec[0].specVals]
-        this.expandSpec2 = []
-        this.dataList = this.Descates
-      } else {
-        this.expandSpec1 = []
-        this.expandSpec2 = []
-        this.dataList = this.Descates
-      }
-      // if (list && list.length > 0) {
-      //   list.forEach((item, index) => {
-      //     this.dataList[index].skuId = ''
-      //     this.dataList[index].imageUrl = list[index].imageUrl
-      //     this.dataList[index].imageShow = this.dataList[index].imageUrl !== ''
-      //     this.dataList[index].code = list[index].code
-      //     this.dataList[index].tcode = list[index].tcode
-      //     this.dataList[index].supply = list[index].supply
-      //     this.dataList[index].stock = list[index].stock
-      //     this.dataList[index].retail = list[index].retail
-      //     this.dataList[index].wholesale = list[index].wholesale
-      //     this.dataList[index].trade = list[index].trade
-      //     this.dataList[index].brokerage = this.rewardState == 0 ? '' : list[index].brokerage
-      //     this.dataList[index].integral = list[index].integral
-      //     this.dataList[index].exchangePoints = this.pointExchangeState == 0 ? '' : list[index].exchangePoints
-      //     this.dataList[index].exchangePrice = this.pointExchangeState == 0 ? '' : list[index].exchangePrice
-      //   })
-      // }
       // this.columnsList = [...this.columnsListUpdata]
       this.initExchangeFn()
     },
@@ -1812,7 +1780,6 @@ export default {
       }
       let obj = this.expandSpec[index]
       obj.showEdit = !obj.showEdit
-      // console.log('this.skusListOrg', this.skusListOrg)
       // this.expandSpec[index].editVal = ''
       this.$set(this.expandSpec, index, obj)
     },
@@ -1856,13 +1823,22 @@ export default {
     // 删除Spec
     clearSpec (index, idx) {
       let obj = this.expandSpec[index]
+      let specValsCurrent = this.expandSpec[index].specVals
+      let list = this.dataList.filter(item => {
+        if (index === 0) {
+          return item.guige0 !== specValsCurrent
+        }
+        if (index === 1) {
+          return item.guige1 !== specValsCurrent
+        }
+      })
       obj.showEdit = false
       obj.specVals.splice(idx, 1)
       this.$set(this.expandSpec, index, obj)
       // expandSpecForEachClear
       if (this.type !== 'edit') {
         // console.log(this.dataList)
-        this.expandSpecForEachClear(this.expandSpec, this.skusListOrg)
+        this.expandSpecForEach(this.expandSpec, list)
         // this.expandSpecFor(this.expandSpec, this.dataList)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)

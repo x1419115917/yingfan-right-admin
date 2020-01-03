@@ -214,7 +214,6 @@ export default {
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
-      delIndex: '',
       total: 0,
       rolelistArr: [],
       detailInfo: {},
@@ -456,12 +455,14 @@ export default {
       this.forTreesIds(this.treeData1)
     },
     treeChange (data) {
-      console.log(data)
+      // console.log(data)
+      this.pageNum = 1
+      this.pageSize = 10
       this.categoryId = data[0].id
       this.levelCheck = data[0].data.level
       this.branchIdsCheck = data[0].data.branchIds.split('>')
       this.getPageList()
-      console.log('this.levelCheck', this.levelCheck)
+      // console.log('this.levelCheck', this.levelCheck)
       // this.formValidate.deptId = data[0].id == -1 ? '' : data[0].id
       // this.formValidate.dept = data[0].title == '顶级节点' ? '' : data[0].title
       // this.getPageList()
