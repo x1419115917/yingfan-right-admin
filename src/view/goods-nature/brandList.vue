@@ -87,7 +87,7 @@
             <Button type="primary" class="upload-img">上传图片</Button>
 					  <input type="file" class="img-ipt"
               ref="filezm" @change="filezm" accept="image/*" capture="camera">
-              <span class="tips-upload">(180*180，jpg，小于20k)</span>
+              <span class="tips-upload">(180*180，jpg，小于200k)</span>
           </div>
 				</div>
 				<FormItem label="品牌介绍:" prop="intro">
