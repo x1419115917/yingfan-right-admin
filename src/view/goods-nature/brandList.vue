@@ -377,7 +377,7 @@ export default {
             title: value.text,
             checked: value.selected === 'true',
             dataInfo: value.data,
-            expand: num < 1,
+            expand: num < 0,
             children: this.forArr1(value.children, num + 1),
             hasParent: value.hasParent,
             hasChildren: value.hasChildren
@@ -436,7 +436,7 @@ export default {
       let res = await categoryTreeList(data)
       console.log(res.data)
       if (res.data.code === 0) {
-        let data = [{ ...res.data.content }]
+        let data = [...res.data.content.children]
         this.ztreesData = this.forArr1(data, 0)
       }
     },
