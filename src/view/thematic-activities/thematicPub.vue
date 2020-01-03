@@ -42,7 +42,7 @@
                           accept="image/*"
                           capture="camera">
                       </div>
-                      <div><span class="title-span-tips">(图片尺寸宽度710，高度250，jpg，jpeg，gif，小于500k)</span></div>
+                      <div><span class="title-span-tips">(图片尺寸宽度750，高度600，jpg，jpeg，gif，小于500k)</span></div>
                     </Col>
                   </Row>
                 </Col>

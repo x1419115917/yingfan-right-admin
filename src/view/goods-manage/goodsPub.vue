@@ -218,30 +218,33 @@
              <div class="base-attr expand-attr" v-show="expandSpec && expandSpec.length > 0">
               <div v-for="(item,index) in expandSpec" :key="index">
                 <div class="name-left w687">
-                  <div class="tb-top-item">
-                    <span class="top-name">{{item.specName}}：</span>
-                    <div class="spce-right">
-                      <div class="content-box-vals" v-for="(values,idx) in item.specVals" :value="values" :key="idx">
-                        <!-- <span class="check-box to-ipt-show toname-ipt">{{values}}</span> @on-change="iptChange($event,index,idx)" -->
-                        <Input class="check-box to-ipt-show toname-ipt" type="text" :value="values" @on-focus="iptFocus($event,index,idx)" @on-blur="iptChange($event,index,idx)"></Input>
-                      </div>
-                      <div class="edit-item" v-show="expandSpec.length > 0 && index === 0">
-                        <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
-                        <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
-                          <!-- <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" /> -->
-                          <Input class="edit-modal-ipt" v-model="addSpelVal" placeholder="请输入" style="width: 100px" />
-                          <Button class="edit-btn" @click="saveExpandFn(index, addSpelVal)" type="info">保存</Button>
+                  <div class="tb-top-item tb-top-item-spec">
+                    <Row>
+                      <Col :span="2" class="top-name">{{item.specName}}：</Col>
+                      <Col :span="20" class="spce-right">
+                        <div class="content-box-vals" v-for="(values,idx) in item.specVals" :value="values" :key="idx">
+                          <!-- <span class="check-box to-ipt-show toname-ipt">{{values}}</span> @on-change="iptChange($event,index,idx)" -->
+                          <Icon type="ios-close-circle" size="22" class="close-btn" @click="clearSpec(index,idx)" v-show="(idx > item.specLength && type === 'edit') || (type !== 'edit')" />
+                          <Input class="check-box to-ipt-show toname-ipt" type="text" :value="values" @on-focus="iptFocus($event,index,idx)" @on-blur="iptChange($event,index,idx)"></Input>
                         </div>
-                      </div>
-                      <div class="edit-item" v-show="expandSpec.length > 1 && index === 1">
-                        <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
-                        <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
-                          <!-- <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" /> -->
-                          <Input class="edit-modal-ipt" v-model="addSpelVal1" placeholder="请输入" style="width: 100px" />
-                          <Button class="edit-btn" @click="saveExpandFn(index, addSpelVal1)" type="info">保存</Button>
+                        <div class="edit-item" v-show="expandSpec.length > 0 && index === 0">
+                          <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
+                          <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
+                            <!-- <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" /> -->
+                            <Input class="edit-modal-ipt" v-model="addSpelVal" placeholder="请输入" style="width: 100px" />
+                            <Button class="edit-btn" @click="saveExpandFn(index, addSpelVal)" type="info">保存</Button>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                        <div class="edit-item" v-show="expandSpec.length > 1 && index === 1">
+                          <Icon style="cursor:pointer" v-show="!item.showEdit" @click="editExpandFn(index)" type="ios-add-circle-outline" size="22" />
+                          <div class="edit-ipt" style="float: left;" v-show="item.showEdit">
+                            <!-- <Input class="edit-modal-ipt" v-model="item.editVal" placeholder="请输入" style="width: 100px" /> -->
+                            <Input class="edit-modal-ipt" v-model="addSpelVal1" placeholder="请输入" style="width: 100px" />
+                            <Button class="edit-btn" @click="saveExpandFn(index, addSpelVal1)" type="info">保存</Button>
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
                   </div>
                 </div>
               </div>
@@ -1121,6 +1124,42 @@ export default {
       // this.columnsList = [...this.columnsListUpdata]
       this.initExchangeFn()
     },
+    // 删除重新遍历
+    expandSpecForEachClear (arr, list) {
+      if (arr && arr.length === 2) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = [...this.expandSpec[1].specVals]
+        this.dataList = this.Descates
+      } else if (arr && arr.length == 1) {
+        this.expandSpec1 = [...this.expandSpec[0].specVals]
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      } else {
+        this.expandSpec1 = []
+        this.expandSpec2 = []
+        this.dataList = this.Descates
+      }
+      // if (list && list.length > 0) {
+      //   list.forEach((item, index) => {
+      //     this.dataList[index].skuId = ''
+      //     this.dataList[index].imageUrl = list[index].imageUrl
+      //     this.dataList[index].imageShow = this.dataList[index].imageUrl !== ''
+      //     this.dataList[index].code = list[index].code
+      //     this.dataList[index].tcode = list[index].tcode
+      //     this.dataList[index].supply = list[index].supply
+      //     this.dataList[index].stock = list[index].stock
+      //     this.dataList[index].retail = list[index].retail
+      //     this.dataList[index].wholesale = list[index].wholesale
+      //     this.dataList[index].trade = list[index].trade
+      //     this.dataList[index].brokerage = this.rewardState == 0 ? '' : list[index].brokerage
+      //     this.dataList[index].integral = list[index].integral
+      //     this.dataList[index].exchangePoints = this.pointExchangeState == 0 ? '' : list[index].exchangePoints
+      //     this.dataList[index].exchangePrice = this.pointExchangeState == 0 ? '' : list[index].exchangePrice
+      //   })
+      // }
+      // this.columnsList = [...this.columnsListUpdata]
+      this.initExchangeFn()
+    },
     clearGoodsObj () { // 清空商品obj
       this.goodsObj = {
         supply: '',
@@ -1726,8 +1765,13 @@ export default {
         // return;
         this.baseSpec = skuInfo.attrTemplate
         this.expandSpec = skuInfo.specTemplate
+        if (this.expandSpec && this.expandSpec.length > 0) {
+          this.expandSpec.forEach(item => {
+            item.specLength = item.specVals.length - 1
+          })
+        }
         this.expandSpecFor(this.expandSpec, this.skusList)
-        console.log('this.expandSpec-edit', this.expandSpec)
+        // console.log('this.expandSpec-edit', this.expandSpec)
         // console.log('ctx-edit',this.ctx)
       }
     },
@@ -1768,7 +1812,7 @@ export default {
       }
       let obj = this.expandSpec[index]
       obj.showEdit = !obj.showEdit
-      console.log('this.skusListOrg', this.skusListOrg)
+      // console.log('this.skusListOrg', this.skusListOrg)
       // this.expandSpec[index].editVal = ''
       this.$set(this.expandSpec, index, obj)
     },
@@ -1804,6 +1848,21 @@ export default {
       if (this.type !== 'edit') {
         // console.log(this.dataList)
         this.expandSpecForEach(this.expandSpec, this.skusListOrg)
+        // this.expandSpecFor(this.expandSpec, this.dataList)
+      } else {
+        this.expandSpecFor(this.expandSpec, this.skusList)
+      }
+    },
+    // 删除Spec
+    clearSpec (index, idx) {
+      let obj = this.expandSpec[index]
+      obj.showEdit = false
+      obj.specVals.splice(idx, 1)
+      this.$set(this.expandSpec, index, obj)
+      // expandSpecForEachClear
+      if (this.type !== 'edit') {
+        // console.log(this.dataList)
+        this.expandSpecForEachClear(this.expandSpec, this.skusListOrg)
         // this.expandSpecFor(this.expandSpec, this.dataList)
       } else {
         this.expandSpecFor(this.expandSpec, this.skusList)
@@ -2199,9 +2258,12 @@ export default {
     }
   }
 }
+.tb-top-item-spec{
+  overflow: visible;
+}
 .spce-right{
   float: left;
-  width: 800px;
+  // width: 800px;
 }
 .check-box[data-v-5c127369] {
     max-width: 560px;
@@ -2443,6 +2505,14 @@ export default {
       width: 95%;
       .content-box-vals{
         float: left;
+        position: relative;
+        .close-btn{
+          cursor: pointer;
+          position: absolute;
+          z-index: 10;
+          top: -8px;
+          left: 75px;
+        }
       }
       .to-ipt-show{
         height: 32px;
@@ -2470,6 +2540,7 @@ export default {
       }
       .edit-ipt{
         float: left;
+        position: relative;
         .edit-btn{
           height: 30px;
         }
