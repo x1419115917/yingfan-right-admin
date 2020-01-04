@@ -1111,7 +1111,7 @@ export default {
         list.forEach((item, index) => {
           this.dataList[index].skuId = ''
           this.dataList[index].imageUrl = list[index].imageUrl
-          this.dataList[index].imageShow = this.dataList[index].imageUrl !== ''
+          this.dataList[index].imageShow = list[index].imageUrl !== ''
           this.dataList[index].code = list[index].code
           this.dataList[index].tcode = list[index].tcode
           this.dataList[index].supply = list[index].supply
