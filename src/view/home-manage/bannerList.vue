@@ -22,6 +22,7 @@
     <div class="wrap">
       <Table :columns="columns" border :data="activeList" stripe :loading="tableLoading">
         <template slot-scope="{ row, index }" slot="plateRegion">{{ returnPlateRegion(row.plateRegion) }}</template>
+        <template slot-scope="{ row, index }" slot="plateType">{{ returnPlateType(row.plateType) }}</template>
         <template slot-scope="{ row, index }" slot="action">
           <Button type="primary" size="small" style="margin-right: 5px" @click="operate(row,0)">详情</Button>
           <Button type="primary" size="small" style="margin-right: 5px" @click="operate(row,1)" v-has="'sys:homePage:edit'">编辑</Button>
@@ -114,6 +115,11 @@ export default {
           slot: 'plateRegion'
         },
         {
+          title: '跳转类型',
+          align: 'center',
+          slot: 'plateType'
+        },
+        {
           title: '操作',
           slot: 'action',
           align: 'center'
@@ -122,6 +128,12 @@ export default {
     }
   },
   methods: {
+    returnPlateType (item) {
+      switch (item) {
+        case 0 : return '专题活动'
+        case 1 : return '商品'
+      }
+    },
     returnPlateRegion (item) {
       switch (item) {
         case 0 : return '首页banner'
