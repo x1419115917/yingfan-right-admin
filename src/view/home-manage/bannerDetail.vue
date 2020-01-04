@@ -2,11 +2,11 @@
 <template>
   <div class="bannerDetail">
     <div class="wrap">
-      <Table max-height="400" :columns="columns" border :data="activeList" stripe>
-        <template slot-scope="{ row }" slot="activityName">{{ row.activityName }}</template>
-        <template slot-scope="{ row }" slot="pictureUrl">
+      <Table max-height="400" :columns="activeMsg.plateType === 0 ? activeColumns : goodsColumns" border :data="dataList" stripe>
+        <template slot-scope="{ row }" slot="name">{{ row.name }}</template>
+        <template slot-scope="{ row }" slot="url">
           <div class="img">
-            <img :src="row.pictureUrl" />
+            <img :src="row.url" />
           </div>
         </template>
       </Table>
@@ -17,18 +17,29 @@
 export default {
   data () {
     return {
-      activeList: [],
-      detail: '',
-      columns: [
+      dataList: [],
+      activeColumns: [
         {
           title: '专题活动名称',
           align: 'center',
-          slot: 'activityName'
+          slot: 'name'
         },
         {
           title: '图片',
           align: 'center',
-          slot: 'pictureUrl'
+          slot: 'url'
+        }
+      ],
+      goodsColumns: [
+        {
+          title: '商品名称',
+          align: 'center',
+          slot: 'name'
+        },
+        {
+          title: '图片',
+          align: 'center',
+          slot: 'url'
         }
       ]
     }
@@ -38,13 +49,11 @@ export default {
   },
   watch: {
     activeMsg () {
-      this.detail = this.activeMsg.activityDetails
-      this.activeList = this.activeMsg.activityDetails
+      this.dataList = this.activeMsg.details
     }
   },
   created () {
-    this.detail = this.activeMsg.activityDetails
-    this.activeList = this.activeMsg.activityDetails
+    this.dataList = this.activeMsg.details
   }
 }
 </script>

@@ -38,7 +38,7 @@
           @on-change="pageChange"/>
       </div>
       <Modal v-model="modal" width="800" class="hideFootModal">
-        <cash-out-detail @close="modal = false" @updateList="getList" :cashoutId="cashoutId"></cash-out-detail>
+        <cash-out-detail @close="modal = false" @updateList="getList"></cash-out-detail>
       </Modal>
   </div>
 </template>

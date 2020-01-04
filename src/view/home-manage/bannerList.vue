@@ -1,7 +1,7 @@
 <!--首页配置-banner列表-->
 <template>
   <div class="bannerList">
-    <Card title="首页展示列表">
+    <Card title="首页配置列表">
       <Row>
           <Col span="6">
             <span>名称</span>
@@ -142,7 +142,7 @@ export default {
     },
     operate (row, type) {
       switch (type) {
-        case 0: this.modalTitle = '活动详情'
+        case 0: this.modalTitle = '详情'
           this.modalWid = '800'
           this.activeMsg = row
           break

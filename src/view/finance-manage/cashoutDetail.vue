@@ -72,7 +72,6 @@ export default {
       cashoutDetail: {}
     }
   },
-  props: ['cashoutId'],
   methods: {
     returnStatus (item) {
       switch (item) {
