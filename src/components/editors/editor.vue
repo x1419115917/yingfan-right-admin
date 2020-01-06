@@ -2,13 +2,13 @@
 <div class="editor" :class="{error:err}">
   <!-- 图片上传组件辅助-->
   <div class="label" :style="{width:labelWidth+'px'}">
-  	<label :class="{required:required}">
-  		<slot name="label" class="12"></slot>
-  	</label>
+    <label :class="{required:required}">
+      <slot name="label" class="12"></slot>
+    </label>
   </div>
   <div class="editor-wrapper" :style="{margin:'0 0 0 0px'}">
-  	<Upload
-  		style="display: none;"
+    <Upload
+      style="display: none;"
       class="uploader"
       :action="serverUrl"
       name="file"
@@ -32,7 +32,7 @@
         v-model="detailContent"
         ref="myQuillEditor"
         :options="editorOption"
-        @blur="_blur"
+        @blur="_blur($event)"
         @change="onEditorChange($event)">
       </quill-editor>
       <p class="tips" v-if="tips.length>0">{{tips}}</p>
@@ -183,8 +183,8 @@ export default {
     uploadSuccess (res, file) {
       // res为图片服务器返回的数据
       // 获取富文本组件实例
-	  let quill = this.$refs.myQuillEditor.quill
-	  console.log(res)
+      let quill = this.$refs.myQuillEditor.quill
+      console.log(res)
       // 如果上传成功
       if (res.code === 0 && res.info !== null) {
         // 获取光标所在位置
@@ -213,35 +213,36 @@ export default {
     },
     /* 当编辑器内容发生变化时触发 */
     onEditorChange ($event) {
-    	this.$emit('on-change', $event)
-    	this.isInit = false
-    	this.valiDate()
+      this.$emit('on-change', $event)
+      this.isInit = false
+      this.valiDate()
     },
     /* 设置编辑器的内容 */
     resetForm () {
       // this.detailContent = ''
       // this.$refs.myQuillEditor.quill.root.innerHTML = this.initContent
       this.detailContent = this.initContent
-    	this.isInit = true
+      this.isInit = true
     },
     /* 设置报错 */
     valiDate (msg = '请编辑内容') {
       this.isInit = false
-    	if (this.detailContent.length == 0) {
-    		if (!this.isInit) {
-    			this.tips = msg
-    			this.err = true
-    		}
-    		return false
-    	} else {
-    		this.tips = ''
-    		this.err = false
-    		return true
-    	}
+      if (this.detailContent.length == 0) {
+        if (!this.isInit) {
+          this.tips = msg
+          this.err = true
+        }
+        return false
+      } else {
+        this.tips = ''
+        this.err = false
+        return true
+      }
     },
-    _blur () {
-      let container = this.$refs.myQuillEditor
-      container.innerHTML = this.detailContent
+    _blur (e) {
+      console.log(e)
+      // let container = this.$refs.myQuillEditor
+      // container.innerHTML = e.container.innerHTML
       this.valiDate()
     }
   }
@@ -249,36 +250,36 @@ export default {
 </script>
 
 <style  lang="less">
-	.editor{
-		position: relative;
-		padding-bottom: 6px;
-		.ql-container.ql-snow{
-			.ql-editor{
-				min-height: 300px;
-			}
-		}
-		.label{
-			float: left;
-			text-align: right;
-			padding-right: 12px;
-			box-sizing: border-box;
-			line-height: 40px;
-			label{
-				span{
-					color: #606266;
-					font-size: 14px;
-				}
-			}
-		}
-		.tips{
-			bottom: 0;
-		}
+  .editor{
+    position: relative;
+    padding-bottom: 6px;
+    .ql-container.ql-snow{
+      .ql-editor{
+        min-height: 300px;
+      }
+    }
+    .label{
+      float: left;
+      text-align: right;
+      padding-right: 12px;
+      box-sizing: border-box;
+      line-height: 40px;
+      label{
+        span{
+          color: #606266;
+          font-size: 14px;
+        }
+      }
+    }
+    .tips{
+      bottom: 0;
+    }
 
-	}
-	.editor.error{
-		.ql-container.ql-snow,.ql-toolbar.ql-snow{
-			border-color: #FF0000;
-		}
+  }
+  .editor.error{
+    .ql-container.ql-snow,.ql-toolbar.ql-snow{
+      border-color: #FF0000;
+    }
   }
   .editor-wrapper{
     position: relative;
