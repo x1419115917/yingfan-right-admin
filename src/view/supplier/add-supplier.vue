@@ -244,7 +244,6 @@ export default {
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
-      delIndex: '',
       total: 0,
       checkName: '',
       checkSelId: '',
@@ -487,6 +486,9 @@ export default {
     },
     addFn () {
       this.modal1 = true
+      this.cur1 = ''
+      this.cur2 = ''
+      this.cur3 = ''
       this.getcategList(0, '', 1)
     },
     forArr1 (arr, num) { // 循环部门树形数据
