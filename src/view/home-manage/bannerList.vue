@@ -3,20 +3,20 @@
   <div class="bannerList">
     <Card title="首页配置列表">
       <Row>
-          <Col span="6">
-            <span>名称</span>
-            <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入名称" clearable></Input>
-          </Col>
-          <Col span="8">
-            <span>展示位置</span>
-            <Select v-model="form.plateRegion" placeholder="请选择展示位置" :style="{width: inpWidth}" clearable>
-              <Option v-for="item in showDotOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-            <Button style="margin-left:10px;" type="primary" @click="search">查询</Button>
-          </Col>
-          <Col span="6" offset="4">
-            <Button class="addBtn" icon="ios-add" type="success" @click="operate('',2)" v-has="'sys:homePage:add'">新增</Button>
-          </Col>
+        <Col span="6">
+          <span>名称</span>
+          <Input v-model="form.plateName" :style="{ width :inpWidth}" placeholder="请输入名称" clearable></Input>
+        </Col>
+        <Col span="8">
+          <span>展示位置</span>
+          <Select v-model="form.plateRegion" placeholder="请选择展示位置" :style="{width: inpWidth}" clearable>
+            <Option v-for="item in showDotOpts" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+          <Button style="margin-left:10px;" type="primary" @click="search">查询</Button>
+        </Col>
+        <Col span="6" offset="4">
+          <Button class="addBtn" icon="ios-add" type="success" @click="operate('',2)" v-has="'sys:homePage:add'">新增</Button>
+        </Col>
       </Row>
     </Card>
     <div class="wrap">

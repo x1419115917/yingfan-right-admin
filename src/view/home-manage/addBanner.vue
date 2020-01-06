@@ -74,7 +74,7 @@
               </template>
               <!--跳转类型为商品-->
               <template v-else-if="form.plateType === '1'">
-                <Button size="small" type="success" ghost @click="addGoods(row,index)">添加商品</Button>
+                <Button type="success" ghost @click="addGoods(row,index)">添加商品</Button>
                 <template v-if="form.plaDets[index].contentVoucher.images">
                   <div class="goods">
                     <div><img :src="form.plaDets[index].contentVoucher.images[0]" /></div>
@@ -84,8 +84,8 @@
               </template>
             </template>
             <template slot-scope="{ row,index }" slot="sortOrder">
-              <!--<InputNumber :max="5" :min="1" v-model.sync="form.plaDets[index].sortOrder" placeholder="权重"></InputNumber>-->
-              <Input type="number" style="width: 80px;" v-model="form.plaDets[index].sortOrder" placeholder="请输入权重"></Input>
+              <InputNumber :max="5" :min="1" v-model="form.plaDets[index].sortOrder" placeholder="权重"></InputNumber>
+              <!--<Input type="number" style="width: 80px;" v-model="form.plaDets[index].sortOrder" placeholder="请输入权重"></Input>-->
               <div class="tips">请输入1~5之间数字</div>
               <div class="tips">1为最高权重</div>
             </template>
@@ -141,7 +141,7 @@ export default {
         plaDets: [{ // 活动图片列表
           contentVoucher: '',
           pictureUrl: '',
-          sortOrder: ''
+          sortOrder: null
         }],
         isShow: '0' // 显示状态
       },
@@ -332,7 +332,7 @@ export default {
         obj = {
           contentVoucher: '',
           pictureUrl: '',
-          sortOrder: '',
+          sortOrder: null,
           isShow: '0'
         }
         delete this.form.isShow
@@ -340,7 +340,7 @@ export default {
         obj = {
           contentVoucher: '',
           pictureUrl: '',
-          sortOrder: ''
+          sortOrder: null
         }
         this.form.isShow = '0'
       }
@@ -388,7 +388,7 @@ export default {
               plaDets: [{
                 contentVoucher: '',
                 pictureUrl: '',
-                sortOrder: ''
+                sortOrder: null
               }],
               isShow: '0'
             }
@@ -473,7 +473,7 @@ export default {
           plaDets: [{
             contentVoucher: '',
             pictureUrl: '',
-            sortOrder: ''
+            sortOrder: null
           }],
           isShow: '0'
         }
@@ -492,7 +492,7 @@ export default {
         plaDets: [{
           contentVoucher: '',
           pictureUrl: '',
-          sortOrder: ''
+          sortOrder: null
         }],
         isShow: '0'
       }
