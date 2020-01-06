@@ -230,7 +230,6 @@ export default {
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
-      delIndex: '',
       total: 0,
       loading: false, // 分割线
       tableLoading: false
@@ -289,6 +288,7 @@ export default {
       }
     },
     async brandDetail (id) {
+      this.catgCheckList = []
       let data = {
         FLAG: 1,
         id: id
@@ -296,6 +296,7 @@ export default {
       let res = await brandDetail(data)
       if (res.data.code === 0) {
         let data = res.data.content
+        // console.log('braCatRefs++--', res)
         this.formValidate = {
           name: data.name,
           nameEn: data.nameEn,
@@ -304,6 +305,8 @@ export default {
         this.imgShow1 = true
         this.imgUrl = data.pictureUrl
         this.menuIds = data.braCatRefs
+        // data.branchIds.filte
+        this.catgCheckList = data.branchIds
         if (this.menuIds && this.menuIds.length > 0) {
           this.forIds(this.menuIds)
         }
@@ -320,7 +323,7 @@ export default {
       arr.forEach((item, index) => {
         if (item.id == roleId) {
           this.$set(item, 'checked', true)
-          this.catgCheckList.push(item.branchIds)
+          // this.catgCheckList.push(item.branchIds)
         } else {
           if (item.children) {
             this.parentFn(item.children, roleId)

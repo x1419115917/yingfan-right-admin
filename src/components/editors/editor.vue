@@ -45,24 +45,22 @@ import Cookies from 'js-cookie'
 import config from '@/config'
 const baseUrl = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro
 const toolbarOptions = [
-	  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-	  ['blockquote', 'code-block'],
-
-	  [{ 'header': 1 }, { 'header': 2 }], // custom button values
-	  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-	  [{ 'script': 'sub' }, { 'script': 'super' }], // superscript/subscript
-	  [{ 'indent': '-1' }, { 'indent': '+1' }], // outdent/indent
-	  [{ 'direction': 'rtl' }], // text direction
-
-	  [{ 'size': ['small', false, 'large', 'huge'] }], // custom dropdown
-	  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
-	  [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
-	  [{ 'font': [] }],
-	  [{ 'align': [] }],
-	  ['link', 'image'],
-  //   ['link', 'image', 'video'],
-	  ['clean'] // remove formatting button
+  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+  ['blockquote', 'code-block'],
+  [{ 'header': 1 }, { 'header': 2 }], // custom button values
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  [{ 'script': 'sub' }, { 'script': 'super' }], // superscript/subscript
+  [{ 'indent': '-1' }, { 'indent': '+1' }], // outdent/indent
+  [{ 'direction': 'rtl' }], // text direction
+  [{ 'size': ['small', false, 'large', 'huge'] }], // custom dropdown
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
+  [{ 'font': [] }],
+  [{ 'align': [] }],
+  ['link', 'image'],
+  // ['link', 'image', 'video'],
+  ['clean'], // remove formatting button
+  ['sourceEditor'] // 源码编辑
 ]
 
 export default {
@@ -77,7 +75,7 @@ export default {
       header: { token: Cookies.get('access_token') }, // 有的图片服务器要求请求头需要有token之类的参数，写在这里
       detailContent: '', // 富文本内容
       editorOption: {
-        	placeholder: '',
+        placeholder: '',
         theme: 'snow', // or 'bubble'
         modules: {
           toolbar: {
@@ -89,6 +87,28 @@ export default {
                 } else {
                   this.quill.format('image', false)
                 }
+              },
+              shadeBox: null,
+              // 添加工具方法
+              'sourceEditor': function () {
+                // alert('我新添加的工具方法');
+                const container = this.container
+                const firstChild = container.nextElementSibling.firstChild
+                // 在第一次点击源码编辑的时候，会在整个工具条上加一个div，层级比工具条高，再次点击工具条任意位置，就会退出源码编辑。可以在下面cssText里面加个背景颜色看看效果。
+                if (!this.shadeBox) {
+                  let shadeBox = this.shadeBox = document.createElement('div')
+                  shadeBox.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer'
+                  container.style.position = 'relative'
+                  container.appendChild(shadeBox)
+                  firstChild.innerText = firstChild.innerHTML
+                  shadeBox.addEventListener('click', function () {
+                    this.style.display = 'none'
+                    firstChild.innerHTML = firstChild.innerText.trim()
+                  }, false)
+                } else {
+                  this.shadeBox.style.display = 'block'
+                  firstChild.innerText = firstChild.innerHTML
+                }
               }
             }
           }
@@ -97,54 +117,63 @@ export default {
     }
   },
   props: {
-  	params: {
-  		type: Object,
-  		default () {
-  			return {
-				  tag: 0
+    params: {
+      type: Object,
+      default () {
+        return {
+          tag: 0
         }
-  		}
-  	},
-  	labelWidth: {
+      }
+    },
+    labelWidth: {
       type: Number,
-  		default () {
-  			return 100
-  		}
-  	},
-  	initContent: {
-  		type: String,
-  		default () {
-  			return ''
-  		}
-  	},
-  	required: {
-  		type: [Boolean, String],
-  		default () {
-  			return undefined
-  		}
-  	}
+      default () {
+        return 100
+      }
+    },
+    initContent: {
+      type: String,
+      default () {
+        return ''
+      }
+    },
+    required: {
+      type: [Boolean, String],
+      default () {
+        return undefined
+      }
+    }
   },
   watch: {
     initContent: function (val, oval) {
       this.detailContent = val
-  	},
-  	isInit: function (val, oval) {
-  		if (val) {
-  			this.tips = ''
-  			this.err = false
-  		}
-  	}
+    },
+    isInit: function (val, oval) {
+      if (val) {
+        this.tips = ''
+        this.err = false
+      }
+    }
   },
   created () {
-  	this.detailContent = this.initContent
+    this.detailContent = this.initContent
   },
   mounted () {
     this.detailContent = this.initContent
-  	this.$nextTick(() => {
+    this.$nextTick(() => {
       this.$on('resetForm', function () {
         this.resetForm()
       })
     })
+    // 样式随便改
+    const sourceEditorButton = document.querySelector('.ql-sourceEditor')
+    // sourceEditorButton.style.cssText = 'font-size:20px'
+    // 加了iview的icon <Icon type="ios-create-outline" />
+    // sourceEditorButton.classList.add('ios-create-outline')
+    sourceEditorButton.style.cssText = 'font-size: 12px; width:45px; border:1px solid #87CEFA; border-radius:5px; color:#87CEFA'
+    sourceEditorButton.innerText = 'HTML'
+    // 鼠标放上去显示的提示文字
+    sourceEditorButton.title = '源码编辑'
   },
   methods: {
     beforeUpload () {
@@ -211,7 +240,9 @@ export default {
     	}
     },
     _blur () {
-    	this.valiDate()
+      let container = this.$refs.myQuillEditor
+      container.innerHTML = this.detailContent
+      this.valiDate()
     }
   }
 }
