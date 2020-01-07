@@ -222,6 +222,7 @@
                     <Row>
                       <Col :span="2" class="top-name">{{item.specName}}：</Col>
                       <Col :span="20" class="spce-right">
+
                         <div class="content-box-vals" v-for="(values,idx) in item.specVals" :value="values" :key="idx">
                           <!-- <span class="check-box to-ipt-show toname-ipt">{{values}}</span> @on-change="iptChange($event,index,idx)" -->
                           <Icon type="ios-close-circle" size="22" class="close-btn" @click="clearSpec(index,idx)" v-show="(idx > item.specLength && type === 'edit') || (type !== 'edit')" />
@@ -746,14 +747,14 @@ export default {
   },
   beforeRouteEnter (to, from, next) { // 路由载入页面处理
     next(vm => {
-      let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
-      vm.getcategList(0, '', 1)
-      vm.getSupplierList()
-      if (brand && brand.length === 0) {
-        vm.getlistBrandsPage()
-      } else {
-        vm.BrandsList = brand
-      }
+      // let brand = JSON.parse(sessionStorage.getItem('BrandLists')) || []
+      // vm.getcategList(0, '', 1)
+      // vm.getSupplierList()
+      // if (brand && brand.length === 0) {
+      //   vm.getlistBrandsPage()
+      // } else {
+      //   vm.BrandsList = brand
+      // }
       vm.goodsObj = { // 商品批量填充obj
         supply: '',
         stock: '',
