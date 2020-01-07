@@ -14,7 +14,7 @@
       name="file"
       :data="params"
       :headers="header"
-      :format="['jpg','jpeg','png']"
+      :format="['jpg','jpeg','png','gif']"
       :max-size="2048"
       :show-file-list="false"
       :on-success="uploadSuccess"
