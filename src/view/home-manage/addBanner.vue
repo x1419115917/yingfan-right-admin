@@ -85,7 +85,6 @@
             </template>
             <template slot-scope="{ row,index }" slot="sortOrder">
               <InputNumber :max="5" :min="1" v-model="form.plaDets[index].sortOrder" placeholder="权重"></InputNumber>
-              <!--<Input type="number" style="width: 80px;" v-model="form.plaDets[index].sortOrder" placeholder="请输入权重"></Input>-->
               <div class="tips">请输入1~5之间数字</div>
               <div class="tips">1为最高权重</div>
             </template>
@@ -377,7 +376,6 @@ export default {
           }
         } else if (this.editType === 2) { // 新增
           let data = Object.assign(this.form, { FLAG: 1 })
-          console.log(JSON.stringify(data))
           let res = await doAddHomeBanner(data)
           if (res.data.code === 0) {
             this.$Message.success('操作成功!')
