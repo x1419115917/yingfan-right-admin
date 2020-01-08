@@ -272,7 +272,6 @@ export default {
         return
       }
       this.$emit('chooseGoods', selcheck[0])
-
       // console.log('selectedList', this.selectedList)
     },
     cancelModal () {

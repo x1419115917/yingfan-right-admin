@@ -102,7 +102,7 @@
         </FormItem>
     </Form>
     <Modal v-model="modal1" class="hideFootModal" title="添加商品"  width="940" :mask-closable="false">
-      <member-chosses @cancelModal="modal1 = false" @chooseGoods="chooseGoods"></member-chosses>
+      <member-chosses @cancelModal="modal1 = false" :modal1="modal1" @chooseGoods="chooseGoods"></member-chosses>
     </Modal>
   </div>
 </template>

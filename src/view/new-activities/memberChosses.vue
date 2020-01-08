@@ -271,7 +271,6 @@ export default {
         })
         return
       }
-      this.getPageList()
       this.$emit('chooseGoods', selcheck[0])
       // console.log('selectedList', this.selectedList)
     },
