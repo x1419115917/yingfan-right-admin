@@ -79,6 +79,10 @@
             <Radio label="1">隐藏</Radio>
           </RadioGroup>
 				</FormItem>
+        <FormItem label="权重:" prop="sortOrder">
+					<!-- <Input v-model="formValidate.sortOrder" placeholder="请输入"></Input> -->
+          <InputNumber :max="1000" :min="0" v-model="formValidate.sortOrder"></InputNumber>
+				</FormItem>
         <div class="form-item" v-show="level == 3">
           <span class="name"><span>*</span>类目图标:</span>
           <span class="form-item-img" v-show="!imgShow1"></span>
@@ -171,13 +175,17 @@ export default {
         categorySecond: '',
         categoryThird: '',
         parentId: '0',
-        status: ''
+        status: '',
+        sortOrder: 0
       },
       ruleValidate1: {
         categoryFirst: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         status: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        sortOrder: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
@@ -232,7 +240,6 @@ export default {
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
-      delIndex: '',
       total: 0,
       rolelistArr: [],
       loading: false, // 分割线
@@ -311,7 +318,8 @@ export default {
             categorySecond: data.levelNo === 2 ? data.text : '',
             categoryThird: '',
             parentId: data.id,
-            status: ''
+            status: '',
+            sortOrder: 0
           }
           this.modal1 = true
           this.operationShow = false
@@ -388,6 +396,7 @@ export default {
           categorySecond: categorySecond,
           categoryThird: categoryThird,
           parentId: data.parentId,
+          sortOrder: data.sortOrder,
           status: data.isShow.toString()
         }
         // this.formValidate = {
@@ -439,7 +448,7 @@ export default {
         name: categoryName,
         // parentId: this.formValidate.parentId,
         pictureUrl: this.imgUrl,
-        sortOrder: 0
+        sortOrder: this.formValidate.sortOrder
       }
       let res = await catgUpdate(data)
       if (res.data.code === 0) {
@@ -450,16 +459,6 @@ export default {
           content: '编辑成功'
         })
         this.checkedId = ''
-        this.formValidate = {
-          deptId: '',
-          dept: '',
-          email: '',
-          status: '',
-          username: '',
-          name: '',
-          roleIds: [],
-          pwd: ''
-        }
         this.getPageList()
       }
     },
@@ -592,7 +591,7 @@ export default {
         name: categoryName,
         parentId: this.formValidate.parentId,
         pictureUrl: this.imgUrl,
-        sortOrder: 0
+        sortOrder: this.formValidate.sortOrder
       }
       let res = await catgSave(data)
       if (res.data.code === 0) {
