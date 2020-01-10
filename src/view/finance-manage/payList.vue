@@ -24,6 +24,7 @@
             <span v-else>-</span>
           </template>
           <template slot-scope="{ row, index }" slot="status"><span>{{ returnStatus(row.status) }}</span></template>
+          <template slot-scope="{ row, index }" slot="paySource"><span>{{ returnPaySource(row.paySource) }}</span></template>
           <template slot-scope="{ row, index }" slot="payFee">
             <span v-if="row.payFee">¥{{ row.payFee }}</span>
             <span v-else>-</span>
@@ -60,12 +61,12 @@ export default {
       },
       columns: [
         {
-          title: '交易流水号',
-          key: 'id',
+          title: '商户订单号',
+          key: 'serialNumber',
           align: 'center'
         },
         {
-          title: '订单号',
+          title: '平台订单号',
           key: 'businessId',
           align: 'center'
         },
@@ -73,6 +74,11 @@ export default {
           title: '支付时间',
           align: 'center',
           slot: 'timeEnd'
+        },
+        {
+          title: '支付来源',
+          align: 'center',
+          slot: 'paySource'
         },
         {
           title: '交易金额（元）',
@@ -88,6 +94,13 @@ export default {
     }
   },
   methods: {
+    returnPaySource (item) {
+      switch (item) {
+        case 0 : return '微信小程序支付'
+        case 1 : return '微信支付'
+        case 2 : return '支付宝支付'
+      }
+    },
     returnStatus (item) {
       switch (item) {
         case 0 : return '待支付'
