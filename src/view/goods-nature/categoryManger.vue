@@ -24,23 +24,6 @@
               <Button  type="primary" icon="ios-search" :loading="uploadLoading" @click="searchFn">搜索</Button> -->
             </div>
           </Row>
-          <Row>
-            <div class="ivu-upload-list-file" v-if="file !== null">
-              <Icon type="ios-stats"></Icon>
-                {{ file.name }}
-              <Icon v-show="showRemoveFile" type="ios-close" class="ivu-upload-list-remove" @click.native="handleRemove()"></Icon>
-            </div>
-          </Row>
-          <Row>
-            <transition name="fade">
-              <Progress v-if="showProgress" :percent="progressPercent" :stroke-width="2">
-                <div v-if="progressPercent == 100">
-                  <Icon type="ios-checkmark-circle"></Icon>
-                  <span>成功</span>
-                </div>
-              </Progress>
-            </transition>
-          </Row>
         </Card>
         <Row class="margin-top-10 bank-table-content">
       <!-- <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table> -->
@@ -101,24 +84,6 @@
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
 			</div>
 		</Modal>
-    <Modal v-model="modal3" class="smsModel" title="重置密码"  width="540" @on-cancel="cancelModal3">
-      <Form ref="formValidPwd" :model="formValidPwd" :rules="ruleValidPwd" :label-width="90">
-        <FormItem label="密码:" prop="password">
-					<Input type="password" v-model="formValidPwd.password" placeholder="请输入密码"></Input>
-				</FormItem>
-			</Form>
-			<div slot="footer">
-				<Button size="large" @click="cancelModal3" class="cancel" style="margin-right: 10px">取消</Button>
-				<Button size="large" @click="replacePwdFn" type="primary">确定</Button>
-			</div>
-		</Modal>
-    <Modal v-model="modal5" class="smsModel deptsms-modal" title="选择部门"  width="340" @on-cancel="cancelModal5">
-      <div class="dept-list" :label-width="90">
-          <Tree :data="treeData1" @on-select-change="treeChangeDept"></Tree>
-      </div>
-			<div slot="footer">
-			</div>
-		</Modal>
     <Modal
 				width="20"
 				v-model="delBatchModal"
@@ -139,7 +104,6 @@
 </template>
 <script>
 import has from '@/directive/module/has.js'
-import { sysDeptTree, userList, roleList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
 import { categoryTreeList, catgSave, singleUpload, catgDetail, catgUpdate, catgRemove } from '@/api/nature'
 import TreeGrid from '@/components/tree-grid/treeGrid2.0.vue'
 export default {
@@ -150,8 +114,6 @@ export default {
       modal1: false,
       imgShow1: false,
       imgUrl: '',
-      modal3: false,
-      modal5: false,
       operationShow: false,
       delBatchModal: false,
       delModal: false,
@@ -183,9 +145,6 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         status: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        sortOrder: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
@@ -241,13 +200,8 @@ export default {
       pageNum: 1,
       pageSize: 10,
       total: 0,
-      rolelistArr: [],
       loading: false, // 分割线
       uploadLoading: false,
-      progressPercent: 0,
-      showProgress: false,
-      showRemoveFile: false,
-      file: null,
       tableData: [],
       tableTitle: [],
       tableLoading: false
@@ -355,17 +309,6 @@ export default {
       console.log('排序字段:' + key)
       console.log('排序规则:' + type)
     }, // 分割线
-    async getRoleList () {
-      let data = {
-        FLAG: 1,
-        pageIndex: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let res = await roleList(data)
-      if (res.data.code === 0) {
-        this.rolelistArr = res.data.content.rows
-      }
-    },
     async catgDetail (id) {
       let data = {
         id: id,
@@ -494,16 +437,16 @@ export default {
       return data
     },
     // 循环树形结构，得到选中id
-    forTreesIds (arr) {
-      arr.forEach((item, index) => {
-        if (item.checked == true) {
-          this.checkedIds.push(item.id)
-        }
-        if (item.children) {
-          this.forTreesIds(item.children)
-        }
-      })
-    },
+    // forTreesIds (arr) {
+    //   arr.forEach((item, index) => {
+    //     if (item.checked == true) {
+    //       this.checkedIds.push(item.id)
+    //     }
+    //     if (item.children) {
+    //       this.forTreesIds(item.children)
+    //     }
+    //   })
+    // },
     // 循环树形结构，得到选中id
     forTrees () {
       this.ztreesData.forEach((item, index) => {
@@ -544,17 +487,6 @@ export default {
           this.forTreesIds(item.children)
         }
       })
-    },
-    // 选择部门
-    treeChangeDept (data) {
-      console.log(data)
-      if (data[0].id == -1) {
-        return
-      }
-      this.formValidate.deptId = data[0].id
-      this.formValidate.dept = data[0].title
-      this.modal5 = false
-      this.forTreesIds(this.treeData1)
     },
     treeChange (data) {
       this.formValidate.deptId = data[0].id == -1 ? '' : data[0].id
@@ -623,7 +555,8 @@ export default {
         categorySecond: '',
         categoryThird: '',
         parentId: 0,
-        status: ''
+        status: '',
+        sortOrder: 0
       }
     },
     async catgRemove () {
@@ -728,13 +661,6 @@ export default {
         }
       })
     },
-    deptModal () {
-      this.modal5 = true
-    },
-    cancelModal5 () {
-      this.modal5 = false
-    },
-    chooseDept () {},
     // 取消
     cancelModal1 () {
       this.modal1 = false
@@ -743,18 +669,6 @@ export default {
       this.imgShow1 = false
       this.imgUrl = ''
       this.$refs.formValidate.resetFields()
-      // this.formValidate = {
-      //   deptId: '',
-      //   dept: '',
-      //   email: '',
-      //   status: '',
-      //   deptName: '',
-      //   username: '',
-      //   name: '',
-      //   roleIds: [],
-      //   pwd: ''
-      // }
-      // this.checkedPrentFn(this.ztreesData)
     },
     cancelModal3 () {
       this.modal3 = false
@@ -794,22 +708,10 @@ export default {
       this.pageSize = 10
       this.keyword2 = ''
       this.getPageList()
-    },
-    goBack () {
-      this.$router.go(-1)
-    }, // 分割线
-    initUpload () {
-      this.file = null
-      this.showProgress = false
-      this.loadingProgress = 0
-      this.tableData = []
-      this.tableTitle = []
     }
-
   },
   created () {
     this.getPageList()
-    this.getRoleList()
     // this.menuTree()
   },
   mounted () {
