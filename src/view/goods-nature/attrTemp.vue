@@ -99,13 +99,6 @@
 				<Button size="large" @click="operationRole" type="primary">确定</Button>
 			</div>
 		</Modal>
-    <Modal v-model="modal5" class="smsModel deptsms-modal" title="选择部门"  width="340" @on-cancel="cancelModal5">
-      <div class="dept-list" :label-width="90">
-          <Tree :data="treeData1" @on-select-change="treeChangeDept"></Tree>
-      </div>
-			<div slot="footer">
-			</div>
-		</Modal>
     <Modal
 				width="20"
 				v-model="delModal"
@@ -126,7 +119,6 @@
 </template>
 <script>
 import has from '@/directive/module/has.js'
-import { sysDeptTree, userList, menuTree, userSave, detailUser, updateUser, adminResetPwd, removeUser, batchRemoveUser } from '@/api/sys'
 import { categoryTreeList, specList, saveSpec, editSpec, updateSpec, batchRemoveSpec } from '@/api/nature'
 export default {
   name: 'attr',
@@ -134,7 +126,6 @@ export default {
     return {
       value: '',
       modal1: false,
-      modal5: false,
       operationShow: false,
       delBatchModal: false,
       delModal: false,
@@ -142,7 +133,6 @@ export default {
       attrList: [],
       attrListArr: [],
       checkedId: '',
-      deptId: '',
       menuIdsArr: [],
       levelCheck: '',
       branchIdsCheck: '',
@@ -164,7 +154,6 @@ export default {
           { required: true, message: '请选择', trigger: 'blur' }
         ]
       },
-      roleName: '',
       columnsList: [
         {
           type: 'selection',
@@ -203,19 +192,14 @@ export default {
         }
       ],
       dataList: [],
-      userIdCreate: '',
       categoryId: '',
-      roleSign: '',
       dataDel: [],
-      addShow: false,
-      sendContractBut: false,
       selectedList: [],
       contractInfo: '',
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
       total: 0,
-      rolelistArr: [],
       detailInfo: {},
       expandSpecs: [],
       loading: false, // 分割线
@@ -235,9 +219,7 @@ export default {
       }
       let res = await specList(data)
       this.tableLoading = false
-      console.log(res.data.content)
       if (res.data.code === 0) {
-        console.log(res.data.content)
         this.dataList = res.data.content.rows
         this.total = +res.data.content.total
         this.dataList.forEach((item) => {
@@ -296,7 +278,6 @@ export default {
             attrItem: item
           })
         })
-        console.log(this.attrListArr)
       }
     },
     forIds (arr) {
@@ -340,7 +321,6 @@ export default {
       }
       let res = await updateSpec(data)
       if (res.data.code === 0) {
-        console.log(res)
         this.modal1 = false
         this.$Modal.success({
           title: '提示',
@@ -358,7 +338,7 @@ export default {
         this.getPageList()
       }
     },
-    forArr1 (arr, num) { // 循环部门树形数据
+    forArr1 (arr, num) { // 循环树形数据
       let data = []
       arr.forEach((value, index, array) => {
         let datav
@@ -392,17 +372,6 @@ export default {
       return data
     },
     // 循环树形结构，得到选中id
-    // forTreesIds (arr) {
-    //   arr.forEach((item, index) => {
-    //     if (item.checked == true) {
-    //       this.checkedIds.push(item.id)
-    //     }
-    //     if (item.children) {
-    //       this.forTreesIds(item.children)
-    //     }
-    //   })
-    // },
-    // 循环树形结构，得到选中id
     forTrees () {
       this.ztreesData.forEach((item, index) => {
         if (item.checked == true) {
@@ -422,50 +391,13 @@ export default {
       this.checkedIds = [...new Set(this.checkedIds)]
       this.formValidate.power = this.checkedIds.join(',')
     },
-    //  菜单树结构
-    async menuTree () {
-      let res = await menuTree({})
-      console.log(res.data)
-      if (res.data.code === 0) {
-        let data = [{ ...res.data.content }]
-        console.log(data)
-        this.ztreesData = this.forArr1(data, 0)
-      }
-    },
-    // 取消选中的部门
-    forTreesIds (arr) {
-      arr.forEach((item, index) => {
-        if (item.selected == true) {
-          this.$set(item, 'selected', false)
-        }
-        if (item.children) {
-          this.forTreesIds(item.children)
-        }
-      })
-    },
-    // 选择部门
-    treeChangeDept (data) {
-      console.log(data)
-      if (data[0].id == -1) {
-        return
-      }
-      this.formValidate.deptId = data[0].id
-      this.formValidate.dept = data[0].title
-      this.modal5 = false
-      this.forTreesIds(this.treeData1)
-    },
     treeChange (data) {
-      // console.log(data)
       this.pageNum = 1
       this.pageSize = 10
       this.categoryId = data[0].id
       this.levelCheck = data[0].data.level
       this.branchIdsCheck = data[0].data.branchIds.split('>')
       this.getPageList()
-      // console.log('this.levelCheck', this.levelCheck)
-      // this.formValidate.deptId = data[0].id == -1 ? '' : data[0].id
-      // this.formValidate.dept = data[0].title == '顶级节点' ? '' : data[0].title
-      // this.getPageList()
     },
     //  添加属性
     saveSepcs () {
@@ -514,7 +446,6 @@ export default {
       }
       let res = await saveSpec(data)
       if (res.data.code === 0) {
-        console.log(res)
         this.modal1 = false
         this.$Modal.success({
           title: '提示',
@@ -609,7 +540,6 @@ export default {
       this.delModal = true
       this.delIndex = i
       this.selectedList = [{ ...this.dataList[i] }]
-      console.log(this.delIndex)
     },
     async delRole () {
       // let data = {
@@ -634,13 +564,6 @@ export default {
         }
       })
     },
-    deptModal () {
-      this.modal5 = true
-    },
-    cancelModal5 () {
-      this.modal5 = false
-    },
-    chooseDept () {},
     // 取消
     cancelModal1 () {
       this.modal1 = false
@@ -656,7 +579,6 @@ export default {
     },
     selected (res) {
       this.selectedList = res
-      console.log(res)
     },
     changePageSize (value) {
       this.pageNum = 1
@@ -677,18 +599,7 @@ export default {
       this.pageSize = 10
       this.value = ''
       this.getPageList()
-    },
-    goBack () {
-      this.$router.go(-1)
-    }, // 分割线
-    initUpload () {
-      this.file = null
-      this.showProgress = false
-      this.loadingProgress = 0
-      this.tableData = []
-      this.tableTitle = []
-    }
-
+    } // 分割线
   },
   created () {
     this.getPageList()
