@@ -259,7 +259,6 @@ export default {
       delIndex: '',
       pageNum: 1,
       pageSize: 10,
-      delIndex: '',
       total: 0,
       rolelistArr: [],
       loading: false, // 分割线

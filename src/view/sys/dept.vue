@@ -196,7 +196,6 @@ export default {
       editInfo: '',
       pageNum: 1,
       pageSize: 100,
-      delIndex: '',
       total: 0,
       loading: false, // 分割线
       uploadLoading: false,
