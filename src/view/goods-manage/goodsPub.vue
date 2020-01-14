@@ -1545,11 +1545,11 @@ export default {
     },
     // 校验1-100的数字
     validaRange (str) {
-      let reg = /^([1-9]\d{0,1}|100|NA)$/
+      let reg = /^([0-9]\d{0,1}|100|NA)$/
       if (!reg.test(str)) {
         this.$Modal.warning({
           title: '提示',
-          content: '(%)只能输入1-100的正整数'
+          content: '(%)只能输入0-100的正整数'
         })
         this.validateType = true
       }
