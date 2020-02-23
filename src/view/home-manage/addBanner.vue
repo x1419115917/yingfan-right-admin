@@ -12,24 +12,21 @@
         <FormItem label="展示模式" prop="showMode">
             <RadioGroup v-model="form.showMode" @on-change="selectMode">
               <template v-if="form.plateRegion == '0'">
-                <Radio label="6">轮播图模式</Radio>
+                <Radio label="0">轮播图模式</Radio>
               </template>
-              <template v-if="form.plateRegion !== '0'">
-                <Radio label="0">单图模式</Radio>
-                <Radio label="1">一行两图模式</Radio>
-                <Radio label="2">一行三图模式</Radio>
-                <template v-if="form.plateRegion === '2'">
-                  <Radio label="3">一行四图模式</Radio>
-                </template>
-                <template v-if="form.plateRegion !== '2'">
-                  <Radio label="4">组合模式(3个)</Radio>
-                  <Radio label="5">组合模式(4个)</Radio>
-                </template>
+              <template v-if="form.plateRegion == '1'">
+                <Radio label="1">新人推荐</Radio>
+                <Radio label="2">VIP最爱</Radio>
+                <Radio label="3">每周上新</Radio>
+                <Radio label="4">本周值得买</Radio>
+              </template>
+              <template v-if="form.plateRegion == '2'">
+                <Radio label="5">极致推荐</Radio>
               </template>
             </RadioGroup>
         </FormItem>
-        <FormItem label="活动名称" prop="plateName">
-          <Input v-model="form.plateName" :maxlength="maxlength" :style="{ width :inpWidth}" placeholder="请输入活动名称" clearable></Input>
+        <FormItem label="首页活动入口标题" prop="plateName">
+          <Input v-model="form.plateName" :maxlength="maxlength" :style="{ width :inpWidth}" placeholder="请输入首页活动入口标题，如每周上新" clearable></Input>
         </FormItem>
         <FormItem label="跳转类型" prop="plateType">
           <RadioGroup v-model="form.plateType" @on-change="selectType">
@@ -38,6 +35,7 @@
           </RadioGroup>
         </FormItem>
         <FormItem label="图片">
+          <Button style="margin-bottom:10px;" v-if="form.plateRegion !== '0'" type="success" @click="add">+ 新增</Button>
           <Table max-height="400" border :columns="columns" :data="form.plaDets">
             <template slot-scope="{ row,index }" slot="uploadImg">
               <div class="imgWrap">
@@ -47,7 +45,7 @@
                   <Button type="primary" class="upload-img">上传图片</Button>
                   <input type="file" class="img-ipt"
                     ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
-                    <span v-if="form.plateRegion === '0'" class="tips-upload">750*450</span>
+                    <!--<span v-if="form.plateRegion === '0'" class="tips-upload">750*450</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '0'" class="tips-upload">690*160</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '1'" class="tips-upload">340*400</span>
                     <span v-else-if="form.plateRegion === '1' && form.showMode === '4'" class="tips-upload">左边1张:340*470<br />右边2张:340*230</span>
@@ -55,7 +53,7 @@
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '0'" class="tips-upload">690*470</span>
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '1'" class="tips-upload">340*160</span>
                     <span v-else-if="form.plateRegion === '2' && form.showMode === '2'" class="tips-upload">224*300</span>
-                    <span v-else-if="form.plateRegion === '2' && form.showMode === '3'" class="tips-upload">165*165</span>
+                    <span v-else-if="form.plateRegion === '2' && form.showMode === '3'" class="tips-upload">165*165</span>-->
                 </div>
               </div>
             </template>
@@ -119,9 +117,9 @@ export default {
   data () {
     const validatorPlateName = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入活动名称'))
-      } else if (value.length > 5) {
-        callback(new Error('活动名称不超过5个字'))
+        callback(new Error('请输入首页活动入口标题，如每周上新'))
+      } else if (value.length > 10) {
+        callback(new Error('活动名称不超过10个字'))
       } else {
         callback()
       }
@@ -134,7 +132,7 @@ export default {
       inpWidth: '200px',
       form: {
         plateRegion: '0', // 展示位置
-        showMode: '6', // 展示模式
+        showMode: '0', // 展示模式
         plateName: '', // 活动名称
         plateType: '0', // 跳转类型0：专题活动；1：商品
         plaDets: [{ // 活动图片列表
@@ -156,12 +154,6 @@ export default {
           title: '选择活动',
           align: 'center',
           slot: 'contentVoucher'
-        },
-        {
-          title: '权重',
-          width: 150,
-          align: 'center',
-          slot: 'sortOrder'
         }
       ],
       activeColumns1: [
@@ -198,12 +190,6 @@ export default {
           title: '选择商品',
           align: 'center',
           slot: 'contentVoucher'
-        },
-        {
-          title: '权重',
-          width: 150,
-          align: 'center',
-          slot: 'sortOrder'
         }
       ],
       goodsColumns1: [
@@ -250,6 +236,13 @@ export default {
     }
   },
   methods: {
+    add () {
+      this.form.plaDets.push({
+        contentVoucher: '',
+        pictureUrl: '',
+        sortOrder: null
+      })
+    },
     // 选择跳转类型
     selectType () {
       // 清空商品id或者活动id
@@ -257,13 +250,13 @@ export default {
         item.contentVoucher = ''
       })
       if (this.form.plateType === '1') { // 商品
-        if (this.form.plateRegion === '0') {
+        if (this.form.plateRegion === '0' || this.form.plateRegion === '2') {
           this.columns = this.goodsColumns1
         } else {
           this.columns = this.goodsColumns
         }
       } else if (this.form.plateType === '0') { // 活动
-        if (this.form.plateRegion === '0') {
+        if (this.form.plateRegion === '0' || this.form.plateRegion === '2') {
           this.columns = this.activeColumns1
         } else {
           this.columns = this.activeColumns
@@ -292,39 +285,26 @@ export default {
     },
     // 选择展示位置
     selectPlateRegion () {
-      if (this.form.plateRegion === '0') { // 首页banner时，默认轮播图模式
-        this.form.showMode = '6'
-        this.columns = this.activeColumns1
-      } else {
-        this.form.showMode = '0'
-        this.columns = this.activeColumns
-      }
-      this.selectMode(this.form.showMode)
-      this.form.plateType = '0'// 选择展示位置后默认跳转类型为活动
-    },
-    selectMode (value) {
       this.form.plaDets.length = 0
       let count
-      switch (value) {
-        case '0': count = 1
-          break
-        case '1': count = 2
-          break
-        case '2': count = 3
-          break
-        case '3': count = 4
-          break
-        case '4': count = 3
-          break
-        case '5': count = 4
-          break
-        case '6': count = 5 // 轮播图模式
-          break
+      if (this.form.plateRegion === '0') { // 首页banner
+        count = 5 // 轮播图模式,最大5张
+        this.columns = this.activeColumns1
+      } else if (this.form.plateRegion === '2') { // 主题精选
+        count = 1
+        this.columns = this.activeColumns1
+      } else { // 首页活动板块
+        count = 1
+        this.columns = this.activeColumns
       }
       for (let i = 0; i < count; i++) {
         this.pushObj()
       }
+      this.selectMode(this.form.showMode)
+      this.form.plateType = '0'// 选择展示位置后默认跳转类型为活动
     },
+    // 选择展示模式
+    selectMode (value) {},
     pushObj () {
       let obj
       if (this.form.showMode === '6') {
@@ -347,7 +327,7 @@ export default {
     },
     async handleSubmit (name) {
       if (!this.form.plateName) {
-        this.$Message.warning('请输入活动名称')
+        this.$Message.warning('请输入首页活动入口标题')
       } else {
         // 新增或编辑banner时，获取banner列表
         if (this.form.plateRegion === '0') {
@@ -399,59 +379,59 @@ export default {
     },
     returnBanner () {
       this.$emit('close')
-    },
-    async getBannerDetail (obj) {
-      let res = await doBannerDetail(obj)
-      if (res.data.code === 0) {
-        this.bannerDetail = res.data.content
-        this.form.plateRegion = this.bannerDetail.plateRegion.toString()
-        this.form.showMode = this.bannerDetail.showMode.toString()
-        this.form.plateName = this.bannerDetail.plateName
-        this.form.plateType = this.bannerDetail.plateType.toString()
-        this.form.isShow = this.bannerDetail.isShow.toString()
-        let plaDets = []
-        if (this.form.plateType === '0') { // 跳转类型为活动时
-          for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
-            delete this.bannerDetail.plaDets[i].id
-            delete this.bannerDetail.plaDets[i].homePageId
-            delete this.bannerDetail.plaDets[i].spuResp
-            this.bannerDetail.plaDets[i].isShow = this.bannerDetail.plaDets[i].isShow.toString()
-            plaDets.push(this.bannerDetail.plaDets[i])
-          }
-        } else if (this.form.plateType === '1') { // 跳转类型商品时
-          for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
-            delete this.bannerDetail.plaDets[i].id
-            delete this.bannerDetail.plaDets[i].homePageId
-            this.bannerDetail.plaDets[i].contentVoucher = this.bannerDetail.plaDets[i].spuResp
-            this.bannerDetail.plaDets[i].isShow = this.bannerDetail.plaDets[i].isShow.toString()
-            plaDets.push(this.bannerDetail.plaDets[i])
-          }
-        }
-        this.form.plaDets = plaDets
-        if (this.form.plateRegion === '0') {
-          let num = parseInt(this.form.plaDets.length)
-          if (num < 5) {
-            for (let i = 0; i < (5 - num); i++) {
-              this.pushObj()
-            }
-          }
-        }
-      }
-    },
-    async getActiveList () {
-      let data = {
-        FLAG: 1,
-        pageSize: 300,
-        pageIndex: 1,
-        activityName: null
-      }
-      let res = await doActiveList(data)
-      if (res.data.code === 0) {
-        this.activeList = res.data.content.rows
-        // 转换活动列表key值
-        this.activeList = this.activeList.map(o => { return { contentVoucher: o.id.toString(), activityName: o.activityName } })
-      }
     }
+    // async getBannerDetail (obj) {
+    //   let res = await doBannerDetail(obj)
+    //   if (res.data.code === 0) {
+    //     this.bannerDetail = res.data.content
+    //     this.form.plateRegion = this.bannerDetail.plateRegion.toString()
+    //     this.form.showMode = this.bannerDetail.showMode.toString()
+    //     this.form.plateName = this.bannerDetail.plateName
+    //     this.form.plateType = this.bannerDetail.plateType.toString()
+    //     this.form.isShow = this.bannerDetail.isShow.toString()
+    //     let plaDets = []
+    //     if (this.form.plateType === '0') { // 跳转类型为活动时
+    //       for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
+    //         delete this.bannerDetail.plaDets[i].id
+    //         delete this.bannerDetail.plaDets[i].homePageId
+    //         delete this.bannerDetail.plaDets[i].spuResp
+    //         this.bannerDetail.plaDets[i].isShow = this.bannerDetail.plaDets[i].isShow.toString()
+    //         plaDets.push(this.bannerDetail.plaDets[i])
+    //       }
+    //     } else if (this.form.plateType === '1') { // 跳转类型商品时
+    //       for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
+    //         delete this.bannerDetail.plaDets[i].id
+    //         delete this.bannerDetail.plaDets[i].homePageId
+    //         this.bannerDetail.plaDets[i].contentVoucher = this.bannerDetail.plaDets[i].spuResp
+    //         this.bannerDetail.plaDets[i].isShow = this.bannerDetail.plaDets[i].isShow.toString()
+    //         plaDets.push(this.bannerDetail.plaDets[i])
+    //       }
+    //     }
+    //     this.form.plaDets = plaDets
+    //     if (this.form.plateRegion === '0') {
+    //       let num = parseInt(this.form.plaDets.length)
+    //       if (num < 5) {
+    //         for (let i = 0; i < (5 - num); i++) {
+    //           this.pushObj()
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
+    // async getActiveList () {
+    //   let data = {
+    //     FLAG: 1,
+    //     pageSize: 300,
+    //     pageIndex: 1,
+    //     activityName: null
+    //   }
+    //   let res = await doActiveList(data)
+    //   if (res.data.code === 0) {
+    //     this.activeList = res.data.content.rows
+    //     // 转换活动列表key值
+    //     this.activeList = this.activeList.map(o => { return { contentVoucher: o.id.toString(), activityName: o.activityName } })
+    //   }
+    // }
   },
   props: ['activeMsg', 'editType'],
   watch: {
@@ -465,7 +445,7 @@ export default {
       } else {
         this.form = {
           plateRegion: '0',
-          showMode: '6',
+          showMode: '0',
           plateName: '',
           plateType: '0',
           plaDets: [{
@@ -475,7 +455,7 @@ export default {
           }],
           isShow: '0'
         }
-        this.selectMode('6')
+        this.selectMode('0')
       }
     }
   },
@@ -484,7 +464,7 @@ export default {
     Bus.$on('clear', () => {
       this.form = {
         plateRegion: '0',
-        showMode: '6',
+        showMode: '0',
         plateName: '',
         plateType: '0',
         plaDets: [{
@@ -494,12 +474,12 @@ export default {
         }],
         isShow: '0'
       }
-      this.selectMode('6')
+      this.selectMode('0')
     })
   },
   created () {
-    this.getActiveList()
-    this.selectMode('6')
+    // this.getActiveList()
+    this.selectMode('0')
     this.columns = this.activeColumns1
     if (this.activeMsg) {
       let obj = {
