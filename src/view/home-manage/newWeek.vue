@@ -1,11 +1,19 @@
-<!--首页配置-首页banner-->
+<!--首页配置-每周上新-->
 <template>
   <div class="add">
     <Form ref="form" :model="form" :rules="ruleValidate" :label-width="80">
+        <FormItem label="首页活动入口标题" prop="plateType">
+          <Input style="width: 300px;" placeholder="请输入首页活动入口标题，如新人推荐"></Input>
+        </FormItem>
+        <FormItem label="状态" prop="plateType">
+          <RadioGroup>
+            <Radio label="0">显示</Radio>
+            <Radio label="1">隐藏</Radio>
+          </RadioGroup>
+        </FormItem>
         <FormItem label="跳转类型" prop="plateType">
           <RadioGroup v-model="form.plateType" @on-change="selectType">
             <Radio label="0">活动</Radio>
-            <Radio label="1">商品</Radio>
           </RadioGroup>
         </FormItem>
         <FormItem label="图片">
@@ -35,21 +43,6 @@
                   <Option v-for="item in activeList" :value="item.contentVoucher" :key="item.contentVoucher">{{ item.activityName }}</Option>
                 </Select>
               </template>
-              <!--跳转类型为商品-->
-              <template v-else-if="form.plateType === '1'">
-                <Button type="success" ghost @click="addGoods(row,index)">添加商品</Button>
-                <template v-if="form.plaDets[index].contentVoucher.images">
-                  <div class="goods">
-                    <div><img :src="form.plaDets[index].contentVoucher.images[0]" /></div>
-                    <p>{{ form.plaDets[index].contentVoucher.title }}</p>
-                  </div>
-                </template>
-              </template>
-            </template>
-            <template slot-scope="{ row,index }" slot="sortOrder">
-              <InputNumber :max="5" :min="1" v-model="form.plaDets[index].sortOrder" placeholder="权重"></InputNumber>
-              <div class="tips">请输入1~5之间数字</div>
-              <div class="tips">1为最高权重</div>
             </template>
           </Table>
         </FormItem>
@@ -113,36 +106,6 @@ export default {
           title: '选择活动',
           align: 'center',
           slot: 'contentVoucher'
-        },
-        {
-          title: '权重',
-          width: 150,
-          align: 'center',
-          slot: 'sortOrder'
-        }
-      ],
-      goodsColumns: [
-        {
-          title: '图片',
-          align: 'center',
-          slot: 'uploadImg'
-        },
-        {
-          title: '状态',
-          align: 'center',
-          width: 150,
-          slot: 'isShow'
-        },
-        {
-          title: '选择商品',
-          align: 'center',
-          slot: 'contentVoucher'
-        },
-        {
-          title: '权重',
-          width: 150,
-          align: 'center',
-          slot: 'sortOrder'
         }
       ],
       ruleValidate: {
@@ -159,8 +122,7 @@ export default {
     add () {
       this.form.plaDets.push({
         contentVoucher: '',
-        pictureUrl: '',
-        sortOrder: null
+        pictureUrl: ''
       })
     },
     // 选择跳转类型
@@ -169,7 +131,7 @@ export default {
       // this.form.plaDets.forEach((item) => {
       //   item.contentVoucher = ''
       // })
-      this.form.plateType === '0' ? this.columns = this.activeColumns : this.columns = this.goodsColumns
+      // this.form.plateType === '0' ? this.columns = this.activeColumns : this.columns = this.goodsColumns
     },
     async filezm (e, index) {
       let file = e.target.files[0]

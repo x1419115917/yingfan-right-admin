@@ -1,7 +1,13 @@
-<!--首页配置-首页banner-->
+<!--首页配置-本周值得买-->
 <template>
   <div class="add">
     <Form ref="form" :model="form" :rules="ruleValidate" :label-width="80">
+        <FormItem label="状态" prop="plateType">
+          <RadioGroup>
+            <Radio label="0">显示</Radio>
+            <Radio label="1">隐藏</Radio>
+          </RadioGroup>
+        </FormItem>
         <FormItem label="跳转类型" prop="plateType">
           <RadioGroup v-model="form.plateType" @on-change="selectType">
             <Radio label="0">活动</Radio>
@@ -45,11 +51,6 @@
                   </div>
                 </template>
               </template>
-            </template>
-            <template slot-scope="{ row,index }" slot="sortOrder">
-              <InputNumber :max="5" :min="1" v-model="form.plaDets[index].sortOrder" placeholder="权重"></InputNumber>
-              <div class="tips">请输入1~5之间数字</div>
-              <div class="tips">1为最高权重</div>
             </template>
           </Table>
         </FormItem>
@@ -113,12 +114,6 @@ export default {
           title: '选择活动',
           align: 'center',
           slot: 'contentVoucher'
-        },
-        {
-          title: '权重',
-          width: 150,
-          align: 'center',
-          slot: 'sortOrder'
         }
       ],
       goodsColumns: [
@@ -128,21 +123,9 @@ export default {
           slot: 'uploadImg'
         },
         {
-          title: '状态',
-          align: 'center',
-          width: 150,
-          slot: 'isShow'
-        },
-        {
           title: '选择商品',
           align: 'center',
           slot: 'contentVoucher'
-        },
-        {
-          title: '权重',
-          width: 150,
-          align: 'center',
-          slot: 'sortOrder'
         }
       ],
       ruleValidate: {
@@ -159,8 +142,7 @@ export default {
     add () {
       this.form.plaDets.push({
         contentVoucher: '',
-        pictureUrl: '',
-        sortOrder: null
+        pictureUrl: ''
       })
     },
     // 选择跳转类型
