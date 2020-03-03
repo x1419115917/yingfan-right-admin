@@ -38,7 +38,6 @@ import newWeek from './newWeek'
 import vipHot from './vipHot'
 import weekWorth from './weekWorth'
 import themeHot from './themeHot'
-// import Bus from '@/assets/js/bus.js'
 export default {
   name: 'bannerList',
   components: {
@@ -59,29 +58,7 @@ export default {
   methods: {
     selectPlate (index) {
       this.activeIndex = index
-    },
-    operate (row, type) {
-      switch (type) {
-        case 0: this.modalTitle = '详情'
-          this.modalWid = '800'
-          this.activeMsg = row
-          break
-        case 1: this.modalTitle = '编辑'
-          this.modalWid = '1000'
-          this.activeMsg = row
-          break
-        case 2: this.modalTitle = '新增'
-          this.modalWid = '1000'
-          this.activeMsg = ''
-          Bus.$emit('clear')
-          break
-      }
-      this.modalWid = '1000'
-      this.detailModal = true
-      this.editType = type
     }
-  },
-  computed: {
   },
   created () {
   }

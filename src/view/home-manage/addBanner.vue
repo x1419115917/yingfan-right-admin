@@ -1,64 +1,82 @@
 <!--首页配置-首页banner-->
 <template>
   <div class="add">
-    <Form ref="form" :model="form" :rules="ruleValidate" :label-width="80">
-        <FormItem label="跳转类型" prop="plateType">
-          <RadioGroup v-model="form.plateType" @on-change="selectType">
-            <Radio label="0">活动</Radio>
-            <Radio label="1">商品</Radio>
-          </RadioGroup>
-        </FormItem>
-        <FormItem label="图片">
-          <Button style="margin-bottom:10px;" type="success" @click="add">+ 新增</Button>
-          <Table max-height="500" border :columns="columns" :data="form.plaDets">
-            <template slot-scope="{ row,index }" slot="uploadImg">
-              <div class="imgWrap">
-                <img class="noImg" v-show="!form.plaDets[index].pictureUrl" src="@/assets/images/noImg.png">
-                <img :src="form.plaDets[index].pictureUrl" class="img-box1" v-show="form.plaDets[index].pictureUrl">
-                <div class="btn-upload">
-                  <Button type="primary" class="upload-img">上传图片</Button>
-                  <input type="file" class="img-ipt"
-                    ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
-                </div>
+      <Button style="margin-bottom:10px;" type="success" @click="add">新增</Button>
+      <Table max-height="500" border :columns="columns" :data="form.plaDets">
+        <template slot-scope="{ row,index }" slot="uploadImg">
+        </template>
+        <template slot-scope="{ row,index }" slot="isShow">
+        </template>
+        <template slot-scope="{ row,index }" slot="contentVoucher">
+          <!--跳转类型为活动-->
+          <template v-if="form.plateType === '0'">
+            <Select v-model="form.plaDets[index].contentVoucher" placeholder="请选择活动" :style="{width: inpWidth}" clearable>
+              <Option v-for="item in activeList" :value="item.contentVoucher" :key="item.contentVoucher">{{ item.activityName }}</Option>
+            </Select>
+          </template>
+          <!--跳转类型为商品-->
+          <template v-else-if="form.plateType === '1'">
+            <Button type="success" ghost @click="addGoods(row,index)">添加商品</Button>
+            <template v-if="form.plaDets[index].contentVoucher.images">
+              <div class="goods">
+                <div><img :src="form.plaDets[index].contentVoucher.images[0]" /></div>
+                <p>{{ form.plaDets[index].contentVoucher.title }}</p>
               </div>
             </template>
-            <template slot-scope="{ row,index }" slot="isShow">
-              <RadioGroup v-model="form.plaDets[index].isShow">
-                <Radio label="0">显示</Radio>
-                <Radio label="1">隐藏</Radio>
-              </RadioGroup>
-            </template>
-            <template slot-scope="{ row,index }" slot="contentVoucher">
-              <!--跳转类型为活动-->
-              <template v-if="form.plateType === '0'">
-                <Select v-model="form.plaDets[index].contentVoucher" placeholder="请选择活动" :style="{width: inpWidth}" clearable>
-                  <Option v-for="item in activeList" :value="item.contentVoucher" :key="item.contentVoucher">{{ item.activityName }}</Option>
-                </Select>
-              </template>
-              <!--跳转类型为商品-->
-              <template v-else-if="form.plateType === '1'">
-                <Button type="success" ghost @click="addGoods(row,index)">添加商品</Button>
-                <template v-if="form.plaDets[index].contentVoucher.images">
-                  <div class="goods">
-                    <div><img :src="form.plaDets[index].contentVoucher.images[0]" /></div>
-                    <p>{{ form.plaDets[index].contentVoucher.title }}</p>
-                  </div>
-                </template>
-              </template>
-            </template>
-            <template slot-scope="{ row,index }" slot="sortOrder">
-              <InputNumber :max="5" :min="1" v-model="form.plaDets[index].sortOrder" placeholder="权重"></InputNumber>
-              <div class="tips">请输入1~5之间数字</div>
-              <div class="tips">1为最高权重</div>
-            </template>
-          </Table>
-        </FormItem>
-        <FormItem class="btnGroup">
-          <Button size="large" type="primary" @click="handleSubmit('form')">保存</Button>
-        </FormItem>
+          </template>
+        </template>
+        <template slot-scope="{ row,index }" slot="sortOrder">
+        </template>
+        <template slot-scope="{ row,index }" slot="operate">
+          <Button type="primary" @click="edit">编辑</Button>
+        </template>
+      </Table>
+      <Page
+        :current="form.pageNum"
+        :page-size="form.pageSize"
+        :total="pageTotal"
+        show-total
+        show-elevator
+        show-sizer
+        @on-page-size-change="changePageSize"
+        @on-change="pageChange"/>
     </Form>
+    <!--选择商品-->
     <Modal v-model="modal1" class="hideFootModal" title="添加商品"  width="940" :mask-closable="false">
       <member-chosses @cancelModal="modal1 = false" :modal1="modal1" @chooseGoods="chooseGoods"></member-chosses>
+    </Modal>
+    <!--新增/编辑-->
+    <Modal v-model="editModal" class="hideFootModal" title="新增">
+      <Form ref="formValidate" :model="form" :rules="ruleValidate" :label-width="80">
+        <FormItem label="图片" prop="name">
+          <img style="width:100px; height: auto;" src="@/assets/images/noImg.png">
+          <!--<img :src="form.plaDets[index].pictureUrl" v-show="form.plaDets[index].pictureUrl">-->
+          <div class="btn-upload">
+            <Button type="primary" class="upload-img">上传图片</Button>
+            <input type="file" class="img-ipt"
+              ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
+          </div>
+        </FormItem>
+        <FormItem label="跳转类型" prop="name">
+          <RadioGroup>
+            <Radio label="0">活动</Radio>
+            <Radio label="1">商品</Radio>
+          </RadioGroup>.
+        </FormItem>
+        <FormItem label="状态" prop="name">
+          <RadioGroup>
+            <Radio label="0">显示</Radio>
+            <Radio label="1">隐藏</Radio>
+          </RadioGroup>
+        </FormItem>
+        <FormItem label="权重" prop="name">
+          <InputNumber :max="5" :min="1" placeholder="权重"></InputNumber><span style="margin-left: 10px;color: red;">请输入1~5之间数字，1为最高权重</span>
+        </FormItem>
+        <FormItem style="margin-top: 50px;">
+          <Button type="primary" size="large" @click="edit">保存</Button>
+          <Button size="large" style="margin-left: 15px;" @click="editModal = false">返回</Button>
+        </FormItem>
+      </Form>
     </Modal>
   </div>
 </template>
@@ -85,64 +103,45 @@ export default {
     return {
       goodsIndex: '', // 保存选择商品的索引值
       modal1: false,
+      editModal: false,
       bannerDetail: '',
       inpWidth: '200px',
+      pageTotal: 50,
       form: {
-        plateType: '0', // 跳转类型0：活动；1：商品
-        plaDets: [{
-          contentVoucher: '',
-          pictureUrl: '',
-          sortOrder: null
-        }]
+        pageNum: 1,
+        pageSize: 10
       },
       activeList: [], // 活动列表
-      columns: [],
-      activeColumns: [
+      columns: [
         {
           title: '图片',
           align: 'center',
           slot: 'uploadImg'
         },
         {
-          title: '状态',
+          title: '跳转类型',
           align: 'center',
-          width: 150,
           slot: 'isShow'
         },
         {
-          title: '选择活动',
+          title: '跳转详情',
           align: 'center',
-          slot: 'contentVoucher'
-        },
-        {
-          title: '权重',
-          width: 150,
-          align: 'center',
-          slot: 'sortOrder'
-        }
-      ],
-      goodsColumns: [
-        {
-          title: '图片',
-          align: 'center',
-          slot: 'uploadImg'
+          slot: 'isShow'
         },
         {
           title: '状态',
           align: 'center',
-          width: 150,
           slot: 'isShow'
         },
         {
-          title: '选择商品',
+          title: '权重',
           align: 'center',
           slot: 'contentVoucher'
         },
         {
-          title: '权重',
-          width: 150,
+          title: '操作',
           align: 'center',
-          slot: 'sortOrder'
+          slot: 'operate'
         }
       ],
       ruleValidate: {
@@ -157,20 +156,9 @@ export default {
   },
   methods: {
     add () {
-      this.form.plaDets.push({
-        contentVoucher: '',
-        pictureUrl: '',
-        sortOrder: null
-      })
+      this.editModal = true
     },
-    // 选择跳转类型
-    selectType () {
-      // 清空商品id或者活动id
-      // this.form.plaDets.forEach((item) => {
-      //   item.contentVoucher = ''
-      // })
-      this.form.plateType === '0' ? this.columns = this.activeColumns : this.columns = this.goodsColumns
-    },
+    edit () {},
     async filezm (e, index) {
       let file = e.target.files[0]
       let data = {
@@ -179,7 +167,7 @@ export default {
       }
       let res = await singleUpload(data)
       if (res.data.code === 0) {
-        this.form.plaDets[index].pictureUrl = res.data.content
+        // this.form.plaDets[index].pictureUrl = res.data.content
       }
     },
     // 添加商品
@@ -190,6 +178,12 @@ export default {
     chooseGoods (obj) {
       this.form.plaDets[this.goodsIndex].contentVoucher = obj
       this.modal1 = false
+    },
+    changePageSize (value) {
+      this.form.pageSize = value
+    },
+    pageChange (value) {
+      this.form.pageIndex = value
     },
     async handleSubmit (name) {
       if (!this.form.plateName) {
@@ -310,90 +304,15 @@ export default {
     // })
   },
   created () {
-    this.columns = this.activeColumns
     this.getActiveList()
   }
 }
 </script>
 <style lang="less" scoped>
 .add {
-  .ivu-form {
-    .goods {
-      float: right;
-      width: 150px;
-      div {
-        width: 70px;
-        height: 70px;
-        margin: 0 auto;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      p {
-        line-height: 18px;
-      }
-    }
-    .btnGroup {
-      text-align: center;
-    }
-    .ivu-form-item {
-      .ivu-table-wrapper {
-        overflow: visible;
-        .imgWrap {
-          padding-top: 15px;
-          padding-bottom: 40px;
-          .noImg {
-            vertical-align: top;
-            width: 80px;
-            height: 80px;
-          }
-        }
-      }
-      .img-box1{
-        vertical-align: top;
-        width: 80px;
-        height: 80px;
-        display: inline-block;
-        border: 1px solid #e6e6e6;
-      }
-      .tips {
-        line-height: 20px;
-        color: #999;
-      }
-      .btn-upload{
-        display: inline-block;
-        position: relative;
-        .upload-img{
-          margin-left: 8px;
-          width: 80px;
-          height: 32px;
-        }
-        .img-ipt{
-          position: absolute;
-          left: 8px;
-          opacity: 0;
-          width: 80px;
-          height: 32px;
-        }
-        .tips-upload{
-          font-size: 12px;
-          color: #999;
-          text-align: left;
-          position: absolute;
-          top: 40px;
-          line-height: 16px;
-          width: 211px;
-          left: 8px;
-        }
-      }
-      .img {
-        margin-right: 6px;
-      }
-    }
-    .ivu-radio-group-item {
-      margin-right: 15px;
-    }
+  .ivu-page {
+    margin-top: 14px;
+    text-align: center;
   }
 }
 </style>
