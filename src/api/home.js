@@ -1,5 +1,38 @@
 import axios from '@/libs/api.request'
 
+// 查询首页版块列表
+export const doPlateList = data => {
+  return axios.request({
+    url: '/homePge/operation/plateDetail/listPlateDetailsPage',
+    data,
+    method: 'post'
+  })
+}
+// 新增版块详情列表
+export const doAddPlate = data => {
+  return axios.request({
+    url: '/homePge/operation/plateDetail/savePlateDetail',
+    data,
+    method: 'post'
+  })
+}
+// 查询版块详情列表
+export const doCheckPlate = data => {
+  return axios.request({
+    url: '/homePge/operation/plateDetail/getPlateDetail',
+    data,
+    method: 'post'
+  })
+}
+// 编辑版块详情列表
+export const doEditPlate = data => {
+  return axios.request({
+    url: '/homePge/operation/plateDetail/editPlateDetail',
+    data,
+    method: 'post'
+  })
+}
+
 // 首页banner列表
 export const doBannerList = data => {
   return axios.request({
