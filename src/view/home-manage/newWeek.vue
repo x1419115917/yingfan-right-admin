@@ -240,11 +240,11 @@ export default {
         this.detailForm.pictureUrl = res.data.content
       }
     },
-    // chooseGoods (obj) {
-    //   this.selectedGoods = obj
-    //   this.detailForm.contentVoucher = obj.id
-    //   this.modal1 = false
-    // },
+    chooseGoods (obj) {
+      // this.selectedGoods = obj
+      // this.detailForm.contentVoucher = obj.id
+      // this.modal1 = false
+    },
     changePageSize (value) {
       this.form.pageSize = value
       this.getPlateList()
