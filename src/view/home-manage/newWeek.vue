@@ -1,137 +1,233 @@
 <!--首页配置-每周上新-->
 <template>
   <div class="add">
-    <Form ref="form" :model="form" :rules="ruleValidate" :label-width="80">
-        <FormItem label="首页活动入口标题" prop="plateType">
-          <Input style="width: 300px;" placeholder="请输入首页活动入口标题，如新人推荐"></Input>
+      <Form ref="titleform" :model="titleform" :rules="titleFormValidate" inline :label-width="120">
+        <FormItem label="首页活动入口标题" prop="plateName">
+          <Input :maxlength="maxlength" style="width: 300px;" v-model="titleform.plateName" placeholder="请输入首页活动入口标题，如每周上新"></Input>
         </FormItem>
-        <FormItem label="状态" prop="plateType">
-          <RadioGroup>
+        <FormItem label="状态" prop="isShow">
+          <RadioGroup v-model="titleform.isShow">
             <Radio label="0">显示</Radio>
             <Radio label="1">隐藏</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem label="跳转类型" prop="plateType">
-          <RadioGroup v-model="form.plateType" @on-change="selectType">
-            <Radio label="0">活动</Radio>
-          </RadioGroup>
+        <FormItem>
+          <Button type="primary" @click="saveTitleMsg">保存</Button>
         </FormItem>
-        <FormItem label="图片">
-          <Button style="margin-bottom:10px;" type="success" @click="add">+ 新增</Button>
-          <Table max-height="500" border :columns="columns" :data="form.plaDets">
-            <template slot-scope="{ row,index }" slot="uploadImg">
-              <div class="imgWrap">
-                <img class="noImg" v-show="!form.plaDets[index].pictureUrl" src="@/assets/images/noImg.png">
-                <img :src="form.plaDets[index].pictureUrl" class="img-box1" v-show="form.plaDets[index].pictureUrl">
-                <div class="btn-upload">
-                  <Button type="primary" class="upload-img">上传图片</Button>
-                  <input type="file" class="img-ipt"
-                    ref="filezm" @change="filezm($event,index)" accept="image/*" capture="camera">
-                </div>
+      </Form>
+      <Button style="margin-bottom:10px;" type="success" @click="operate(0)">新增</Button>
+      <Table max-height="500" border :columns="columns" :data="tableData">
+        <template slot-scope="{ row,index }" slot="pictureUrl">
+          <img style="width: 100px;height:auto;margin-top: 10px;" :src="row.pictureUrl">
+        </template>
+        <template slot-scope="{ row,index }" slot="plateType"><span>{{ row.plateType === 0 ? '活动' : '商品' }}</span></template>
+        <template slot-scope="{ row,index }" slot="contentVoucher">
+          <!--跳转类型为活动-->
+          <template v-if="row.plateType === 0">
+              <p>{{ returnActivity(row.contentVoucher)}}</p>
+              {{ row.beginTime+' 到 '+row.endTime }}
+          </template>
+          <!--跳转类型为商品-->
+          <template v-else-if="row.plateType === 1">
+            <template v-if="row.spuResp.images">
+              <div class="goods">
+                <div><img style="width: 100px;height:auto;margin-top: 10px;" :src="row.spuResp.images[0]" /></div>
+                <p>{{ row.spuResp.title }}</p>
               </div>
             </template>
-            <template slot-scope="{ row,index }" slot="isShow">
-              <RadioGroup v-model="form.plaDets[index].isShow">
-                <Radio label="0">显示</Radio>
-                <Radio label="1">隐藏</Radio>
-              </RadioGroup>
-            </template>
-            <template slot-scope="{ row,index }" slot="contentVoucher">
-              <!--跳转类型为活动-->
-              <template v-if="form.plateType === '0'">
-                <Select v-model="form.plaDets[index].contentVoucher" placeholder="请选择活动" :style="{width: inpWidth}" clearable>
-                  <Option v-for="item in activeList" :value="item.contentVoucher" :key="item.contentVoucher">{{ item.activityName }}</Option>
-                </Select>
-              </template>
-            </template>
-          </Table>
-        </FormItem>
-        <FormItem class="btnGroup">
-          <Button size="large" type="primary" @click="handleSubmit('form')">保存</Button>
-        </FormItem>
+          </template>
+        </template>
+        <template slot-scope="{ row,index }" slot="isShow">
+          <span>{{ row.isShow === 0 ? '显示' : '隐藏' }}</span>
+        </template>
+        <template slot-scope="{ row,index }" slot="operate">
+          <Button type="primary" @click="operate(1,row.id)">编辑</Button>
+        </template>
+      </Table>
+      <Page
+        :current="form.pageNum"
+        :page-size="form.pageSize"
+        :total="pageTotal"
+        show-total
+        show-elevator
+        show-sizer
+        @on-page-size-change="changePageSize"
+        @on-change="pageChange"/>
     </Form>
+    <!--选择商品-->
     <Modal v-model="modal1" class="hideFootModal" title="添加商品"  width="940" :mask-closable="false">
       <member-chosses @cancelModal="modal1 = false" :modal1="modal1" @chooseGoods="chooseGoods"></member-chosses>
+    </Modal>
+    <!--新增/编辑-->
+    <Modal v-model="editModal" width="600" class="hideFootModal" :title="modalTitle">
+      <Form ref="formValidate" :model="detailForm" :rules="ruleValidate" :label-width="80">
+        <FormItem label="图片" prop="pictureUrl">
+          <div class="imgWrap">
+            <img v-show="!detailForm.pictureUrl" src="@/assets/images/noImg.png">
+            <img :src="detailForm.pictureUrl" v-show="detailForm.pictureUrl">
+          </div>
+          <div class="btn-upload">
+            <Button type="primary" class="upload-img">上传图片</Button>
+            <input type="file" class="img-ipt"
+              ref="filezm" @change="filezm($event)" accept="image/*" capture="camera">
+          </div>
+        </FormItem>
+        <FormItem label="跳转类型" prop="plateType">
+          <RadioGroup v-model="detailForm.plateType">
+            <Radio label="0">活动</Radio>
+            <!--<Radio label="1">商品</Radio>-->
+          </RadioGroup>
+        </FormItem>
+        <FormItem label="跳转详情" prop="contentVoucher">
+          <!--跳转类型为活动-->
+          <template v-if="detailForm.plateType === '0'">
+            <Select v-model="detailForm.contentVoucher" placeholder="请选择活动" :style="{width: inpWidth}" clearable>
+              <Option v-for="item in activeList" :value="item.contentVoucher" :key="item.contentVoucher">{{ item.activityName }}</Option>
+            </Select>
+          </template>
+          <!--跳转类型为商品-->
+          <!--<template v-else-if="detailForm.plateType === '1'">
+            <Button type="success" ghost @click="modal1 = true">添加商品</Button>
+            <template v-if="selectedGoods">
+              <div class="goods">
+                <div><img :src="selectedGoods.images[0]" /></div>
+                <p>{{ selectedGoods.title }}</p>
+              </div>
+            </template>
+          </template>-->
+        </FormItem>
+        <FormItem label="状态" prop="isShow">
+          <RadioGroup v-model="detailForm.isShow">
+            <Radio label="0">显示</Radio>
+            <Radio label="1">隐藏</Radio>
+          </RadioGroup>
+        </FormItem>
+        <FormItem style="margin-top: 50px;">
+          <Button type="primary" size="large" @click="handleSubmit">保存</Button>
+          <Button size="large" style="margin-left: 15px;" @click="editModal = false">返回</Button>
+        </FormItem>
+      </Form>
     </Modal>
   </div>
 </template>
 <script>
-import { doActiveList, doAddHomeBanner, doBannerDetail, doEditHomeBanner } from '@/api/home'
+import { doPlateList, doAddPlate, doCheckPlate, doEditPlate, doActiveList, doEditTitleMsg, doCheckTitleMsg } from '@/api/home'
 import { singleUpload } from '@/api/nature'
 import memberChosses from '@/view/new-activities/memberChosses.vue'
-import Bus from '@/assets/js/bus.js'
 export default {
   name: 'addBanner',
   components: {
     memberChosses
   },
   data () {
-    const validatorPlateName = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请输入首页活动入口标题，如每周上新'))
-      } else if (value.length > 10) {
-        callback(new Error('活动名称不超过10个字'))
-      } else {
-        callback()
-      }
-    }
     return {
-      goodsIndex: '', // 保存选择商品的索引值
       modal1: false,
-      bannerDetail: '',
+      editModal: false,
+      modalTitle: '',
+      maxlength: 10,
+      editType: '',
       inpWidth: '200px',
-      form: {
-        plateType: '0', // 跳转类型0：活动；1：商品
-        plaDets: [{
-          contentVoucher: '',
-          pictureUrl: '',
-          sortOrder: null
-        }]
+      pageTotal: null,
+      detailId: null, // 详情id
+      // selectedGoods: null,//选择的商品
+      titleform: {
+        plateName: '',
+        FLAG: 1,
+        showMode: 3,
+        isShow: '0'
       },
+      form: {
+        FLAG: 1,
+        pageIndex: 1,
+        pageSize: 10,
+        showMode: 3
+      },
+      detailForm: {
+        showMode: 3, // 每周上新
+        FLAG: 1,
+        contentVoucher: '',
+        isShow: '0',
+        pictureUrl: '',
+        plateType: '0'
+      },
+      tableData: [],
       activeList: [], // 活动列表
-      columns: [],
-      activeColumns: [
+      columns: [
         {
           title: '图片',
           align: 'center',
-          slot: 'uploadImg'
+          slot: 'pictureUrl'
+        },
+        {
+          title: '跳转类型',
+          align: 'center',
+          width: 100,
+          slot: 'plateType'
+        },
+        {
+          title: '跳转详情',
+          align: 'center',
+          slot: 'contentVoucher'
         },
         {
           title: '状态',
           align: 'center',
-          width: 150,
+          width: 100,
           slot: 'isShow'
         },
         {
-          title: '选择活动',
+          title: '操作',
+          width: 100,
           align: 'center',
-          slot: 'contentVoucher'
+          slot: 'operate'
         }
       ],
-      ruleValidate: {
+      titleFormValidate: {
         plateName: [
-          { required: true, validator: validatorPlateName, trigger: ['change', 'blur'] }
+          { required: true, trigger: ['change', 'blur'], message: '请输入首页活动入口标题' }
+        ],
+        isShow: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择状态' }
+        ]
+      },
+      ruleValidate: {
+        pictureUrl: [
+          { required: true, trigger: ['change', 'blur'], message: '请上传图片' }
         ],
         plateType: [
-          { required: true, message: '请选择跳转类型', trigger: ['change', 'blur'] }
+          { required: true, trigger: ['change', 'blur'], message: '请选择跳转类型' }
+        ],
+        contentVoucher: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择跳转详情' }
+        ],
+        isShow: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择状态' }
+        ],
+        sortOrder: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择权重' }
         ]
       }
     }
   },
   methods: {
-    add () {
-      this.form.plaDets.push({
-        contentVoucher: '',
-        pictureUrl: ''
-      })
+    operate (item, id) {
+      switch (item) {
+        case 0: this.modalTitle = '新增'
+          this.clear()
+          break
+        case 1: this.modalTitle = '编辑'
+          this.checkDetail(id)
+          break
+      }
+      this.editType = item
+      this.editModal = true
     },
-    // 选择跳转类型
-    selectType () {
-      // 清空商品id或者活动id
-      // this.form.plaDets.forEach((item) => {
-      //   item.contentVoucher = ''
-      // })
-      // this.form.plateType === '0' ? this.columns = this.activeColumns : this.columns = this.goodsColumns
+    returnActivity (id) {
+      for (let i = 0; i < this.activeList.length; i++) {
+        if (this.activeList[i].contentVoucher === id) {
+          return this.activeList[i].activityName
+        }
+      }
     },
     async filezm (e, index) {
       let file = e.target.files[0]
@@ -141,67 +237,74 @@ export default {
       }
       let res = await singleUpload(data)
       if (res.data.code === 0) {
-        this.form.plaDets[index].pictureUrl = res.data.content
+        this.detailForm.pictureUrl = res.data.content
       }
     },
-    // 添加商品
-    addGoods (row, index) {
-      this.goodsIndex = index
-      this.modal1 = true
+    // chooseGoods (obj) {
+    //   this.selectedGoods = obj
+    //   this.detailForm.contentVoucher = obj.id
+    //   this.modal1 = false
+    // },
+    changePageSize (value) {
+      this.form.pageSize = value
+      this.getPlateList()
     },
-    chooseGoods (obj) {
-      this.form.plaDets[this.goodsIndex].contentVoucher = obj
-      this.modal1 = false
+    pageChange (value) {
+      this.form.pageIndex = value
+      this.getPlateList()
     },
-    async handleSubmit (name) {
-      if (!this.form.plateName) {
-        this.$Message.warning('请输入首页活动入口标题')
-      } else {
-        // 新增或编辑banner时，获取banner列表
-        if (this.form.plateRegion === '0') {
-          let banner = []
-          this.form.plaDets.forEach((val) => {
-            if (val.pictureUrl) {
-              banner.push(val)
-            }
-          })
-          this.form.plaDets = banner
+    clear () {
+      this.detailForm = {
+        showMode: 3,
+        FLAG: 1,
+        contentVoucher: '',
+        isShow: '0',
+        pictureUrl: '',
+        plateType: '0'
+      }
+    },
+    async saveTitleMsg () {
+      let res = await doEditTitleMsg(this.titleform)
+      if (res.data.code === 0) {
+        this.$Message.success('操作成功!')
+      }
+    },
+    async handleSubmit () {
+      // 选择跳转类型为商品时，筛选出商品id
+      // if (this.detailForm.plateType === '1') {
+      //   this.detailForm.contentVoucher = this.selectedGoods.id
+      // }
+      if (this.editType === 1) { // 编辑
+        let res = await doEditPlate(Object.assign(this.detailForm, { id: this.detailId }))
+        if (res.data.code === 0) {
+          this.$Message.success('操作成功!')
+          this.editModal = false
+          this.getPlateList()
         }
-        // 选择跳转类型为商品时，筛选出商品id
-        if (this.form.plateType === '1') {
-          let arr = []
-          this.form.plaDets.forEach((val) => {
-            val.contentVoucher = val.contentVoucher.id
-          })
+      } else if (this.editType === 0) { // 新增
+        let res = await doAddPlate(this.detailForm)
+        if (res.data.code === 0) {
+          this.$Message.success('操作成功!')
+          this.editModal = false
+          this.getPlateList()
         }
-        if (this.editType === 1) { // 编辑
-          let data = Object.assign(this.form, { FLAG: 1, id: this.activeMsg.id })
-          let res = await doEditHomeBanner(data)
-          if (res.data.code === 0) {
-            this.$Message.success('操作成功!')
-            this.$emit('close')
-            this.$emit('updateList')
-          }
-        } else if (this.editType === 2) { // 新增
-          let data = Object.assign(this.form, { FLAG: 1 })
-          let res = await doAddHomeBanner(data)
-          if (res.data.code === 0) {
-            this.$Message.success('操作成功!')
-            this.form = {
-              plateRegion: '0',
-              showMode: '6',
-              plateName: '',
-              plaDets: [{
-                contentVoucher: '',
-                pictureUrl: '',
-                sortOrder: null
-              }],
-              isShow: '0'
-            }
-            this.$emit('close')
-            this.$emit('updateList')
-          }
+      }
+    },
+    async checkDetail (id) {
+      this.detailId = id
+      let res = await doCheckPlate({ id: id, FLAG: 1 })
+      if (res.data.code === 0) {
+        this.detailForm = {
+          showMode: 3,
+          FLAG: 1,
+          contentVoucher: res.data.content.contentVoucher,
+          isShow: res.data.content.isShow.toString(),
+          pictureUrl: res.data.content.pictureUrl,
+          plateType: res.data.content.plateType.toString()
         }
+        // if(res.data.content.spuResp) {
+        //   this.selectedGoods = res.data.content.spuResp
+        // }
       }
     },
     async getActiveList () {
@@ -217,145 +320,36 @@ export default {
         // 转换活动列表key值
         this.activeList = this.activeList.map(o => { return { contentVoucher: o.id.toString(), activityName: o.activityName } })
       }
+    },
+    async getPlateList () {
+      let res = await doPlateList(this.form)
+      if (res.data.code === 0) {
+        this.tableData = res.data.content.rows
+        this.pageTotal = res.data.content.total
+      } else {
+        this.tableData = []
+      }
+    },
+    async getCheckTitleMsg () {
+      let res = await doCheckTitleMsg({ showMode: 3, FLAG: 1 })
+      if (res.data.code === 0) {
+        this.titleform.plateName = res.data.content.plateName
+        this.titleform.isShow = res.data.content.isShow.toString()
+      }
     }
-    // async getBannerDetail (obj) {
-    //   let res = await doBannerDetail(obj)
-    //   if (res.data.code === 0) {
-    //     this.bannerDetail = res.data.content
-    //     this.form.plateRegion = this.bannerDetail.plateRegion.toString()
-    //     this.form.showMode = this.bannerDetail.showMode.toString()
-    //     this.form.plateName = this.bannerDetail.plateName
-    //     this.form.plateType = this.bannerDetail.plateType.toString()
-    //     this.form.isShow = this.bannerDetail.isShow.toString()
-    //     let plaDets = []
-    //     if (this.form.plateType === '0') { // 跳转类型为活动时
-    //       for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
-    //         delete this.bannerDetail.plaDets[i].id
-    //         delete this.bannerDetail.plaDets[i].homePageId
-    //         delete this.bannerDetail.plaDets[i].spuResp
-    //         this.bannerDetail.plaDets[i].isShow = this.bannerDetail.plaDets[i].isShow.toString()
-    //         plaDets.push(this.bannerDetail.plaDets[i])
-    //       }
-    //     } else if (this.form.plateType === '1') { // 跳转类型商品时
-    //       for (let i = 0; i < this.bannerDetail.plaDets.length; i++) {
-    //         delete this.bannerDetail.plaDets[i].id
-    //         delete this.bannerDetail.plaDets[i].homePageId
-    //         this.bannerDetail.plaDets[i].contentVoucher = this.bannerDetail.plaDets[i].spuResp
-    //         this.bannerDetail.plaDets[i].isShow = this.bannerDetail.plaDets[i].isShow.toString()
-    //         plaDets.push(this.bannerDetail.plaDets[i])
-    //       }
-    //     }
-    //     this.form.plaDets = plaDets
-    //     if (this.form.plateRegion === '0') {
-    //       let num = parseInt(this.form.plaDets.length)
-    //       if (num < 5) {
-    //         for (let i = 0; i < (5 - num); i++) {
-    //           this.pushObj()
-    //         }
-    //       }
-    //     }
-    //   }
-    // },
-  },
-  mounted () {
-    // 清空信息
-    // Bus.$on('clear', () => {
-    //   this.form = {
-    //     plateType: '0',
-    //     plaDets: [{
-    //       contentVoucher: '',
-    //       pictureUrl: '',
-    //       sortOrder: null
-    //     }],
-    //     isShow: '0'
-    //   }
-    // })
   },
   created () {
-    this.columns = this.activeColumns
     this.getActiveList()
+    this.getPlateList()
+    this.getCheckTitleMsg()
   }
 }
 </script>
 <style lang="less" scoped>
 .add {
-  .ivu-form {
-    .goods {
-      float: right;
-      width: 150px;
-      div {
-        width: 70px;
-        height: 70px;
-        margin: 0 auto;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      p {
-        line-height: 18px;
-      }
-    }
-    .btnGroup {
-      text-align: center;
-    }
-    .ivu-form-item {
-      .ivu-table-wrapper {
-        overflow: visible;
-        .imgWrap {
-          padding-top: 15px;
-          padding-bottom: 40px;
-          .noImg {
-            vertical-align: top;
-            width: 80px;
-            height: 80px;
-          }
-        }
-      }
-      .img-box1{
-        vertical-align: top;
-        width: 80px;
-        height: 80px;
-        display: inline-block;
-        border: 1px solid #e6e6e6;
-      }
-      .tips {
-        line-height: 20px;
-        color: #999;
-      }
-      .btn-upload{
-        display: inline-block;
-        position: relative;
-        .upload-img{
-          margin-left: 8px;
-          width: 80px;
-          height: 32px;
-        }
-        .img-ipt{
-          position: absolute;
-          left: 8px;
-          opacity: 0;
-          width: 80px;
-          height: 32px;
-        }
-        .tips-upload{
-          font-size: 12px;
-          color: #999;
-          text-align: left;
-          position: absolute;
-          top: 40px;
-          line-height: 16px;
-          width: 211px;
-          left: 8px;
-        }
-      }
-      .img {
-        margin-right: 6px;
-      }
-    }
-    .ivu-radio-group-item {
-      margin-right: 15px;
-    }
+  .ivu-page {
+    margin-top: 14px;
+    text-align: center;
   }
 }
 </style>

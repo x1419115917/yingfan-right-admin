@@ -74,10 +74,10 @@
           <!--跳转类型为商品-->
           <template v-else-if="detailForm.plateType === '1'">
             <Button type="success" ghost @click="modal1 = true">添加商品</Button>
-            <template v-if="detailForm.contentVoucher.images">
+            <template v-if="selectedGoods">
               <div class="goods">
-                <div><img :src="detailForm.contentVoucher.images[0]" /></div>
-                <p>{{ detailForm.contentVoucher.title }}</p>
+                <div><img :src="selectedGoods.images[0]" /></div>
+                <p>{{ selectedGoods.title }}</p>
               </div>
             </template>
           </template>
@@ -116,6 +116,8 @@ export default {
       editType: '',
       inpWidth: '200px',
       pageTotal: null,
+      detailId: null, // 详情id
+      selectedGoods: null, // 选择的商品
       form: {
         FLAG: 1,
         pageIndex: 1,
@@ -170,11 +172,20 @@ export default {
         }
       ],
       ruleValidate: {
-        plateName: [
-          { required: true, trigger: ['change', 'blur'] }
+        pictureUrl: [
+          { required: true, trigger: ['change', 'blur'], message: '请上传图片' }
         ],
         plateType: [
-          { required: true, message: '请选择跳转类型', trigger: ['change', 'blur'] }
+          { required: true, trigger: ['change', 'blur'], message: '请选择跳转类型' }
+        ],
+        contentVoucher: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择跳转详情' }
+        ],
+        isShow: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择状态' }
+        ],
+        sortOrder: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择权重' }
         ]
       }
     }
@@ -211,7 +222,8 @@ export default {
       }
     },
     chooseGoods (obj) {
-      this.detailForm.contentVoucher = obj
+      this.selectedGoods = obj
+      this.detailForm.contentVoucher = obj.id
       this.modal1 = false
     },
     changePageSize (value) {
@@ -224,30 +236,28 @@ export default {
     },
     clear () {
       this.detailForm = {
-        showMode: 0, // 首页banner
+        showMode: 0,
         FLAG: 1,
         contentVoucher: '',
-        isShow: '',
+        isShow: '0',
         pictureUrl: '',
         plateType: '0',
         sortOrder: null
       }
     },
-    async handleSubmit (name) {
+    async handleSubmit () {
       // 选择跳转类型为商品时，筛选出商品id
       if (this.detailForm.plateType === '1') {
-        this.detailForm.contentVoucher = this.detailForm.contentVoucher.id
+        this.detailForm.contentVoucher = this.selectedGoods.id
       }
       if (this.editType === 1) { // 编辑
-        console.log(JSON.stringify(this.detailForm))
-        let res = await doEditPlate(this.detailForm)
+        let res = await doEditPlate(Object.assign(this.detailForm, { id: this.detailId }))
         if (res.data.code === 0) {
           this.$Message.success('操作成功!')
           this.editModal = false
           this.getPlateList()
         }
       } else if (this.editType === 0) { // 新增
-        console.log(JSON.stringify(this.detailForm))
         let res = await doAddPlate(this.detailForm)
         if (res.data.code === 0) {
           this.$Message.success('操作成功!')
@@ -257,6 +267,7 @@ export default {
       }
     },
     async checkDetail (id) {
+      this.detailId = id
       let res = await doCheckPlate({ id: id, FLAG: 1 })
       if (res.data.code === 0) {
         this.detailForm = {
@@ -267,6 +278,9 @@ export default {
           pictureUrl: res.data.content.pictureUrl,
           plateType: res.data.content.plateType.toString(),
           sortOrder: res.data.content.sortOrder
+        }
+        if (res.data.content.spuResp) {
+          this.selectedGoods = res.data.content.spuResp
         }
       }
     },
