@@ -3,7 +3,8 @@
     <Row class="member-info">
       <Row class="member-item">
         <Col span="4" class="member-item-left">商品</Col>
-        <Col span="20" class="member-item-right"><Button type="success" ghost @click="openModal">选择活动商品</Button></Col>
+        <Col span="20" class="member-item-right"><Button type="success" ghost @click="openModal" :disabled="conduct">选择活动商品</Button></Col>
+         <!-- <Col span="20" class="member-item-right"><Button type="success" ghost v-show="conduct" :disabled="conduct">选择活动商品</Button></Col> -->
       </Row>
       <Row class="member-item">
         <Col span="4" class="member-item-left"> 商品标题 </Col>
@@ -37,9 +38,9 @@
       <Row class="member-item">
         <Col span="4" class="member-item-left"> 起止时间 </Col>
         <Col span="20" class="member-item-right">
-          <DatePicker v-model="startTime" type="datetime" @on-change="changeStartTime" :options="options1" placeholder="开始日期" style="width: 208px"></DatePicker>
+          <DatePicker v-model="startTime" type="datetime" @on-change="changeStartTime" :options="options1" :disabled="conduct" placeholder="开始日期" style="width: 208px"></DatePicker>
           <span style="margin:0 5px;" class="span-table">——</span>
-          <DatePicker v-model="endTime" type="datetime" @on-change="endDate" placeholder="结束日期" :options="options1" placement="bottom-end" style="width: 208px"></DatePicker>
+          <DatePicker v-model="endTime" type="datetime" @on-change="endDate" placeholder="结束日期" :options="options1" :disabled="conduct" placement="bottom-end" style="width: 208px"></DatePicker>
         </Col>
       </Row>
       <Row class="member-item">
@@ -50,10 +51,10 @@
               <span class="lalal">{{row.specParam}} <span class="saleable" v-show="row.saleable === 0">已下架</span></span>
             </template>
             <template slot-scope="{ row, index }" slot="vipPrice">
-              ￥ <InputNumber style="width: 80px;" placeholder="活动价格" :min="0" class="sku-ipt" type="number" v-model="row.vipPrice" @on-change="changActivePrice($event, index)" ></InputNumber>
+              ￥ <InputNumber style="width: 80px;" placeholder="活动价格" :min="0" :disabled="conduct" class="sku-ipt" type="number" v-model="row.vipPrice" @on-change="changActivePrice($event, index)" ></InputNumber>
             </template>
             <template slot-scope="{ row, index }" slot="sort">
-              <InputNumber style="width: 80px;" placeholder="排序" :min="0" class="sku-ipt" type="number" v-model="row.sort" @on-change="changReorder($event, index)" ></InputNumber>
+              <InputNumber style="width: 80px;" placeholder="排序" :min="0" :disabled="conduct" class="sku-ipt" type="number" v-model="row.sort" @on-change="changReorder($event, index)" ></InputNumber>
             </template>
           </Table>
         </Col>
@@ -137,6 +138,7 @@ export default {
   data () {
     return {
       modal1: false,
+      conduct: false,
       restrictNumber: 1,
       sort: 1,
       startTime: '',
@@ -215,8 +217,9 @@ export default {
         }
         if (val && this.operationShow) {
           this.data1 = this.editInfo.skus
+          // this.conduct = new Date() >= new Date(this.editInfo.startTime) && new Date() < new Date(this.editInfo.endTime) // 判断活动是否开始和结束时间前不可编辑
           this.data1.forEach(item => {
-            item._disabled = false
+            item._disabled = this.conduct
             item._checked = true
             item.specParam = item.specParam != '' ? item.specParam : '-'
           })
