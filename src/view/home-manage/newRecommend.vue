@@ -274,6 +274,13 @@ export default {
       if (this.detailForm.plateType === '1') {
         this.detailForm.contentVoucher = this.selectedGoods.id
       }
+      if (!this.detailForm.pictureUrl) {
+        this.$Message.warning('图片不能为空!')
+        return
+      } else if (!this.detailForm.contentVoucher) {
+        this.$Message.warning('跳转详情不能为空!')
+        return
+      }
       if (this.editType === 1) { // 编辑
         let res = await doEditPlate(Object.assign(this.detailForm, { id: this.detailId }))
         if (res.data.code === 0) {

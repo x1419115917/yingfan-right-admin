@@ -263,6 +263,13 @@ export default {
       }
     },
     async handleSubmit () {
+      if (!this.detailForm.pictureUrl) {
+        this.$Message.warning('图片不能为空!')
+        return
+      } else if (!this.detailForm.contentVoucher) {
+        this.$Message.warning('跳转详情不能为空!')
+        return
+      }
       // 选择跳转类型为商品时，筛选出商品id
       if (this.detailForm.plateType === '1') {
         this.detailForm.contentVoucher = this.selectedGoods.id
