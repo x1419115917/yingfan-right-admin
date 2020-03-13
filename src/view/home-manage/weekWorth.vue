@@ -31,6 +31,7 @@
                 <div><img style="width: 100px;height:auto;margin-top: 10px;" :src="row.spuResp.images[0]" /></div>
                 <p>{{ row.spuResp.title }}</p>
               </div>
+              {{ row.beginTime+' 到 '+row.endTime }}
             </template>
           </template>
         </template>
@@ -69,7 +70,7 @@
               ref="filezm" @change="filezm($event)" accept="image/*" capture="camera">
           </div>
         </FormItem>
-        <FormItem label="跳转类型" prop="plateType">
+        <FormItem label="跳转类型" prop="plateType" on-change="changeType">
           <RadioGroup v-model="detailForm.plateType">
             <Radio label="0">活动</Radio>
             <Radio label="1">商品</Radio>
@@ -93,6 +94,13 @@
             </template>
           </template>
         </FormItem>
+        <template v-if="detailForm.plateType === '1'">
+          <FormItem label="时间" prop="time">
+            <DatePicker v-model="detailForm.beginTime" type="datetime" @on-change="changeStartTime" placeholder="开始日期" style="width: 208px"></DatePicker>
+              <span style="margin:0 5px;" class="span-table">——</span>
+            <DatePicker v-model="detailForm.endTime" type="datetime" @on-change="endDate" placeholder="结束日期" placement="bottom-end" style="width: 208px"></DatePicker>
+          </FormItem>
+        </template>
         <FormItem label="状态" prop="isShow">
           <RadioGroup v-model="detailForm.isShow">
             <Radio label="0">显示</Radio>
@@ -142,6 +150,8 @@ export default {
         showMode: 4, // 本周值得买
         FLAG: 1,
         contentVoucher: '',
+        beginTime: '',
+        endTime: '',
         isShow: '0',
         pictureUrl: '',
         plateType: '0'
@@ -193,6 +203,9 @@ export default {
         contentVoucher: [
           { required: true, trigger: ['change', 'blur'], message: '请选择跳转详情' }
         ],
+        time: [
+          { required: true, trigger: ['change', 'blur'], message: '请选择时间' }
+        ],
         isShow: [
           { required: true, trigger: ['change', 'blur'], message: '请选择状态' }
         ],
@@ -203,6 +216,28 @@ export default {
     }
   },
   methods: {
+    endDate (val) {
+      if (new Date(val) < new Date(this.detailForm.beginTime)) {
+        this.$Message.warning('结束时间不能在开始时间之前')
+        this.detailForm.endTime = ''
+      }
+    },
+    changeStartTime (val) {
+      if (new Date(val) > new Date(this.detailForm.endTime)) {
+        this.$Message.warning('开始时间不能在结束时间之后')
+        this.detailForm.beginTime = ''
+        this.detailForm.endTime = ''
+      }
+    },
+    changeType () {
+      if (this.detailForm.plateType === '0') {
+        delete this.detailForm.beginTime
+        delete this.detailForm.endTime
+      } else {
+        this.detailForm.beginTime = ''
+        this.detailForm.endTime = ''
+      }
+    },
     operate (item, id) {
       switch (item) {
         case 0: this.modalTitle = '新增'
@@ -255,6 +290,7 @@ export default {
         pictureUrl: '',
         plateType: '0'
       }
+      this.selectedGoods = null
     },
     async saveTitleMsg () {
       let res = await doEditTitleMsg(this.titleform)
@@ -263,16 +299,24 @@ export default {
       }
     },
     async handleSubmit () {
+      // 选择跳转类型为商品时，筛选出商品id
+      if (this.detailForm.plateType === '1') {
+        if (this.selectedGoods) { this.detailForm.contentVoucher = this.selectedGoods.id }
+        this.detailForm.beginTime = this.$moment(new Date(this.detailForm.beginTime)).format('YYYY-MM-DD HH:mm:ss')
+        this.detailForm.endTime = this.$moment(new Date(this.detailForm.endTime)).format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        delete this.detailForm.beginTime
+        delete this.detailForm.endTime
+      }
       if (!this.detailForm.pictureUrl) {
         this.$Message.warning('图片不能为空!')
         return
       } else if (!this.detailForm.contentVoucher) {
         this.$Message.warning('跳转详情不能为空!')
         return
-      }
-      // 选择跳转类型为商品时，筛选出商品id
-      if (this.detailForm.plateType === '1') {
-        this.detailForm.contentVoucher = this.selectedGoods.id
+      } else if (this.detailForm.beginTime === '' || this.detailForm.beginTime === 'Invalid date') {
+        this.$Message.warning('时间不能为空!')
+        return
       }
       if (this.editType === 1) { // 编辑
         let res = await doEditPlate(Object.assign(this.detailForm, { id: this.detailId }))
@@ -304,6 +348,10 @@ export default {
         }
         if (res.data.content.spuResp) {
           this.selectedGoods = res.data.content.spuResp
+        }
+        if (res.data.content.plateType === 1) {
+          this.detailForm.beginTime = res.data.content.beginTime
+          this.detailForm.endTime = res.data.content.endTime
         }
       }
     },

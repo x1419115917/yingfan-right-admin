@@ -287,7 +287,7 @@ export default {
       }
       // 选择跳转类型为商品时，筛选出商品id
       if (this.detailForm.plateType === '1') {
-        this.detailForm.contentVoucher = this.selectedGoods.id
+        if (this.selectedGoods) { this.detailForm.contentVoucher = this.selectedGoods.id }
       }
       if (this.editType === 1) { // 编辑
         let res = await doEditPlate(Object.assign(this.detailForm, { id: this.detailId }))
