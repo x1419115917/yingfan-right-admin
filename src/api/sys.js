@@ -217,34 +217,34 @@ export const deptupdate = data => {
   })
 }
 // 积分奖励设置
-export const doSetReward = data => {
-  return axios.request({
-    url: `/system/config/saveOrUpdate`,
-    data,
-    method: 'post'
-  })
-}
+// export const doSetReward = data => {
+//   return axios.request({
+//     url: `/system/config/saveOrUpdate`,
+//     data,
+//     method: 'post'
+//   })
+// }
 // 查询积分系统设置
-export const doCheckIntegral = data => {
-  return axios.request({
-    url: `/system/config/getConfigForIntegral`,
-    data,
-    method: 'post'
-  })
-}
+// export const doCheckIntegral = data => {
+//   return axios.request({
+//     url: `/system/config/getConfigForIntegral`,
+//     data,
+//     method: 'post'
+//   })
+// }
 // 查询邀请vip奖励
-export const doCheckVip = data => {
-  return axios.request({
-    url: `/system/config/getConfigForVIP`,
-    data,
-    method: 'post'
-  })
-}
+// export const doCheckVip = data => {
+//   return axios.request({
+//     url: `/system/config/getConfigForVIP`,
+//     data,
+//     method: 'post'
+//   })
+// }
 // 查询邀新奖励
-export const doCheckNewbie = data => {
-  return axios.request({
-    url: `/system/config/getConfigForNewbie`,
-    data,
-    method: 'post'
-  })
-}
+// export const doCheckNewbie = data => {
+//   return axios.request({
+//     url: `/system/config/getConfigForNewbie`,
+//     data,
+//     method: 'post'
+//   })
+// }

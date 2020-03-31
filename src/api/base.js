@@ -50,21 +50,21 @@ export const iconsRemove = data => {
   })
 }
 // 会员列表
-export const listUsersPage = data => {
-  return axios.request({
-    url: '/account/member/listUsersPage',
-    data,
-    method: 'post'
-  })
-}
+// export const listUsersPage = data => {
+//   return axios.request({
+//     url: '/account/member/listUsersPage',
+//     data,
+//     method: 'post'
+//   })
+// }
 // 积分
-export const listScoresPage = data => {
-  return axios.request({
-    url: '/account/member/listScoresPage',
-    data,
-    method: 'post'
-  })
-}
+// export const listScoresPage = data => {
+//   return axios.request({
+//     url: '/account/member/listScoresPage',
+//     data,
+//     method: 'post'
+//   })
+// }
 // 奖励
 export const listBonussPage = data => {
   return axios.request({
@@ -74,10 +74,10 @@ export const listBonussPage = data => {
   })
 }
 // 团队成员
-export const listUserInvitesPage = data => {
-  return axios.request({
-    url: '/account/member/listUserInvitesPage',
-    data,
-    method: 'post'
-  })
-}
+// export const listUserInvitesPage = data => {
+//   return axios.request({
+//     url: '/account/member/listUserInvitesPage',
+//     data,
+//     method: 'post'
+//   })
+// }
