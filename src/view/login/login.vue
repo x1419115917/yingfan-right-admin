@@ -8,7 +8,7 @@
         <Col span="6">
           <div class="col-sm-7 left-login-text">
             <h3>美粤文化</h3>
-            <h5>欢迎使用 应范管理系统</h5>
+            <h5>欢迎来到 应范管理系统</h5>
             <ul class="list">
               <li><Icon type="md-arrow-round-forward" />供应商管理</li>
               <li><Icon type="md-arrow-round-forward" />商品管理</li>
